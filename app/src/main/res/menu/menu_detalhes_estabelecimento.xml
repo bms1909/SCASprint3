@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ulbra.bms.scaid5.controllers.DetalhesEstabelecimentoActivity">
+    <item android:id="@+id/btnEstabelecimentoTelefone"
+        android:icon="@drawable/ic_action_call"
+        android:title="Ligar"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/btnEstabelecimentoAbrirMaps"
+        android:icon="@drawable/ic_action_directions"
+        android:title="Navegar Até Endereço"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

@@ -1,6 +1,8 @@
 package ulbra.bms.scaid5.ulbra.bms.scaid5.models;
 
+import android.content.Context;
 import android.location.Location;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import ulbra.bms.scaid5.controllers.clsJSONget;
+import ulbra.bms.scaid5.controllers.clsJSONpost;
 
 /**
  * Criador por Bruno em 16/03/2015.
@@ -32,6 +35,12 @@ public class clsEstabelecimentos {
     public boolean larguraSuficiente;
     public String telefoneEstabelecimento;
 
+    public clsEstabelecimentos(int idEstabelecimento)
+    {
+        this.idEstabelecimento = idEstabelecimento;
+    }
+
+    //cadastro
     public clsEstabelecimentos(int idCat, String nome, String endereco, String cidade, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, String telefone, LatLng latlon) {
         this.idCategoria = idCat;
         this.nomeEstabelecimento = nome;
@@ -125,14 +134,14 @@ public class clsEstabelecimentos {
         return retorno;
     }
 
-  /*  public boolean avaliaEstabelecimento(int notaAvaliacao) {
-        clsJSONpost executor = clsJSONpost.getInstance();
-        return executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&nota=" + notaAvaliacao);
+    public void avaliaEstabelecimento(int notaAvaliacao,Context context) {
+        clsJSONpost executor = new clsJSONpost(context);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&nota=" + notaAvaliacao);
     }
 
-    public boolean cadastraEstabelecimento(int notaAvaliacao) {
-        clsJSONpost executor = clsJSONpost.getInstance();
-        return executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estrelasAtendimento=" + notaAvaliacao + "&avaliadoresEstrelas=" + 1 + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude);
-    }*/
+    public void cadastraEstabelecimento(int notaAvaliacao,Context context) {
+        clsJSONpost executor = new clsJSONpost(context);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estrelasAtendimento=" + notaAvaliacao + "&avaliadoresEstrelas=" + 1 + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude);
+    }
 
 }

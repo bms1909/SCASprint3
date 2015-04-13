@@ -23,11 +23,20 @@ import ulbra.bms.scaid5.controllers.clsJSONpost;
 public class clsAlertas {
 
     public int idUsuario;
+    public int idAlerta;
     public LatLng latlonAlerta;
     public int tipoAlerta;
     public String descricaoAlerta;
     public int riscoAlerta;
 
+    private clsAlertas(int idAlerta,int idUsuario, double latitude, double longitude, String descricao, int tipo, int risco) {
+        this.idUsuario = idUsuario;
+        this.idAlerta = idAlerta;
+        this.latlonAlerta = new LatLng(latitude, longitude);
+        this.descricaoAlerta = descricao;
+        this.tipoAlerta = tipo;
+        this.riscoAlerta = risco;
+    }
     public clsAlertas(int idUsuario, double latitude, double longitude, String descricao, int tipo, int risco) {
         this.idUsuario = idUsuario;
         this.latlonAlerta = new LatLng(latitude, longitude);
@@ -54,7 +63,7 @@ public class clsAlertas {
             if (recebido != null) {
                 for (int i = 0; i < recebido.length(); i++) {
                     loop = recebido.getJSONObject(i);
-                    retorno.add(new clsAlertas(loop.getInt("idAlerta"), loop.getDouble("latitudeAlerta"), loop.getDouble("longitudeAlerta"), loop.getString("descricaoAlerta"), loop.getInt("tipoAlerta"), loop.getInt("riscoAlerta")));
+                    retorno.add(new clsAlertas(loop.getInt("idAlerta"),loop.getInt("idUsuario"), loop.getDouble("latitudeAlerta"), loop.getDouble("longitudeAlerta"), loop.getString("descricaoAlerta"), loop.getInt("tipoAlerta"), loop.getInt("riscoAlerta")));
                 }
             }
         } catch (JSONException | NullPointerException e) {

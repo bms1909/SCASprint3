@@ -49,6 +49,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private Location mlocalAtual;
     private LocationListener mLocationListener;
     private clsApiClientSingleton mGerenciadorApiClient;
+    private ArrayList<clsAlertas> alertasCarregados;
+    private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
+    private clsAlertas alertaSelecionado;
+    private clsEstabelecimentos estabelecimentoSelecionado;
 
     //region Mapa
     @Override
@@ -90,15 +94,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (!clsJSONget.temInternet()) {
                 Toast.makeText(this, "Sem acesso a internet, as informações podem estar desatualizadas", Toast.LENGTH_LONG).show();
             } else {
+                alertasCarregados = clsAlertas.carregaAlertas(raioCargaMarcadores, localCarga);
+                estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raioCargaMarcadores, localCarga);
                 //carrega as listas de objetos alertas e estabelecimentos do webService
                 //foreach do java
-                for (clsAlertas percorre : clsAlertas.carregaAlertas(raioCargaMarcadores, localCarga)) {
+                for (clsAlertas percorre : alertasCarregados) {
                     //TODO fazer ícones
                     // .icon personaliza o ícone,
                     //adiciona o marcador ver https://developers.google.com/maps/documentation/android/marker#customize_the_marker_image
                     objMapa.addMarker(new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta).icon(BitmapDescriptorFactory.fromResource(R.drawable.common_signin_btn_icon_focus_light)));
                 }
-                for (clsEstabelecimentos percorre : clsEstabelecimentos.estabelecimentosPorRaio(raioCargaMarcadores, localCarga)) {
+                for (clsEstabelecimentos percorre : estabelecimentosCarregados ) {
                     objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.common_signin_btn_icon_focus_dark)));
                 }
 
@@ -110,16 +116,57 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //ativa com o click de um marcador do mapa
     @Override
     public boolean onMarkerClick(Marker marker) {
-        //pequeno texto exibido rapidamente Toast.makeText(this, "marcador "+marker.getTitle()+" selecionado", Toast.LENGTH_SHORT).show();
-        //pop-up ao clicar em alguma marcação
+        alertaSelecionado = null;
+        estabelecimentoSelecionado = null;
         AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-        dlgAlert.setTitle("Alerta");
-        dlgAlert.setIcon(R.drawable.common_signin_btn_icon_focus_light);
-        dlgAlert.setMessage("Este Marcador é " + marker.getTitle());
-        dlgAlert.setPositiveButton("Denunciar", null);
-        dlgAlert.setNeutralButton("Voltar",null);
-        dlgAlert.setCancelable(true);
-        dlgAlert.create().show();
+
+        for(int x = 0;x<alertasCarregados.size();x++)
+        {
+            //busca entre os alertas carregados, o alerta correspondente as coordenadas do selecionado
+            if(marker.getPosition().equals(alertasCarregados.get(x).latlonAlerta)) {
+                alertaSelecionado = alertasCarregados.get(x);
+            }
+        }
+        if(alertaSelecionado == null) {
+            for (int x = 0; x < estabelecimentosCarregados.size(); x++) {
+                //se não é um alerta, busca entre os marcadores
+                if (marker.getPosition().equals(estabelecimentosCarregados.get(x).latlonEstabelecimento)) {
+                    estabelecimentoSelecionado = estabelecimentosCarregados.get(x);
+                }
+            }
+
+            dlgAlert.setTitle("Estabelecimento");
+            dlgAlert.setIcon(R.drawable.common_signin_btn_icon_focus_dark);
+            dlgAlert.setMessage(estabelecimentoSelecionado.nomeEstabelecimento);
+            dlgAlert.setPositiveButton("Abrir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSelecionado.idEstabelecimento));
+                }
+            });
+            dlgAlert.setNeutralButton("Voltar",null);
+            dlgAlert.setCancelable(true);
+            dlgAlert.create().show();
+        }
+        else
+        {
+            //pop-up marcações
+            dlgAlert.setTitle("Alerta");
+            dlgAlert.setIcon(R.drawable.common_signin_btn_icon_focus_light);
+            dlgAlert.setMessage("Este Marcador é " + alertaSelecionado.descricaoAlerta);
+            dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta,MainActivity.this);
+                    Toast.makeText(MainActivity.this,"Alerta denunciado, Obrigado!)",Toast.LENGTH_LONG).show();
+                }
+            });
+            dlgAlert.setNeutralButton("Voltar",null);
+            dlgAlert.setCancelable(true);
+            dlgAlert.create().show();
+        }
+
+      //
         return false;
     }
 
@@ -333,7 +380,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     dialog.cancel();
-                    Toast.makeText(MainActivity.this, "Cancelado", Toast.LENGTH_LONG);
+                    Toast.makeText(MainActivity.this, "Cancelado", Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -354,3 +401,4 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 //endregion
 
 }
+
