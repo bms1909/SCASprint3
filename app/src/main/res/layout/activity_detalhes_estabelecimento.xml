@@ -1,5 +1,198 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    tools:context="ulbra.bms.scaid5.controllers.DetalhesEstabelecimentoActivity"
-    tools:ignore="MergeRootFrame" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp"
+            tools:context="ulbra.bms.scaid5.controllers.DetalhesEstabelecimentoActivity">
+
+            <!-- itens somente leitura -->
+
+            <TextView
+                android:id="@+id/tv_estabelecimento_nome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:gravity="top|start|end"
+                android:text="Restaurante Exemplo Beira-Rio dois"
+                android:textSize="@dimen/abc_text_size_display_1_material"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_estabelecimento_endereco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tv_estabelecimento_nome"
+                android:layout_marginTop="20dp"
+                android:gravity="top|start|end"
+                android:text="Avenida Barão do Rio Branco, 1900"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_estabelecimento_cidade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tv_estabelecimento_endereco"
+                android:layout_alignStart="@+id/tv_estabelecimento_endereco"
+                android:layout_below="@+id/tv_estabelecimento_endereco"
+                android:layout_marginTop="10dp"
+                android:gravity="top|start|end"
+                android:text="Santo Antônio da Patrulha - RS"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_estabelecimento_telefone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tv_estabelecimento_cidade"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/tv_estabelecimento_cidade"
+                android:layout_toRightOf="@+id/tv_estabelecimento_cidade"
+                android:gravity="top|start|end"
+                android:text="(51)99999-8888"
+                android:visibility="visible" />
+            <!-- itens iguais, só que editáveis
+
+            <EditText android:text="Restaurante Exemplo Beira-Rio dois"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:gravity="top|start|end"
+                android:textSize="@dimen/abc_text_size_display_1_material"
+                android:id="@+id/txt_estabelecimento_nome"
+                android:visibility="invisible"
+                />
+            <EditText android:text="Avenida Barão do Rio Branco, 1900" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top|start|end"
+                android:id="@+id/txt_estabelecimento_endereco"
+                android:layout_below="@+id/txt_estabelecimento_nome"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp"
+                android:visibility="invisible"/>
+            <EditText android:text="Santo Antônio da Patrulha - RS" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top|start|end"
+                android:id="@+id/txt_estabelecimento_cidade"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/txt_estabelecimento_endereco"
+                android:layout_alignLeft="@+id/txt_estabelecimento_endereco"
+                android:layout_alignStart="@+id/txt_estabelecimento_endereco"
+                android:visibility="invisible"/>
+            <EditText android:text="(51)99999-8888" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top|start|end"
+                android:id="@+id/txt_estabelecimento_telefone"
+                android:visibility="invisible"
+                android:layout_below="@+id/txt_estabelecimento_cidade"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        -->
+
+
+            <RatingBar
+                android:id="@+id/rb_classificacao_estabelecimento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_estabelecimento_cidade"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" />
+
+            <CheckBox
+                android:id="@+id/cbx_estabelecimento_possui_banheiro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/rb_classificacao_estabelecimento"
+                android:text="Banheiro Adaptado"
+                android:visibility="visible" />
+
+            <CheckBox
+                android:id="@+id/cbx_estabelecimento_possui_estacionamento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_estabelecimento_possui_banheiro"
+                android:text="Vagas Exclusivas" />
+
+            <CheckBox
+                android:id="@+id/cbx_estabelecimento_altura_certa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_estabelecimento_possui_estacionamento"
+                android:text="Objetos ao alcance" />
+
+            <CheckBox
+                android:id="@+id/cbx_estabelecimento_possui_rampa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_estabelecimento_altura_certa"
+                android:text="Possui Rampas" />
+
+            <CheckBox
+                android:id="@+id/cbx_estabelecimento_largura_suficiente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_estabelecimento_possui_rampa"
+                android:text="Largura Suficiente" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/btnbar_estabelecimento"
+        style="?android:buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <!--
+            Make sure to apply the ?android:buttonBarStyle to each button
+            in the button bar.
+
+            In the Holo theme, this style is very similar to
+            ?android:borderlessButtonStyle, but designed for use specifically
+            in horizontal button bars.
+        -->
+        <Button
+            android:id="@+id/btn_estabelecimento_avaliar"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="salvaAvaliacao_Click"
+            android:text="Avaliar" />
+
+    </LinearLayout>
+</RelativeLayout>

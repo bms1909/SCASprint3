@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ulbra.bms.scaid5" >
+    package="ulbra.bms.scaid5">
 
     <!-- Permissões pra lidar com mapas -->
 
@@ -19,7 +19,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
         <!-- TODO tá aqui os paranauê de mapa -->
 
@@ -32,7 +32,7 @@
 
         <activity
             android:name=".controllers.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,8 +41,18 @@
         </activity>
         <activity
             android:name=".controllers.DetalhesEstabelecimentoActivity"
-            android:label="@string/title_activity_detalhes_estabelecimento" >
+            android:label="@string/title_activity_detalhes_estabelecimento"></activity>
+        <activity
+            android:name=".controllers.clsJSONpost$DetalheEstabelecimentoActivity"
+            android:label="@string/title_activity_detalhe_estabelecimento"
+            android:parentActivityName=".controllers.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ulbra.bms.scaid5.controllers.MainActivity" />
         </activity>
+        <activity
+            android:name=".controllers.DetalhesEstabelecimentoActivity"
+            android:label="@string/title_activity_detalhes_estabelecimento"></activity>
     </application>
 
 </manifest>

@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import ulbra.bms.scaid5.controllers.clsJSONget;
@@ -23,8 +24,8 @@ public class clsCategorias {
         this.nomeCategoria = nome;
     }
 
-    public static clsCategorias carregaCategorias() {
-        clsCategorias retorno = null;
+    public static ArrayList<clsCategorias> carregaCategorias() {
+        ArrayList<clsCategorias> retorno = new ArrayList<>();
         clsJSONget executor = new clsJSONget();
         JSONArray recebido = null;
         JSONObject loop;
@@ -39,14 +40,26 @@ public class clsCategorias {
 
         if (recebido != null) {
             try {
-                loop = recebido.getJSONObject(0);
-                retorno = new clsCategorias(loop.getInt("idCategoria"), loop.getString("nomeCategoria"));
+                for (int i = 0; i < recebido.length(); i++) {
+                    loop = recebido.getJSONObject(i);
+                    retorno.add(new clsCategorias(loop.getInt("idCategoria"), loop.getString("nomeCategoria")));
+                }
+
 
             } catch (JSONException e) {
                 Log.d(null, e.getMessage());
             }
         }
         return retorno;
+    }
+
+    public static String getNomeCategoria(int idCategoria) {
+        ArrayList<clsCategorias> percorre = carregaCategorias();
+        for (clsCategorias loop : percorre) {
+            if (loop.idCategoria == idCategoria)
+                return loop.nomeCategoria;
+        }
+        return null;
     }
 
     public int getIdCategoria() {

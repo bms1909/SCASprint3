@@ -104,7 +104,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     //adiciona o marcador ver https://developers.google.com/maps/documentation/android/marker#customize_the_marker_image
                     objMapa.addMarker(new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta).icon(BitmapDescriptorFactory.fromResource(R.drawable.common_signin_btn_icon_focus_light)));
                 }
-                for (clsEstabelecimentos percorre : estabelecimentosCarregados ) {
+                for (clsEstabelecimentos percorre : estabelecimentosCarregados) {
                     objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.common_signin_btn_icon_focus_dark)));
                 }
 
@@ -118,18 +118,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(Marker marker) {
         alertaSelecionado = null;
         estabelecimentoSelecionado = null;
-        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
 
-        for(int x = 0;x<alertasCarregados.size();x++)
-        {
-            //busca entre os alertas carregados, o alerta correspondente as coordenadas do selecionado
-            if(marker.getPosition().equals(alertasCarregados.get(x).latlonAlerta)) {
+        //busca entre os alertas carregados, o alerta correspondente as coordenadas do selecionado
+        for (int x = 0; x < alertasCarregados.size(); x++) {
+            if (marker.getPosition().equals(alertasCarregados.get(x).latlonAlerta)) {
                 alertaSelecionado = alertasCarregados.get(x);
             }
         }
-        if(alertaSelecionado == null) {
+        if (alertaSelecionado == null) {
+            //se não é um alerta, busca entre os estabelecimentos
             for (int x = 0; x < estabelecimentosCarregados.size(); x++) {
-                //se não é um alerta, busca entre os marcadores
+
                 if (marker.getPosition().equals(estabelecimentosCarregados.get(x).latlonEstabelecimento)) {
                     estabelecimentoSelecionado = estabelecimentosCarregados.get(x);
                 }
@@ -141,15 +141,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             dlgAlert.setPositiveButton("Abrir", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    //inicia tela de detalhes do estabelecimento, enviado o ID do mesmo via putExtra
                     startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSelecionado.idEstabelecimento));
                 }
             });
-            dlgAlert.setNeutralButton("Voltar",null);
+            dlgAlert.setNeutralButton("Voltar", null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
-        }
-        else
-        {
+        } else {
             //pop-up marcações
             dlgAlert.setTitle("Alerta");
             dlgAlert.setIcon(R.drawable.common_signin_btn_icon_focus_light);
@@ -157,16 +156,16 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta,MainActivity.this);
-                    Toast.makeText(MainActivity.this,"Alerta denunciado, Obrigado!)",Toast.LENGTH_LONG).show();
+                    clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, MainActivity.this);
+                    Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!)", Toast.LENGTH_LONG).show();
                 }
             });
-            dlgAlert.setNeutralButton("Voltar",null);
+            dlgAlert.setNeutralButton("Voltar", null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
         }
 
-      //
+        //
         return false;
     }
 
@@ -228,8 +227,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     //ativado após o retorno da activity ao foco principal
     @Override
-    protected void onPostResume()
-    {
+    protected void onPostResume() {
         super.onPostResume();
 
         //confere se o GPS está ligado
@@ -240,10 +238,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(which==DialogInterface.BUTTON_POSITIVE) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                    else {
+                    } else {
                         finish();
                     }
                 }
@@ -259,15 +256,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             });
 
-            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não",dialogClickListener);
+            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
             builder.create().show();
-        }
-        else
-        {
+        } else {
             //obtem uma instancia singleton do objeto, registrando seu próprio listener
             mGerenciadorApiClient = clsApiClientSingleton.getInstance(this, mLocationListener);
-            if(objMapa==null)
-            {
+            if (objMapa == null) {
                 //prepara o mapa como objeto, provoca onmapready
                 MapFragment mapFragment = (MapFragment) getFragmentManager()
                         .findFragmentById(R.id.map);
