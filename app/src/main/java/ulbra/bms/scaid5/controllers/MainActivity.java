@@ -48,6 +48,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private Location mLocalUltimaCargaMarcadores;
     private Location mlocalAtual;
     private LocationListener mLocationListener;
+    private Location mLocalFocoCamera;
     private clsApiClientSingleton mGerenciadorApiClient;
     private ArrayList<clsAlertas> alertasCarregados;
     private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
@@ -60,16 +61,16 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap map) {
         //passa para um objeto local o googleMap instanciado
         objMapa = map;
+        mLocalFocoCamera= new Location("");
+        mLocalFocoCamera.setTime(new Date().getTime());
         objMapa.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 if (!segueUsuario) {
-                    Location location = new Location("Test");
-                    location.setLatitude(cameraPosition.target.latitude);
-                    location.setLongitude(cameraPosition.target.longitude);
-                    location.setTime(new Date().getTime());
-                    if (location.distanceTo(mLocalUltimaCargaMarcadores) > 1000) {
-                        carregaMarcadores(location, 1);
+                    mLocalFocoCamera.setLatitude(cameraPosition.target.latitude);
+                    mLocalFocoCamera.setLongitude(cameraPosition.target.longitude);
+                    if (mLocalFocoCamera.distanceTo(mLocalUltimaCargaMarcadores) > 1000) {
+                        carregaMarcadores(mLocalFocoCamera, 1);
                     }
                 }
             }
@@ -281,7 +282,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     protected void onDestroy() {
-        mGerenciadorApiClient.suspendeLocalizacao(mLocationListener);
+        if (mGerenciadorApiClient != null)
+            mGerenciadorApiClient.suspendeLocalizacao(mLocationListener);
         mGerenciadorApiClient = null;
         mLocalUltimaCargaMarcadores = null;
         objMapa = null;
@@ -380,7 +382,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             alertas.setTitle("Informar");
             alertas.setNegativeButton("Voltar", null);
-            ArrayAdapter adapter = new ArrayAdapter(this, R.layout.layout_tipos_alerta, tiposAlerta);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
             //define o diálogo como uma lista, passa o adapter.
             alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int idSelecionado) {
@@ -391,6 +393,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             });
             alertas.create().show();
         }
+    }
+
+    public void btnNovoEstabelecimento_Click(View view) {
+        startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
     }
 //endregion
 

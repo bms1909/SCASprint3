@@ -14,7 +14,6 @@
             android:paddingTop="20dp"
             tools:context="ulbra.bms.scaid5.controllers.DetalhesEstabelecimentoActivity">
 
-            <!-- itens somente leitura -->
 
             <TextView
                 android:id="@+id/tv_estabelecimento_nome"
@@ -66,52 +65,10 @@
                 android:gravity="top|start|end"
                 android:text="(51)99999-8888"
                 android:visibility="visible" />
-            <!-- itens iguais, só que editáveis
-
-            <EditText android:text="Restaurante Exemplo Beira-Rio dois"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:gravity="top|start|end"
-                android:textSize="@dimen/abc_text_size_display_1_material"
-                android:id="@+id/txt_estabelecimento_nome"
-                android:visibility="invisible"
-                />
-            <EditText android:text="Avenida Barão do Rio Branco, 1900" android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="top|start|end"
-                android:id="@+id/txt_estabelecimento_endereco"
-                android:layout_below="@+id/txt_estabelecimento_nome"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
-                android:visibility="invisible"/>
-            <EditText android:text="Santo Antônio da Patrulha - RS" android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="top|start|end"
-                android:id="@+id/txt_estabelecimento_cidade"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/txt_estabelecimento_endereco"
-                android:layout_alignLeft="@+id/txt_estabelecimento_endereco"
-                android:layout_alignStart="@+id/txt_estabelecimento_endereco"
-                android:visibility="invisible"/>
-            <EditText android:text="(51)99999-8888" android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="top|start|end"
-                android:id="@+id/txt_estabelecimento_telefone"
-                android:visibility="invisible"
-                android:layout_below="@+id/txt_estabelecimento_cidade"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-        -->
 
 
             <RatingBar
-                android:id="@+id/rb_classificacao_estabelecimento"
+                android:id="@+id/rb_estabelecimento_classificacao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_estabelecimento_cidade"
@@ -125,7 +82,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/rb_classificacao_estabelecimento"
+                android:layout_below="@+id/rb_estabelecimento_classificacao"
+                android:clickable="false"
                 android:text="Banheiro Adaptado"
                 android:visibility="visible" />
 
@@ -136,6 +94,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_estabelecimento_possui_banheiro"
+                android:clickable="false"
                 android:text="Vagas Exclusivas" />
 
             <CheckBox
@@ -145,6 +104,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_estabelecimento_possui_estacionamento"
+                android:clickable="false"
                 android:text="Objetos ao alcance" />
 
             <CheckBox
@@ -154,6 +114,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_estabelecimento_altura_certa"
+                android:clickable="false"
                 android:text="Possui Rampas" />
 
             <CheckBox
@@ -163,6 +124,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_estabelecimento_possui_rampa"
+                android:clickable="false"
                 android:text="Largura Suficiente" />
 
         </RelativeLayout>
@@ -174,6 +136,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
+        android:background="#ffffffff"
         android:orientation="horizontal"
         android:visibility="visible">
 

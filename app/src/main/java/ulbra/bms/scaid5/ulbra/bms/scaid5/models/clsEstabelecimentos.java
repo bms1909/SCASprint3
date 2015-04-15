@@ -35,13 +35,12 @@ public class clsEstabelecimentos {
     public boolean larguraSuficiente;
     public String telefoneEstabelecimento;
 
-    public clsEstabelecimentos(int idEstabelecimento)
-    {
+    public clsEstabelecimentos(int idEstabelecimento) {
         this.idEstabelecimento = idEstabelecimento;
     }
 
     //cadastro
-    public clsEstabelecimentos(int idCat, String nome, String endereco, String cidade, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, String telefone, LatLng latlon) {
+    public clsEstabelecimentos(int idCat, String nome, String endereco, String cidade, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, boolean estacionamento, String telefone, LatLng latlon) {
         this.idCategoria = idCat;
         this.nomeEstabelecimento = nome;
         this.enderecoEstabelecimento = endereco;
@@ -52,6 +51,7 @@ public class clsEstabelecimentos {
         this.larguraSuficiente = largo;
         this.telefoneEstabelecimento = telefone;
         this.latlonEstabelecimento = latlon;
+        this.possuiEstacionamento = estacionamento;
     }
 
     private clsEstabelecimentos(int idCat, int idEstab, String nome, String endereco, String cidade, double avgEstrelas, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, String telefone,/*LatLng latlon*/double latitude, double longitude) {
@@ -73,9 +73,9 @@ public class clsEstabelecimentos {
         return clsEstabelecimentos.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.getLatitude() + "&longitude=" + local.getLongitude());
     }
 
-    public static ArrayList<clsEstabelecimentos> estabelecimentosPorCategoria(int idCategoria) {
+  /*  public static ArrayList<clsEstabelecimentos> estabelecimentosPorCategoria(int idCategoria) {
         return clsEstabelecimentos.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + idCategoria);
-    }
+    }*/
 
     private static ArrayList<clsEstabelecimentos> carregaEstabelecimentos(String URL) {
         ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
@@ -134,12 +134,12 @@ public class clsEstabelecimentos {
         return retorno;
     }
 
-    public void avaliaEstabelecimento(int notaAvaliacao,Context context) {
+    public void avaliaEstabelecimento(int notaAvaliacao, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
         executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&nota=" + notaAvaliacao);
     }
 
-    public void cadastraEstabelecimento(int notaAvaliacao,Context context) {
+    public void cadastraEstabelecimento(int notaAvaliacao, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
         executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estrelasAtendimento=" + notaAvaliacao + "&avaliadoresEstrelas=" + 1 + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude);
     }

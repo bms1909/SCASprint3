@@ -45,7 +45,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         TextView tvFone = (TextView) findViewById(R.id.tv_estabelecimento_telefone);
         tvFone.setText(estabCarregado.telefoneEstabelecimento);
 
-        rb = (RatingBar) findViewById(R.id.rb_classificacao_estabelecimento);
+        rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
         rb.setMax(5);
         rb.setRating((float) estabCarregado.mediaEstrelasAtendimento);
 
@@ -65,7 +65,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
     public void salvaAvaliacao_Click(View a) {
         //envia ao WS a avaliação do estabelecimento
-        rb = (RatingBar) findViewById(R.id.rb_classificacao_estabelecimento);
+        rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
         estabCarregado.avaliaEstabelecimento(rb.getProgress(), this);
         Toast.makeText(this, "Avaliação Salva, Obrigado!", Toast.LENGTH_SHORT).show();
     }
@@ -76,7 +76,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes_estabelecimento);
 
-        rb = (RatingBar) findViewById(R.id.rb_classificacao_estabelecimento);
+        rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
         //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
         rb.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -123,7 +123,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
         switch (item.getItemId()) {
             case R.id.btnEstabelecimentoAbrirMaps:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("geo:" + estabCarregado.latlonEstabelecimento.latitude + "," + estabCarregado.latlonEstabelecimento.longitude)));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + estabCarregado.latlonEstabelecimento.latitude + "," + estabCarregado.latlonEstabelecimento.longitude + "(" + Uri.encode(estabCarregado.nomeEstabelecimento) + ")")));
                 break;
             case R.id.btnEstabelecimentoTelefone:
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + estabCarregado.telefoneEstabelecimento)));

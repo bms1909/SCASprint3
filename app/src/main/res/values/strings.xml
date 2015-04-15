@@ -4,4 +4,5 @@
     <string name="title_activity_detalhes_estabelecimento">Estabelecimento</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_detalhe_estabelecimento">DetalheEstabelecimentoActivity</string>
+    <string name="title_activity_cadastra_estabelecimento">Estabelecimento</string>
 </resources>

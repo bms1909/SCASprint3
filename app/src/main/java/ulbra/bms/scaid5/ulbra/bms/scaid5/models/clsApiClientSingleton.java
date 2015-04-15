@@ -1,6 +1,7 @@
 package ulbra.bms.scaid5.ulbra.bms.scaid5.models;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -9,6 +10,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Criado por Bruno on 24/03/2015.
@@ -40,6 +42,13 @@ public class clsApiClientSingleton {
         return INSTANCE;
     }
 
+    private static clsApiClientSingleton getInstance(Context contexto) {
+        if (INSTANCE.mGoogleApiClient == null) {
+            criaApiClient(contexto);
+        }
+        return INSTANCE;
+    }
+
     private static void criaApiClient(Context contexto) {
         //contexto é pai de toda a activity, sendo o mesmo para o aplicativo inteiro
         INSTANCE.mGoogleApiClient = new GoogleApiClient.Builder(contexto)
@@ -47,7 +56,9 @@ public class clsApiClientSingleton {
                     @Override
                     public void onConnected(Bundle bundle) {
                         //acionado após a conexão, instanciar mLocationListener imediatamente após CriaApiClient
-                        solicitaLocalizacao(INSTANCE.mLocationListener);
+                        if (INSTANCE.mLocationListener != null) {
+                            solicitaLocalizacao(INSTANCE.mLocationListener);
+                        }
                     }
 
                     @Override
@@ -64,6 +75,12 @@ public class clsApiClientSingleton {
                 .build();
         //conecta o googleApiClient, provocando o início do método abaixo
         INSTANCE.mGoogleApiClient.connect();
+    }
+
+    public static LatLng ultimoLocal(Context contexto) {
+        clsApiClientSingleton local = getInstance(contexto);
+        Location retorno = LocationServices.FusedLocationApi.getLastLocation(local.mGoogleApiClient);
+        return new LatLng(retorno.getLatitude(), retorno.getLongitude());
     }
 
     private static void solicitaLocalizacao(LocationListener mLocationListener) {

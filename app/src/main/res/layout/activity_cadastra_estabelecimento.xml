@@ -1,0 +1,179 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp">
+
+        <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp"
+            tools:context="ulbra.bms.scaid5.controllers.CadastraEstabelecimentoActivity">
+
+            <EditText
+                android:id="@+id/txt_novoestabelecimento_nome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:focusable="true"
+                android:gravity="top|start|end"
+                android:hint="Nome do Local"
+                android:imeOptions="flagNavigateNext"
+                android:inputType="textCapWords|textImeMultiLine"
+                android:selectAllOnFocus="true"
+                android:textSize="@dimen/abc_text_size_display_1_material" />
+
+            <Spinner
+                android:id="@+id/sp_novoestabelecimento_categorias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_novoestabelecimento_nome" />
+
+            <EditText
+                android:id="@+id/txt_novoestabelecimento_endereco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/txt_novoestabelecimento_nome"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignRight="@+id/txt_novoestabelecimento_nome"
+                android:layout_below="@+id/sp_novoestabelecimento_categorias"
+                android:layout_marginTop="10dp"
+                android:focusable="true"
+                android:gravity="top|start|end"
+                android:hint="Endereço"
+                android:imeOptions="flagNavigateNext"
+                android:inputType="textCapWords|textPostalAddress"
+                android:selectAllOnFocus="true" />
+
+            <EditText
+                android:id="@+id/txt_novoestabelecimento_cidade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/txt_novoestabelecimento_telefone"
+                android:layout_alignLeft="@+id/txt_novoestabelecimento_endereco"
+                android:layout_alignRight="@+id/txt_novoestabelecimento_telefone"
+                android:layout_alignStart="@+id/txt_novoestabelecimento_endereco"
+                android:layout_below="@+id/txt_novoestabelecimento_endereco"
+                android:layout_marginTop="10dp"
+                android:focusable="true"
+                android:gravity="top|start|end"
+                android:hint="Cidade e Estado"
+                android:imeOptions="flagNavigateNext"
+                android:inputType="textCapWords|textPostalAddress"
+                android:selectAllOnFocus="true" />
+
+            <EditText
+                android:id="@+id/txt_novoestabelecimento_telefone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/txt_novoestabelecimento_nome"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignRight="@+id/txt_novoestabelecimento_nome"
+                android:layout_below="@+id/txt_novoestabelecimento_cidade"
+                android:focusable="true"
+                android:gravity="top|start|end"
+                android:hint="DDD e Telefone"
+                android:inputType="phone"
+                android:selectAllOnFocus="true" />
+
+            <RatingBar
+                android:id="@+id/rb_novoestabelecimento_classificacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_novoestabelecimento_telefone"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" />
+
+            <CheckBox
+                android:id="@+id/cbx_novoestabelecimento_possui_banheiro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/rb_novoestabelecimento_classificacao"
+                android:text="Banheiro Adaptado"
+                android:visibility="visible" />
+
+            <CheckBox
+                android:id="@+id/cbx_novoestabelecimento_possui_estacionamento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_novoestabelecimento_possui_banheiro"
+                android:text="Vagas Exclusivas" />
+
+            <CheckBox
+                android:id="@+id/cbx_novoestabelecimento_altura_certa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_novoestabelecimento_possui_estacionamento"
+                android:text="Objetos ao alcance" />
+
+            <CheckBox
+                android:id="@+id/cbx_novoestabelecimento_possui_rampa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_novoestabelecimento_altura_certa"
+                android:text="Possui Rampas" />
+
+            <CheckBox
+                android:id="@+id/cbx_novoestabelecimento_largura_suficiente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/cbx_novoestabelecimento_possui_rampa"
+                android:layout_marginBottom="30dp"
+                android:text="Largura Suficiente" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/btnbar_novoestabelecimento"
+        style="?android:buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffffff"
+        android:orientation="horizontal">
+
+        <!--
+            Make sure to apply the ?android:buttonBarStyle to each button
+            in the button bar.
+
+            In the Holo theme, this style is very similar to
+            ?android:borderlessButtonStyle, but designed for use specifically
+            in horizontal button bars.
+        -->
+        <Button
+            android:id="@+id/btn_novoestabelecimento_avaliar"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#ffffffff"
+            android:onClick="salvaAvaliacao_Click"
+            android:text="Salvar" />
+
+    </LinearLayout>
+</RelativeLayout>
