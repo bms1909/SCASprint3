@@ -95,8 +95,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if (!clsJSONget.temInternet()) {
                 Toast.makeText(this, "Sem acesso a internet, as informações podem estar desatualizadas", Toast.LENGTH_LONG).show();
             } else {
-                alertasCarregados = clsAlertas.carregaAlertas(raioCargaMarcadores, localCarga);
-                estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raioCargaMarcadores, localCarga);
+                LatLng local = new LatLng(localCarga.getLatitude(), localCarga.getLongitude());
+                alertasCarregados = clsAlertas.carregaAlertas(raioCargaMarcadores, local);
+                estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raioCargaMarcadores, local);
                 //carrega as listas de objetos alertas e estabelecimentos do webService
                 //foreach do java
                 for (clsAlertas percorre : alertasCarregados) {
@@ -157,7 +158,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, MainActivity.this);
+                    //TODO pegar id do usuário
+                    clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, 1, MainActivity.this);
                     Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!)", Toast.LENGTH_LONG).show();
                 }
             });
@@ -169,7 +171,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //
         return false;
     }
-
     private void moveCamera(Location localAtual) {
         try {
             //desloca a visualização do mapa para a coordenada informada
@@ -193,6 +194,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     //region Activity
 
+    public void btnBusca_Click(View view) {
+        startActivity(new Intent(MainActivity.this, PesquisaLocaisActivity.class));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -361,7 +365,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             risco = 2;
                             break;
                     }
-                    clsAlertas novo = new clsAlertas(7, mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
+                    //TODO pegar id do usuário
+                    clsAlertas novo = new clsAlertas(1, mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
                     novo.cadastraAlerta(MainActivity.this);
 
                     Toast.makeText(MainActivity.this, "Seu alerta aparecerá em breve, obrigado!", Toast.LENGTH_SHORT).show();
@@ -372,13 +377,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             });
             detalhe.setNegativeButton("Cancelar", null);
             //click fora do AlertDialog
-            detalhe.setOnCancelListener(new DialogInterface.OnCancelListener() {
+     /*       detalhe.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     dialog.cancel();
                     Toast.makeText(MainActivity.this, "Cancelado", Toast.LENGTH_LONG).show();
                 }
-            });
+            });*/
 
             alertas.setTitle("Informar");
             alertas.setNegativeButton("Voltar", null);
@@ -396,8 +401,31 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     }
 
     public void btnNovoEstabelecimento_Click(View view) {
-        startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
+        ArrayList<String> tiposAlerta = new ArrayList<>();
+        final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos = clsEstabelecimentos.estabelecimentosPorRaio((float) 0.5, new LatLng(mlocalAtual.getLatitude(), mlocalAtual.getLongitude()));
+        for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
+            tiposAlerta.add(percorre.nomeEstabelecimento);
+        }
+        AlertDialog.Builder alertas = new AlertDialog.Builder(this);
+        alertas.setTitle("Avaliar Estabelecimento");
+        alertas.setPositiveButton("Cadastrar Novo", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
+            }
+        });
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
+        //define o diálogo como uma lista, passa o adapter.
+        alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int idSelecionado) {
+                arg0.cancel();
+                startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSugeridos.get(idSelecionado).idEstabelecimento));
+            }
+        });
+        alertas.create().show();
     }
+
+
 //endregion
 
 }

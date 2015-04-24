@@ -1,6 +1,8 @@
 package ulbra.bms.scaid5.controllers;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -17,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
     private clsEstabelecimentos estabCarregado;
     private RatingBar rb;
+    private boolean jaAvaliado;
 
     //carrega todas as informações do estabelecimento a partir do objeto global
     private void atualizaTela() {
@@ -47,7 +49,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
         rb.setMax(5);
-        rb.setRating((float) estabCarregado.mediaEstrelasAtendimento);
+        rb.setRating(estabCarregado.mediaEstrelasAtendimento);
 
 
         CheckBox cbxBanheiro = (CheckBox) findViewById(R.id.cbx_estabelecimento_possui_banheiro);
@@ -64,10 +66,11 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
     }
 
     public void salvaAvaliacao_Click(View a) {
-        //envia ao WS a avaliação do estabelecimento
+        // envia ao WS a avaliação do estabelecimento
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
-        estabCarregado.avaliaEstabelecimento(rb.getProgress(), this);
-        Toast.makeText(this, "Avaliação Salva, Obrigado!", Toast.LENGTH_SHORT).show();
+        //TODO,obter id do usuário
+        estabCarregado.avaliaEstabelecimento(rb.getProgress(), 1, this);
+        finish();
     }
 
     @Override
@@ -77,14 +80,39 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detalhes_estabelecimento);
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
+
+        final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(DetalhesEstabelecimentoActivity.this);
+        dlgAlert.setTitle("Confirmação");
+        //TODO ver se dá pra recuperar nota
+        dlgAlert.setMessage("Estabelecimento já avaliado com a nota x, deseja alterar?");
+
+
+
         //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
         rb.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LinearLayout btnBar = (LinearLayout) findViewById(R.id.btnbar_estabelecimento);
-                ViewGroup.LayoutParams a = btnBar.getLayoutParams();
-                a.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                btnBar.setLayoutParams(a);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    final LinearLayout btnBar = (LinearLayout) findViewById(R.id.btnbar_estabelecimento);
+                    final ViewGroup.LayoutParams a = btnBar.getLayoutParams();
+                    a.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+                    if ((jaAvaliado) && (btnBar.getHeight() == 0)) {
+                        dlgAlert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //inicia tela de detalhes do estabelecimento, enviado o ID do mesmo via putExtra
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+                                    btnBar.setLayoutParams(a);
+                                }
+                            }
+                        });
+                        dlgAlert.setNegativeButton("Não", null);
+                        dlgAlert.create().show();
+                    } else {
+                        btnBar.setLayoutParams(a);
+                    }
+                }
                 return false;
             }
         });
@@ -94,6 +122,8 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         estabCarregado = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
         estabCarregado = estabCarregado.carregaDetalhesEstabelecimento();
         atualizaTela();
+        //TODO colocar id do usuário
+        jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(1, estabCarregado.idEstabelecimento);
     }
 
     @Override

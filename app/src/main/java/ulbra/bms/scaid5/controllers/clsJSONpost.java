@@ -65,6 +65,8 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
                 IOUtils.copy(conn.getInputStream(), intermediario);
                 if (intermediario.toString().equals("true"))
                     temp.removeTemp(url);
+                else
+                    return false;
             } catch (Exception e) {
                 Log.d("pau no POSTsem internet", e.getLocalizedMessage());
                 return false;
@@ -76,6 +78,8 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         //obtém resultado do asynctask
+        //   if(result)
+        // Toast.makeText(contexto,"Informações Enviadas!",Toast.LENGTH_SHORT).show();
     }
 }
 

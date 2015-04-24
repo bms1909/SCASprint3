@@ -5,4 +5,14 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_detalhe_estabelecimento">DetalheEstabelecimentoActivity</string>
     <string name="title_activity_cadastra_estabelecimento">Estabelecimento</string>
+    <string name="title_activity_pesquisa_locais">PesquisaLocaisActivity</string>
+    <string name="title_activity_pesquisa_categoria">PesquisaCategoriaActivity</string>
+
+    <string-array name="valores_array_raios">
+        <item>500 Metros</item>
+        <item>2 KM</item>
+        <item>5 KM</item>
+        <item>10 KM</item>
+        <item>25 KM</item>
+    </string-array>
 </resources>

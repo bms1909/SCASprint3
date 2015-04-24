@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ulbra.bms.scaid5" >
+    package="ulbra.bms.scaid5">
 
     <!-- Permissões pra lidar com mapas -->
 
@@ -19,10 +19,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
         <!-- TODO tá aqui os paranauê de mapa -->
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -32,19 +31,44 @@
 
         <activity
             android:name=".controllers.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".controllers.DetalhesEstabelecimentoActivity"
-            android:label="@string/title_activity_detalhes_estabelecimento" />
+            android:label="@string/title_activity_detalhes_estabelecimento"
+            android:parentActivityName=".controllers.MainActivity" />
         <activity
             android:name=".controllers.CadastraEstabelecimentoActivity"
-            android:label="@string/title_activity_cadastra_estabelecimento" >
+            android:label="@string/title_activity_cadastra_estabelecimento"
+            android:parentActivityName=".controllers.MainActivity" />
+        <activity
+            android:name=".controllers.PesquisaLocaisActivity"
+            android:label="@string/title_activity_pesquisa_locais"
+            android:parentActivityName=".controllers.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity
+            android:name=".controllers.PesquisaCategoriaActivity"
+            android:label="@string/title_activity_pesquisa_categoria"
+            android:parentActivityName=".controllers.PesquisaLocaisActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controllers.PesquisaLocaisActivity" />
         </activity>
     </application>
 

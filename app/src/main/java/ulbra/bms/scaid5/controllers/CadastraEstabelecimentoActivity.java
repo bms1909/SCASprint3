@@ -1,7 +1,9 @@
 package ulbra.bms.scaid5.controllers;
 
-import android.support.v7.app.ActionBarActivity;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +14,11 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import ulbra.bms.scaid5.R;
 import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsApiClientSingleton;
@@ -45,32 +51,25 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
 // capturando o spinner do xml pela id
         spCategorias = (Spinner) findViewById(R.id.sp_novoestabelecimento_categorias);
         spCategorias.setAdapter(aOpcoes);
-
         //endregion
-    }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_cadastra_estabelecimento, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        //region sugere endereço
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> addressList = null;
+        LatLng local = clsApiClientSingleton.ultimoLocal(this);
+        try {
+            addressList = geocoder.getFromLocation(local.latitude, local.longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        return super.onOptionsItemSelected(item);
+        if (addressList != null && addressList.size() > 0) {
+            Address address = addressList.get(0);
+            EditText txtEndereco = (EditText) findViewById(R.id.txt_novoestabelecimento_endereco);
+            EditText txtCidade = (EditText) findViewById(R.id.txt_novoestabelecimento_cidade);
+            txtEndereco.setText(address.getAddressLine(0));
+            txtCidade.setText(address.getAddressLine(1));
+        }
+        //endregion
     }
 
     public void salvaAvaliacao_Click(View view) {
@@ -94,8 +93,6 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
             txtCidade.setError("Campo Obrigatório!");
         else if (txtCidade.getText().toString().matches("[0-9]*"))
             txtCidade.setError("Campo não permite números!");
-        else if (txtFone.getText().toString().isEmpty())
-            txtFone.setError("Campo Obrigatório!");
         else {
             String selecionado = spCategorias.getSelectedItem().toString();
             int idCategoria = 0;
@@ -111,10 +108,33 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
                 finish();
             }
             clsEstabelecimentos novo;
-            novo = new clsEstabelecimentos(idCategoria, txtTitulo.getText().toString(), txtEndereco.getText().toString(), txtCidade.getText().toString(), cbxBanheiro.isChecked(), cbxAltura.isChecked(), cbxRampa.isChecked(), cbxLargura.isChecked(), cbxEstacionamento.isChecked(), txtFone.getText().toString(), clsApiClientSingleton.ultimoLocal(this));
-            novo.cadastraEstabelecimento(rb.getNumStars(), this);
-            Toast.makeText(this, "Estabelecimento Salvo, Obrigado!", Toast.LENGTH_SHORT).show();
+            novo = new clsEstabelecimentos(idCategoria, txtTitulo.getText().toString(), txtEndereco.getText().toString(), txtCidade.getText().toString(), cbxBanheiro.isChecked(), cbxAltura.isChecked(), cbxRampa.isChecked(), cbxLargura.isChecked(), cbxEstacionamento.isChecked(), txtFone.getText().toString(), clsApiClientSingleton.ultimoLocal(this), rb.getProgress());
+            //TODO pegar idUsuario
+            novo.cadastraEstabelecimento(1, this);
             finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_cadastra_estabelecimento, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

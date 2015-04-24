@@ -56,10 +56,16 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
             //conversao de inputstream para string
             IOUtils.copy(conn.getInputStream(), intermediario);
             String conteudo = intermediario.toString();
-            if (conteudo.startsWith("{")) {
+            if (!conteudo.startsWith("[")) {
                 builder = new StringBuilder();
                 builder.append("[");
+                if (conteudo.startsWith("t") || conteudo.startsWith("f")) {
+                    builder.append("{'resposta':");
+                }
                 builder.append(conteudo);
+                if (conteudo.startsWith("t") || conteudo.startsWith("f")) {
+                    builder.append("}");
+                }
                 builder.append("]");
                 conteudo = builder.toString();
             }
