@@ -54,13 +54,14 @@ public class clsEstabelecimentos {
         this.possuiEstacionamento = estacionamento;
     }
 
-    private clsEstabelecimentos(int idCat, int idEstab, String nome, String endereco, String cidade, double avgEstrelas, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, String telefone, double latitude, double longitude) {
+    private clsEstabelecimentos(int idCat, int idEstab, String nome, String endereco, String cidade, double avgEstrelas, boolean possBanheiro, boolean estacionamento, boolean altCerta, boolean rampa, boolean largo, String telefone, double latitude, double longitude) {
         this.idCategoria = idCat;
         this.idEstabelecimento = idEstab;
         this.nomeEstabelecimento = nome;
         this.enderecoEstabelecimento = endereco;
         this.cidadeEstabelecimento = cidade;
         this.mediaEstrelasAtendimento = (float) avgEstrelas;
+        this.possuiEstacionamento = estacionamento;
         this.possuiBanheiro = possBanheiro;
         this.alturaCerta = altCerta;
         this.possuiRampa = rampa;
@@ -95,7 +96,21 @@ public class clsEstabelecimentos {
             if (recebido != null) {
                 for (int i = 0; i < recebido.length(); i++) {
                     loop = recebido.getJSONObject(i);
-                    retorno.add(new clsEstabelecimentos(loop.getInt("idCategoria"), loop.getInt("idEstabelecimento"), loop.getString("nomeEstabelecimento"), loop.getString("enderecoEstabelecimento"), loop.getString("cidadeEstabelecimento"), loop.getDouble("estrelasEstabelecimento"), loop.getBoolean("possuiBanheiro"), loop.getBoolean("alturaCerta"), loop.getBoolean("possuiRampa"), loop.getBoolean("larguraSuficiente"), loop.getString("telefoneEstabelecimento"), loop.getDouble("latitudeEstabelecimento"), loop.getDouble("longitudeEstabelecimento")));
+                    retorno.add(new clsEstabelecimentos(
+                            loop.getInt("idCategoria"),
+                            loop.getInt("idEstabelecimento"),
+                            loop.getString("nomeEstabelecimento"),
+                            loop.getString("enderecoEstabelecimento"),
+                            loop.getString("cidadeEstabelecimento"),
+                            loop.getDouble("estrelasEstabelecimento"),
+                            loop.getBoolean("possuiBanheiro"),
+                            loop.getBoolean("possuiEstacionamento"),
+                            loop.getBoolean("alturaCerta"),
+                            loop.getBoolean("possuiRampa"),
+                            loop.getBoolean("larguraSuficiente"),
+                            loop.getString("telefoneEstabelecimento"),
+                            loop.getDouble("latitudeEstabelecimento"),
+                            loop.getDouble("longitudeEstabelecimento")));
                 }
             }
         } catch (JSONException e) {
@@ -105,7 +120,7 @@ public class clsEstabelecimentos {
 
     }
 
-    public static boolean estabelecimentoFoiAvaliado(int idUsuario,int idEstabelecimento) {
+    public static boolean estabelecimentoFoiAvaliado(int idUsuario, int idEstabelecimento) {
         JSONObject retorno;
         JSONArray recebido = null;
         clsJSONget executor = new clsJSONget();
@@ -156,6 +171,7 @@ public class clsEstabelecimentos {
                         loop.getString("cidadeEstabelecimento"),
                         loop.getDouble("estrelasEstabelecimento"),
                         loop.getBoolean("possuiBanheiro"),
+                        loop.getBoolean("possuiEstacionamento"),
                         loop.getBoolean("alturaCerta"),
                         loop.getBoolean("possuiRampa"),
                         loop.getBoolean("larguraSuficiente"),

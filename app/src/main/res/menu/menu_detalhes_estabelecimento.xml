@@ -12,4 +12,9 @@
         android:icon="@drawable/ic_action_directions"
         android:title="Navegar Até Endereço"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/btnEstabelecimentoEditar"
+        android:icon="@drawable/ic_action_edit"
+        android:title="Editar"
+        app:showAsAction="ifRoom" />
 </menu>

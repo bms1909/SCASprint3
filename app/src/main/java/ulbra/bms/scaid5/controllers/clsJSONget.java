@@ -47,8 +47,8 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
             URL link = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) link.openConnection();
 
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setReadTimeout(30000 /* milliseconds */);
+            conn.setConnectTimeout(30000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
 
@@ -76,7 +76,7 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
             }
 
         } catch (IOException o) {
-            Log.d("defeito feio ao carrega", o.getMessage());
+            Log.d("get ", o.getMessage());
         }
         return retorno;
     }

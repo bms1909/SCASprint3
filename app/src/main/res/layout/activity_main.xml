@@ -25,20 +25,20 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/btnAlertar"
+        android:layout_toStartOf="@+id/btnAlertar"
         android:clickable="true"
         android:onClick="btnBusca_Click"
-        android:text="Busque Categorias, Locais e Endereços" />
+        android:text="Busque Categorias e Locais" />
 
     <Button
         android:id="@+id/btnAlertar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/btnNovoEstabelecimento"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_alignRight="@+id/btnNovoEstabelecimento"
+        android:layout_marginBottom="52dp"
         android:clickable="true"
         android:enabled="true"
         android:onClick="btnAlertar_Click"
@@ -48,11 +48,9 @@
         android:id="@+id/btnNovoEstabelecimento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/btnAlertar"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
         android:onClick="btnNovoEstabelecimento_Click"
         android:text="+ Estabelecimento" />
 

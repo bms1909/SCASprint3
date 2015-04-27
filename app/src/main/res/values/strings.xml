@@ -5,7 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_detalhe_estabelecimento">DetalheEstabelecimentoActivity</string>
     <string name="title_activity_cadastra_estabelecimento">Estabelecimento</string>
-    <string name="title_activity_pesquisa_locais">PesquisaLocaisActivity</string>
+    <string name="title_activity_pesquisa_locais">Pesquisa Locais</string>
     <string name="title_activity_pesquisa_categoria">PesquisaCategoriaActivity</string>
 
     <string-array name="valores_array_raios">

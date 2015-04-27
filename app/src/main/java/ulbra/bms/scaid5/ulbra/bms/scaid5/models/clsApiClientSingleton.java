@@ -80,6 +80,8 @@ public class clsApiClientSingleton {
     public static LatLng ultimoLocal(Context contexto) {
         clsApiClientSingleton local = getInstance(contexto);
         Location retorno = LocationServices.FusedLocationApi.getLastLocation(local.mGoogleApiClient);
+        if (retorno == null)
+            return null;
         return new LatLng(retorno.getLatitude(), retorno.getLongitude());
     }
 

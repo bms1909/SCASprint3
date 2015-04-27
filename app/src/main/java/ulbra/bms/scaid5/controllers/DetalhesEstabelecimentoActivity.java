@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -85,7 +86,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         dlgAlert.setTitle("Confirmação");
         //TODO ver se dá pra recuperar nota
         dlgAlert.setMessage("Estabelecimento já avaliado com a nota x, deseja alterar?");
-
 
 
         //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
@@ -158,9 +158,13 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
             case R.id.btnEstabelecimentoTelefone:
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + estabCarregado.telefoneEstabelecimento)));
                 break;
-           /* case R.id.btnEstabelecimentoEditar:
+            case R.id.btnEstabelecimentoEditar:
+                Toast.makeText(this, "em breve", Toast.LENGTH_SHORT).show();
+                break;
+           /*TODO código para envio de dados a página de cadastro previamente preenchida
+
                 rb.setIsIndicator(false);
-                break;*/
+                */
         }
 
         return super.onOptionsItemSelected(item);

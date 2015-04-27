@@ -1,6 +1,10 @@
 package ulbra.bms.scaid5.controllers;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -31,8 +35,8 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
 
     //busca local de emissão do alerta
     private final LatLng localAtual = clsApiClientSingleton.ultimoLocal(this);
-    private ArrayList<clsEstabelecimentos> estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(0.5f, localAtual);
     public ListView lista;
+    private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
     private ArrayList<clsCategorias> categoriasCarregadas = clsCategorias.carregaCategorias();
     private List<Map<String, String>> elementosLista = new ArrayList<>();
 
@@ -63,7 +67,11 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                         raio = 25;
                         break;
                 }
-                estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raio, localAtual);
+                if (localAtual == null) {
+                    gpsDesligado();
+                } else {
+                    estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raio, localAtual);
+                }
                 EditText pesquisa = (EditText) findViewById(R.id.txt_busca);
                 if (pesquisa.getText().length() > 0) {
                     buscaTexto(pesquisa.getText());
@@ -103,6 +111,37 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
             }
         });
         populaLista();
+    }
+
+    private void gpsDesligado() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        //cria uma caixa de diálogo caso o GPS esteja desligado
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    } else {
+                        finish();
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Localização Desativada");
+            builder.setMessage("Este aplicativo utiliza sua localização com Alta Precisão (GPS), deseja habilitar agora?");
+            //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    finish();
+                }
+            });
+
+            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
+            builder.create().show();
+        }
     }
 
     private void buscaTexto(CharSequence parametro) {

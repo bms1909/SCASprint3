@@ -55,13 +55,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private clsAlertas alertaSelecionado;
     private clsEstabelecimentos estabelecimentoSelecionado;
 
+    public static void notificaGPSDesligado() {
+
+    }
+
     //region Mapa
     @Override
     /* ativado quando o mapa estiver instanciado */
     public void onMapReady(GoogleMap map) {
         //passa para um objeto local o googleMap instanciado
         objMapa = map;
-        mLocalFocoCamera= new Location("");
+        mLocalFocoCamera = new Location("");
         mLocalFocoCamera.setTime(new Date().getTime());
         objMapa.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
@@ -104,10 +108,21 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     //TODO fazer ícones
                     // .icon personaliza o ícone,
                     //adiciona o marcador ver https://developers.google.com/maps/documentation/android/marker#customize_the_marker_image
-                    objMapa.addMarker(new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta).icon(BitmapDescriptorFactory.fromResource(R.drawable.common_signin_btn_icon_focus_light)));
+                    //0= buraco
+                    //1=largura calçada
+                    //2=rampa
+                    MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta);
+                    if (percorre.tipoAlerta == 0) {
+                        icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco));
+                    } else if (percorre.tipoAlerta == 1) {
+                        icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura));
+                    } else if (percorre.tipoAlerta == 2) {
+                        icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa));
+                    }
+                    objMapa.addMarker(icone);
                 }
                 for (clsEstabelecimentos percorre : estabelecimentosCarregados) {
-                    objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.common_signin_btn_icon_focus_dark)));
+                    objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_estabelecimento)));
                 }
 
                 mLocalUltimaCargaMarcadores = localCarga;
@@ -171,6 +186,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //
         return false;
     }
+//endregion
+
+    //region Activity
+
     private void moveCamera(Location localAtual) {
         try {
             //desloca a visualização do mapa para a coordenada informada
@@ -190,13 +209,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             Log.d("erro ao mover camera", e.getMessage());
         }
     }
-//endregion
-
-    //region Activity
 
     public void btnBusca_Click(View view) {
         startActivity(new Intent(MainActivity.this, PesquisaLocaisActivity.class));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -318,7 +335,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     }
 //endregion
 
-//region Alertas
+    //region Alertas
 
     public void btnAlertar_Click(View a) {
         //confere precisão do local obtido
@@ -333,7 +350,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             LayoutInflater inflater = this.getLayoutInflater();
             final View viewDetalhes = inflater.inflate(R.layout.layout_comenta_alerta, null);
-
 
             tiposAlerta.add("Buracos");
             tiposAlerta.add("Calçada Estreita");
@@ -402,7 +418,30 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     public void btnNovoEstabelecimento_Click(View view) {
         ArrayList<String> tiposAlerta = new ArrayList<>();
-        final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos = clsEstabelecimentos.estabelecimentosPorRaio((float) 0.5, new LatLng(mlocalAtual.getLatitude(), mlocalAtual.getLongitude()));
+        final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos = new ArrayList<>();
+
+        //TODO ordenação  por proximidade
+        ArrayList<clsEstabelecimentos> temp = clsEstabelecimentos.estabelecimentosPorRaio((float) 0.5, new LatLng(mlocalAtual.getLatitude(), mlocalAtual.getLongitude()));
+        clsEstabelecimentos maisPerto;
+        Location tLocal = new Location("");
+        float menorDistancia;
+        while (temp.size() > 0) {
+            maisPerto = temp.get(0);
+            tLocal.setLatitude(maisPerto.latlonEstabelecimento.latitude);
+            tLocal.setLongitude(maisPerto.latlonEstabelecimento.longitude);
+            menorDistancia = mlocalAtual.distanceTo(tLocal);
+            for (clsEstabelecimentos percorre : temp) {
+                tLocal.setLatitude(percorre.latlonEstabelecimento.latitude);
+                tLocal.setLongitude(percorre.latlonEstabelecimento.longitude);
+                if (mlocalAtual.distanceTo(tLocal) < menorDistancia) {
+                    maisPerto = percorre;
+                    menorDistancia = mlocalAtual.distanceTo(tLocal);
+                }
+            }
+            estabelecimentoSugeridos.add(maisPerto);
+            temp.remove(maisPerto);
+        }
+
         for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
             tiposAlerta.add(percorre.nomeEstabelecimento);
         }

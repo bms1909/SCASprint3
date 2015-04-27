@@ -45,7 +45,7 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
 
         Intent recebido = getIntent();
         idCategoria = recebido.getIntExtra("ID_CATEGORIA", 0);
-        estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorCategoria(0.5f, localAtual, idCategoria);
+        //estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorCategoria(0.5f, localAtual, idCategoria);
 
         ActionBar ab = getSupportActionBar();
         ab.setTitle(clsCategorias.getNomeCategoria(idCategoria));
@@ -75,7 +75,7 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
                 }
                 estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorCategoria(raio, localAtual, idCategoria);
 
-                EditText pesquisa = (EditText) findViewById(R.id.txt_busca);
+                EditText pesquisa = (EditText) findViewById(R.id.txt_busca_categoria);
                 if (pesquisa.getText().length() > 0) {
                     buscaTexto(pesquisa.getText());
                 }
@@ -117,7 +117,7 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
     private void buscaTexto(CharSequence parametro) {
         elementosLista.clear();
         for (clsEstabelecimentos busca : estabelecimentosCarregados) {
-            if (busca.nomeEstabelecimento.contains(parametro)) {
+            if (busca.nomeEstabelecimento.toLowerCase().contains(parametro)) {
                 Map<String, String> m = new HashMap<>();
                 m.put("linha1", "" + busca.idEstabelecimento);
                 m.put("linha2", busca.nomeEstabelecimento);
