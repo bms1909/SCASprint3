@@ -55,10 +55,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private clsAlertas alertaSelecionado;
     private clsEstabelecimentos estabelecimentoSelecionado;
 
-    public static void notificaGPSDesligado() {
-
-    }
-
     //region Mapa
     @Override
     /* ativado quando o mapa estiver instanciado */
