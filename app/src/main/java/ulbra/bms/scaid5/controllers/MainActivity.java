@@ -418,29 +418,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     public void btnNovoEstabelecimento_Click(View view) {
         ArrayList<String> tiposAlerta = new ArrayList<>();
-        final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos = new ArrayList<>();
-
-        //TODO ordenação  por proximidade
-        ArrayList<clsEstabelecimentos> temp = clsEstabelecimentos.estabelecimentosPorRaio((float) 0.5, new LatLng(mlocalAtual.getLatitude(), mlocalAtual.getLongitude()));
-        clsEstabelecimentos maisPerto;
-        Location tLocal = new Location("");
-        float menorDistancia;
-        while (temp.size() > 0) {
-            maisPerto = temp.get(0);
-            tLocal.setLatitude(maisPerto.latlonEstabelecimento.latitude);
-            tLocal.setLongitude(maisPerto.latlonEstabelecimento.longitude);
-            menorDistancia = mlocalAtual.distanceTo(tLocal);
-            for (clsEstabelecimentos percorre : temp) {
-                tLocal.setLatitude(percorre.latlonEstabelecimento.latitude);
-                tLocal.setLongitude(percorre.latlonEstabelecimento.longitude);
-                if (mlocalAtual.distanceTo(tLocal) < menorDistancia) {
-                    maisPerto = percorre;
-                    menorDistancia = mlocalAtual.distanceTo(tLocal);
-                }
-            }
-            estabelecimentoSugeridos.add(maisPerto);
-            temp.remove(maisPerto);
-        }
+        //já vem ordenado do webservice
+        final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos = clsEstabelecimentos.estabelecimentosPorRaio((float) 0.5, new LatLng(mlocalAtual.getLatitude(), mlocalAtual.getLongitude()));
 
         for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
             tiposAlerta.add(percorre.nomeEstabelecimento);
