@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.scaid5.models.clsApiClientSingleton;
+import ulbra.bms.scaid5.models.clsCategorias;
+import ulbra.bms.scaid5.models.clsEstabelecimentos;
 
 
 public class CadastraEstabelecimentoActivity extends ActionBarActivity {

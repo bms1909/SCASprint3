@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.ulbra.bms.scaid5.models;
+package ulbra.bms.scaid5.models;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,10 +11,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
-import ulbra.bms.scaid5.controllers.clsJSONget;
+import ulbra.bms.scaid5.controllers.clsJSONgetAssincrono;
 import ulbra.bms.scaid5.controllers.clsJSONpost;
+import ulbra.bms.scaid5.interfaces.alertasCarregadosListener;
+import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
 
 /**
  * Criador por Bruno em 13/03/2015.
@@ -27,6 +28,7 @@ public class clsAlertas {
     public int tipoAlerta;
     public String descricaoAlerta;
     public int riscoAlerta;
+    private alertasCarregadosListener ouvinte;
 
     private clsAlertas(int idAlerta, int idUsuario, double latitude, double longitude, String descricao, int tipo, int risco) {
         this.idUsuario = idUsuario;
@@ -44,32 +46,39 @@ public class clsAlertas {
         this.tipoAlerta = tipo;
         this.riscoAlerta = risco;
     }
+    public clsAlertas()
+    {
+        super();
+    }
+    public void addListener(alertasCarregadosListener listener)
+    {
+        ouvinte = listener;
+    }
 
-    public static ArrayList<clsAlertas> carregaAlertas(int raio, LatLng local) {
-        ArrayList<clsAlertas> retorno = new ArrayList<>();
-        clsJSONget executor = new clsJSONget();
-        JSONArray recebido = null;
-        JSONObject loop;
+    public void carregaAlertas(int raio, LatLng local) {
+
+        clsJSONgetAssincrono executor = new clsJSONgetAssincrono();
+
+        executor.addListener(new downloadFeitoListener() {
+            @Override
+            public void downloadConcluido(JSONArray result) {
+                ArrayList<clsAlertas> retorno = new ArrayList<>();
+                JSONObject loop;
+                try {
+                    if (result != null) {
+                        for (int i = 0; i < result.length(); i++) {
+                            loop = result.getJSONObject(i);
+                            retorno.add(new clsAlertas(loop.getInt("idAlerta"), loop.getInt("idUsuario"), loop.getDouble("latitudeAlerta"), loop.getDouble("longitudeAlerta"), loop.getString("descricaoAlerta"), loop.getInt("tipoAlerta"), loop.getInt("riscoAlerta")));
+                        }
+                    }
+                } catch (JSONException | NullPointerException e) {
+                    Log.d(null, e.getMessage());
+                }
+                ouvinte.alertasCarregados(retorno);
+            }
+        });
 
         executor.execute("http://scaws.azurewebsites.net/api/clsAlertas?raioLongoemKM=" + raio + "&lat=" + local.latitude + "&lon=" + local.longitude);
-
-        try {
-            recebido = executor.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (recebido != null) {
-                for (int i = 0; i < recebido.length(); i++) {
-                    loop = recebido.getJSONObject(i);
-                    retorno.add(new clsAlertas(loop.getInt("idAlerta"), loop.getInt("idUsuario"), loop.getDouble("latitudeAlerta"), loop.getDouble("longitudeAlerta"), loop.getString("descricaoAlerta"), loop.getInt("tipoAlerta"), loop.getInt("riscoAlerta")));
-                }
-            }
-        } catch (JSONException | NullPointerException e) {
-            Log.d(null, e.getMessage());
-        }
-        return retorno;
     }
 
     public static void denunciaAlerta(int idAlerta, int idUsuario, Context contexto) {

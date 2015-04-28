@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.ulbra.bms.scaid5.models;
+package ulbra.bms.scaid5.models;
 
 import android.util.Log;
 
@@ -50,6 +50,18 @@ public class clsCategorias {
                 Log.d(null, e.getMessage());
             }
         }
+
+
+
+
+    /*  testes
+
+        ArrayList<clsCategorias> a = new ArrayList<>();
+        a.add(new clsCategorias(1,"Restaurante"));
+        a.add(new clsCategorias(2,"Pizzaria"));
+        a.add(new clsCategorias(2,"Prédio Público"));
+        a.add(new clsCategorias(2,"Livraria"));
+        a.add(new clsCategorias(2,"Outros"));*/
         return retorno;
     }
 

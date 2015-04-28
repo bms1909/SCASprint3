@@ -1,6 +1,10 @@
 package ulbra.bms.scaid5.controllers;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -23,9 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
+import ulbra.bms.scaid5.models.clsApiClientSingleton;
+import ulbra.bms.scaid5.models.clsCategorias;
+import ulbra.bms.scaid5.models.clsEstabelecimentos;
 
 
 public class PesquisaCategoriaActivity extends ActionBarActivity {
@@ -73,8 +78,18 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
                         raio = 25;
                         break;
                 }
-                estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorCategoria(raio, localAtual, idCategoria);
-
+                if (localAtual == null) {
+                    gpsDesligado();
+                } else {
+                    clsEstabelecimentos listener = new clsEstabelecimentos();
+                    listener.addListener(new estabelecimentosCarregadosListener() {
+                        @Override
+                        public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
+                            estabelecimentosCarregados = estabelecimentos;
+                        }
+                    });
+                    listener.estabelecimentosPorCategoria(raio, localAtual, idCategoria);
+                }
                 EditText pesquisa = (EditText) findViewById(R.id.txt_busca_categoria);
                 if (pesquisa.getText().length() > 0) {
                     buscaTexto(pesquisa.getText());
@@ -112,6 +127,37 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
                 startActivity(new Intent(PesquisaCategoriaActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", Integer.parseInt(selecionado.get("linha1").toString())));
             }
         });
+    }
+
+    private void gpsDesligado() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        //cria uma caixa de diálogo caso o GPS esteja desligado
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    } else {
+                        finish();
+                    }
+                }
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Localização Desativada");
+            builder.setMessage("Este aplicativo utiliza sua localização com Alta Precisão (GPS), deseja habilitar agora?");
+            //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    finish();
+                }
+            });
+
+            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
+            builder.create().show();
+        }
     }
 
     private void buscaTexto(CharSequence parametro) {

@@ -54,4 +54,15 @@
         android:onClick="btnNovoEstabelecimento_Click"
         android:text="+ Estabelecimento" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button"
+        android:onClick="btnAPAGAESSAGAMBI"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

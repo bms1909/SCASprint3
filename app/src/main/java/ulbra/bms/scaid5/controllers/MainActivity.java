@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -31,17 +33,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsAlertas;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.scaid5.interfaces.alertasCarregadosListener;
+import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
+import ulbra.bms.scaid5.models.clsAlertas;
+import ulbra.bms.scaid5.models.clsApiClientSingleton;
+import ulbra.bms.scaid5.models.clsEstabelecimentos;
 
 /**
  * Criado por Bruno on 19/03/2015.
  * classe padrão que atua como controller da tela activity_main
  */
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Checkable {
 
     private GoogleMap objMapa;
     private boolean segueUsuario;
@@ -54,6 +59,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
     private clsAlertas alertaSelecionado;
     private clsEstabelecimentos estabelecimentoSelecionado;
+    private clsAlertas alertasListener = new clsAlertas();
+    private clsEstabelecimentos estabelecimentosListener = new clsEstabelecimentos();
+
 
     //region Mapa
     @Override
@@ -96,31 +104,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 Toast.makeText(this, "Sem acesso a internet, as informações podem estar desatualizadas", Toast.LENGTH_LONG).show();
             } else {
                 LatLng local = new LatLng(localCarga.getLatitude(), localCarga.getLongitude());
-                alertasCarregados = clsAlertas.carregaAlertas(raioCargaMarcadores, local);
-                estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raioCargaMarcadores, local);
-                //carrega as listas de objetos alertas e estabelecimentos do webService
-                //foreach do java
-                for (clsAlertas percorre : alertasCarregados) {
-                    //TODO fazer ícones
-                    // .icon personaliza o ícone,
-                    //adiciona o marcador ver https://developers.google.com/maps/documentation/android/marker#customize_the_marker_image
-                    //0= buraco
-                    //1=largura calçada
-                    //2=rampa
-                    MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta);
-                    if (percorre.tipoAlerta == 0) {
-                        icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco));
-                    } else if (percorre.tipoAlerta == 1) {
-                        icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura));
-                    } else if (percorre.tipoAlerta == 2) {
-                        icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa));
-                    }
-                    objMapa.addMarker(icone);
-                }
-                for (clsEstabelecimentos percorre : estabelecimentosCarregados) {
-                    objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_estabelecimento)));
-                }
-
+                alertasListener.carregaAlertas(raioCargaMarcadores,local);
+                estabelecimentosListener.estabelecimentosPorRaio(raioCargaMarcadores,local);
                 mLocalUltimaCargaMarcadores = localCarga;
             }
         }
@@ -218,6 +203,43 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //executa operações de POST pendentes
         if (clsJSONget.temInternet())
             clsJSONpost.executaPendentes(this);
+
+        //listener disparado quando a carga de dados do webservice é concluída
+        alertasListener.addListener(new alertasCarregadosListener() {
+            @Override
+            public void alertasCarregados(ArrayList<clsAlertas> alertas) {
+                    alertasCarregados = alertas;
+                    for (clsAlertas percorre : alertas) {
+                        //TODO fazer ícones
+                        // .icon personaliza o ícone,
+                        //adiciona o marcador ver https://developers.google.com/maps/documentation/android/marker#customize_the_marker_image
+                        //0= buraco
+                        //1=largura calçada
+                        //2=rampa
+                        MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta);
+                        if (percorre.tipoAlerta == 0) {
+                            icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco));
+                        } else if (percorre.tipoAlerta == 1) {
+                            icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura));
+                        } else if (percorre.tipoAlerta == 2) {
+                            icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa));
+                        }
+                        objMapa.addMarker(icone);
+                    }
+            }
+        });
+        estabelecimentosListener.addListener(new estabelecimentosCarregadosListener() {
+            @Override
+            public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
+                estabelecimentosCarregados = estabelecimentos;
+                //carrega as listas de objetos alertas e estabelecimentos do webService
+                //foreach do java
+                for (clsEstabelecimentos percorre : estabelecimentosCarregados) {
+                    objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_estabelecimento)));
+                }
+            }
+        });
+
 
         //configura se o método movecamera deve ser acionado ao mudar a localização
         segueUsuario = true;
@@ -360,9 +382,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             detalhe.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //TODO colocar idUsuario
-
-
                     RadioGroup rdGrupo = (RadioGroup) viewDetalhes.findViewById(R.id.rgDetalhesAlerta);
                     EditText txtDescricao = (EditText) viewDetalhes.findViewById(R.id.txt_descricao_alerta);
                     int risco = 0;
@@ -377,8 +396,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             risco = 2;
                             break;
                     }
-                    //TODO pegar id do usuário
-                    clsAlertas novo = new clsAlertas(1, mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
+
+                    SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
+
+                    clsAlertas novo = new clsAlertas(id.getInt("ID_USUARIO",0), mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
                     novo.cadastraAlerta(MainActivity.this);
 
                     Toast.makeText(MainActivity.this, "Seu alerta aparecerá em breve, obrigado!", Toast.LENGTH_SHORT).show();
@@ -413,30 +434,64 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     }
 
     public void btnNovoEstabelecimento_Click(View view) {
-        ArrayList<String> tiposAlerta = new ArrayList<>();
-        //já vem ordenado do webservice
-        final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos = clsEstabelecimentos.estabelecimentosPorRaio((float) 0.5, new LatLng(mlocalAtual.getLatitude(), mlocalAtual.getLongitude()));
-
-        for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
-            tiposAlerta.add(percorre.nomeEstabelecimento);
+        //estabelecimentos já vem ordenados do webservice
+        if(estabelecimentosCarregados==null)
+        {
+            Toast.makeText(this,"inicializando aplicativo, se a mensagem persistir, confira sua internet",Toast.LENGTH_SHORT);
         }
-        AlertDialog.Builder alertas = new AlertDialog.Builder(this);
-        alertas.setTitle("Avaliar Estabelecimento");
-        alertas.setPositiveButton("Cadastrar Novo", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
+        else {
+            ArrayList<String> tiposAlerta = new ArrayList<>();
+
+            final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos= new ArrayList<>();
+            if(estabelecimentosCarregados.size()>15) {
+                List<clsEstabelecimentos> temp = estabelecimentosCarregados.subList(0, 15);
+                estabelecimentoSugeridos.addAll(temp);
             }
-        });
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
-        //define o diálogo como uma lista, passa o adapter.
-        alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int idSelecionado) {
-                arg0.cancel();
-                startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSugeridos.get(idSelecionado).idEstabelecimento));
+            else
+            {
+                estabelecimentoSugeridos.addAll(estabelecimentosCarregados);
             }
-        });
-        alertas.create().show();
+
+            for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
+                tiposAlerta.add(percorre.nomeEstabelecimento);
+            }
+            AlertDialog.Builder alertas = new AlertDialog.Builder(this);
+            alertas.setTitle("Avaliar Estabelecimento");
+            alertas.setPositiveButton("Cadastrar Novo", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
+                }
+            });
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
+            //define o diálogo como uma lista, passa o adapter.
+            alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int idSelecionado) {
+                    arg0.cancel();
+                    startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSugeridos.get(idSelecionado).idEstabelecimento));
+                }
+            });
+            alertas.create().show();
+        }
+    }
+
+    public void btnAPAGAESSAGAMBI(View view) {
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+    }
+
+    @Override
+    public void setChecked(boolean checked) {
+
+    }
+
+    @Override
+    public boolean isChecked() {
+        return false;
+    }
+
+    @Override
+    public void toggle() {
+
     }
 
 

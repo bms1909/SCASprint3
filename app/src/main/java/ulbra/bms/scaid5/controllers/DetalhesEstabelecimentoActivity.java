@@ -24,8 +24,8 @@ import android.widget.Toast;
 import java.util.List;
 
 import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.scaid5.models.clsCategorias;
+import ulbra.bms.scaid5.models.clsEstabelecimentos;
 
 
 public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
@@ -69,6 +69,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
     public void salvaAvaliacao_Click(View a) {
         // envia ao WS a avaliação do estabelecimento
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
+
         //TODO,obter id do usuário
         estabCarregado.avaliaEstabelecimento(rb.getProgress(), 1, this);
         finish();
@@ -79,6 +80,11 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes_estabelecimento);
+        //recebe os dados da outra página e carrega o objeto local
+        Intent recebido = getIntent();
+        estabCarregado = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
+        //tarefa síncrona pois o início da activity depende desses dados
+        estabCarregado.carregaDetalhesEstabelecimento();
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
 
@@ -117,10 +123,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
             }
         });
 
-        //recebe os dados da outra página e carrega o objeto local
-        Intent recebido = getIntent();
-        estabCarregado = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
-        estabCarregado = estabCarregado.carregaDetalhesEstabelecimento();
+
         atualizaTela();
         //TODO colocar id do usuário
         jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(1, estabCarregado.idEstabelecimento);
@@ -143,7 +146,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                 PackageManager.MATCH_DEFAULT_ONLY);
         if (list.size() == 0)
             menu.removeItem(R.id.btnEstabelecimentoTelefone);
-
         return true;
     }
 

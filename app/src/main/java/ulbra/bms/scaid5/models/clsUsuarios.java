@@ -1,5 +1,6 @@
-package ulbra.bms.scaid5.ulbra.bms.scaid5.models;
+package ulbra.bms.scaid5.models;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 import ulbra.bms.scaid5.controllers.clsJSONget;
+import ulbra.bms.scaid5.controllers.clsJSONpost;
 
 /**
  * Criador por Bruno em 16/03/2015.
@@ -58,8 +60,8 @@ public class clsUsuarios {
         return retorno;
     }
 
-  /*  public boolean cadastraUsuario() {
-        clsJSONpost executor = clsJSONpost.getInstance();
-        return executor.executaPost("http://scaws.azurewebsites.net/api/clsUsuarios?nome=" + Uri.encode(this.nomeUsuario) + "&email=" + Uri.encode(this.emailUsuario) + "&senha=" + Uri.encode(this.senhaUsuario));
-    }*/
+    public void cadastraUsuario(Context context) {
+        clsJSONpost executor = new clsJSONpost(context);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsUsuarios?nome=" + Uri.encode(this.nomeUsuario) + "&email=" + Uri.encode(this.emailUsuario) + "&senha=" + Uri.encode(this.senhaUsuario));
+    }
 }

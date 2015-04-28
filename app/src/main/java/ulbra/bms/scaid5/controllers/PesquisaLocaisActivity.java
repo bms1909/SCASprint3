@@ -26,9 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
+import ulbra.bms.scaid5.models.clsApiClientSingleton;
+import ulbra.bms.scaid5.models.clsCategorias;
+import ulbra.bms.scaid5.models.clsEstabelecimentos;
 
 
 public class PesquisaLocaisActivity extends ActionBarActivity {
@@ -70,7 +71,14 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                 if (localAtual == null) {
                     gpsDesligado();
                 } else {
-                    estabelecimentosCarregados = clsEstabelecimentos.estabelecimentosPorRaio(raio, localAtual);
+                    clsEstabelecimentos listener = new clsEstabelecimentos();
+                    listener.addListener(new estabelecimentosCarregadosListener() {
+                        @Override
+                        public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
+                            estabelecimentosCarregados = estabelecimentos;
+                        }
+                    });
+                    listener.estabelecimentosPorRaio(raio, localAtual);
                 }
                 EditText pesquisa = (EditText) findViewById(R.id.txt_busca);
                 if (pesquisa.getText().length() > 0) {

@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.ulbra.bms.scaid5.models;
+package ulbra.bms.scaid5.models;
 
 import android.content.ContentValues;
 import android.content.Context;
