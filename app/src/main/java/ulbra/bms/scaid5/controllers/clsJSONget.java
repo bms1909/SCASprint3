@@ -69,14 +69,13 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
                 builder.append("]");
                 conteudo = builder.toString();
             }
-            try {
                 retorno = new JSONArray(conteudo); //converte os dados recebidos de uma string para um objeto manipulável
-            } catch (JSONException e) {
-                Log.d("pau no json", e.getMessage());
-            }
 
-        } catch (IOException o) {
-            Log.d("get ", o.getMessage());
+
+        } catch (IOException |JSONException o) {
+            //previne crash se a mensagem for vazia
+            if (o.getMessage()!=null)
+                Log.d("get ", o.getMessage());
         }
         return retorno;
     }

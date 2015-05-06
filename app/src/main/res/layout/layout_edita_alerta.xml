@@ -13,12 +13,24 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo"
+            android:id="@+id/textView5" />
+
+        <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Risco do Alerta" />
+            android:id="@+id/sp_editaalerta_tipo"
+            android:entries="@array/valores_array_tipos_alerta"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Risco" />
 
         <RadioGroup
-            android:id="@+id/rgDetalhesAlerta"
+            android:id="@+id/rg_editaalerta_risco"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -44,12 +56,16 @@
                 android:text="Alto" />
         </RadioGroup>
 
-        <EditText
-            android:id="@+id/txt_descricao_alerta"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:hint="Descreva o alerta (opcional)" />
+            android:text="Descrição do Alerta" />
+
+        <EditText
+            android:id="@+id/txt_editaalerta_descricao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
 
     </LinearLayout>
 </LinearLayout>

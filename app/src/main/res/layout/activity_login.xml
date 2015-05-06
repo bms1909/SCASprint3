@@ -55,6 +55,17 @@
         android:textStyle="bold"
         android:onClick="btnLogin_Click"/>
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Esqueci a Senha"
+        android:id="@+id/textView4"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ff5e5fff"
+        android:onClick="btnRecuperaSenha_click"/>
+
     <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
         android:layout_height="match_parent">
 

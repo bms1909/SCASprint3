@@ -1,7 +1,9 @@
 package ulbra.bms.scaid5.controllers;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -17,6 +19,12 @@ import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
 public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
 
     private downloadFeitoListener ouvinte;
+    private final Context contexto;
+
+    public clsJSONgetAssincrono(Context ctx)
+    {
+        this.contexto=ctx;
+    }
 
     public void addListener(downloadFeitoListener listener) {
         ouvinte = listener;
@@ -24,28 +32,15 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
 
     @Override
     protected void onPostExecute(JSONArray result) {
+        if(result!=null)
             ouvinte.downloadConcluido(result);
-    }
-
-
-    public static boolean temInternet() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            //8.8.8.8 refere-se ao servidor de DNS do Google
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+        else
+            Toast.makeText(contexto,"Erro de internet, alertas e estabelecimentos podem estar desatualizados",Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected JSONArray doInBackground(String... params) {
-        JSONArray retorno = null;
+        JSONArray retorno;
 
         StringBuilder builder = new StringBuilder();
         for (String s : params) {
@@ -80,14 +75,14 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
                 builder.append("]");
                 conteudo = builder.toString();
             }
-            try {
                 retorno = new JSONArray(conteudo); //converte os dados recebidos de uma string para um objeto manipulável
-            } catch (JSONException e) {
-                Log.d("pau no json", e.getMessage());
-            }
 
-        } catch (IOException o) {
-            Log.d("get ", o.getMessage());
+
+        } catch (IOException | JSONException o) {
+            //previne crash se a mensagem for vazia
+            if (o.getMessage()!=null)
+                Log.d("get ", o.getMessage());
+            return null;
         }
         return retorno;
     }

@@ -44,8 +44,6 @@ public class clsCategorias {
                     loop = recebido.getJSONObject(i);
                     retorno.add(new clsCategorias(loop.getInt("idCategoria"), loop.getString("nomeCategoria")));
                 }
-
-
             } catch (JSONException e) {
                 Log.d(null, e.getMessage());
             }

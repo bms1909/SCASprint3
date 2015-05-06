@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -53,7 +54,8 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
         Spinner spCategorias;
         aOpcoes = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, nomesCategoria);
-// capturando o spinner do xml pela id
+        // capturando o spinner do xml pela id
+
         spCategorias = (Spinner) findViewById(R.id.sp_novoestabelecimento_categorias);
         spCategorias.setAdapter(aOpcoes);
         //endregion
@@ -74,8 +76,20 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
                 Address address = addressList.get(0);
                 EditText txtEndereco = (EditText) findViewById(R.id.txt_novoestabelecimento_endereco);
                 EditText txtCidade = (EditText) findViewById(R.id.txt_novoestabelecimento_cidade);
+                EditText txtBairro = (EditText) findViewById(R.id.txt_novoestabelecimento_bairro);
+                Spinner spEstado = (Spinner) findViewById(R.id.sp_novoestabelecimento_estado);
+
+                String[] estados = getResources().getStringArray(R.array.valores_array_estados);
+                String percorreEstados;
+                for(int x=0;x<estados.length;x++)
+                {
+                     percorreEstados=estados[x];
+                    if(percorreEstados.equalsIgnoreCase(address.getAdminArea()))
+                        spEstado.setSelection(x);
+                }
                 txtEndereco.setText(address.getAddressLine(0));
-                txtCidade.setText(address.getAddressLine(1));
+                txtCidade.setText(address.getLocality());
+                txtBairro.setText(address.getSubLocality());
             }
         }
         //endregion
@@ -118,7 +132,9 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
         RatingBar rb = (RatingBar) findViewById(R.id.rb_novoestabelecimento_classificacao);
         EditText txtTitulo = (EditText) findViewById(R.id.txt_novoestabelecimento_nome);
         EditText txtEndereco = (EditText) findViewById(R.id.txt_novoestabelecimento_endereco);
+        EditText txtBairro = (EditText) findViewById(R.id.txt_novoestabelecimento_bairro);
         EditText txtCidade = (EditText) findViewById(R.id.txt_novoestabelecimento_cidade);
+        Spinner spEstado = (Spinner) findViewById(R.id.sp_novoestabelecimento_estado);
         EditText txtFone = (EditText) findViewById(R.id.txt_novoestabelecimento_telefone);
         CheckBox cbxBanheiro = (CheckBox) findViewById(R.id.cbx_novoestabelecimento_possui_banheiro);
         CheckBox cbxEstacionamento = (CheckBox) findViewById(R.id.cbx_novoestabelecimento_possui_estacionamento);
@@ -131,8 +147,12 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
             txtEndereco.setError("Campo Obrigatório!");
         else if (txtCidade.getText().toString().isEmpty())
             txtCidade.setError("Campo Obrigatório!");
+        else if(txtBairro.getText().toString().isEmpty())
+            txtBairro.setError("Campo Obrigatório!");
         else if (txtCidade.getText().toString().matches("[0-9]*"))
             txtCidade.setError("Campo não permite números!");
+        else if (txtBairro.getText().toString().matches("[0-9]*"))
+            txtBairro.setError("Campo não permite números!");
         else {
             String selecionado = spCategorias.getSelectedItem().toString();
             int idCategoria = 0;
@@ -152,9 +172,9 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
             if (local == null) {
                 gpsDesligado();
             } else {
-                novo = new clsEstabelecimentos(idCategoria, txtTitulo.getText().toString(), txtEndereco.getText().toString(), txtCidade.getText().toString(), cbxBanheiro.isChecked(), cbxAltura.isChecked(), cbxRampa.isChecked(), cbxLargura.isChecked(), cbxEstacionamento.isChecked(), txtFone.getText().toString(), local, rb.getProgress());
-                //TODO pegar idUsuario
-                novo.cadastraEstabelecimento(1, this);
+                novo = new clsEstabelecimentos(idCategoria, txtTitulo.getText().toString(), txtEndereco.getText().toString(), txtCidade.getText().toString() + spEstado.getSelectedItem().toString(), cbxBanheiro.isChecked(), cbxAltura.isChecked(), cbxRampa.isChecked(), cbxLargura.isChecked(), cbxEstacionamento.isChecked(), txtFone.getText().toString(), local, rb.getProgress());
+                SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
+                novo.cadastraEstabelecimento(id.getInt("ID_USUARIO",0), this);
             }
             finish();
         }

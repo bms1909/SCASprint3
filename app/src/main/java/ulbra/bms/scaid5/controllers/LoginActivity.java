@@ -2,14 +2,15 @@ package ulbra.bms.scaid5.controllers;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulbra.bms.scaid5.R;
+import ulbra.bms.scaid5.interfaces.usuarioCarregadoListener;
 import ulbra.bms.scaid5.models.clsUsuarios;
 
 
@@ -36,8 +39,7 @@ import ulbra.bms.scaid5.models.clsUsuarios;
  */
 public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<Cursor> {
 
-
-    private UserLoginTask mAuthTask = null;
+    private clsUsuarios mUsuario;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -54,7 +56,58 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.txt_login_email);
         popularAutoComplete();
+        mUsuario= new clsUsuarios();
+        mUsuario.addListener(new usuarioCarregadoListener() {
+            @Override
+            public void usuarioCarregado(clsUsuarios Usuario) {
+                //login com sucesso
+                if (Usuario.idUsuario > 0) {
+                    SharedPreferences settings = getSharedPreferences("USUARIO", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt("ID_USUARIO", Usuario.idUsuario);
+                    editor.apply();
 
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                } else if(Usuario.senhaUsuario.equals("INCORRETA")){
+                    //senha incorreta
+                    mPasswordView.setError("Senha Incorreta");
+                    mPasswordView.requestFocus();
+                }
+                else if(Usuario.nomeUsuario.equals("INVALIDO"))
+                {
+                    mEmailView.setError("Usuário ou senha incorretos");
+                }
+                else
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                    builder.setTitle("Erro desconhecido");
+                    builder.setMessage("Não foi possível processar o seu login, por favor, confira a estabilidade de sua conexão com a internet e tente novamente, se o erro persistir, contate o desenvolvedor");
+                    //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
+                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            finish();
+                        }
+                    });
+
+                    builder.setPositiveButton("Repetir", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(which==1)
+                            {
+                                tentarLogin();
+                            }
+                            else {
+                                finish();
+                            }
+                        }
+                    }).setNegativeButton("Fechar", null);
+                    builder.create().show();
+                }
+                showProgress(false);
+            }
+        });
         mUsuarioView = (EditText) findViewById(R.id.txt_login_usuario);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -85,36 +138,29 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     public void tentarLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String emailouUsuario = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid password, if the user entered one.TODO alterar para 4
         if (!TextUtils.isEmpty(password) && !(password.length() > 1)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.setError("Senha inválida, deve ser maior que 4 dígitos");
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!email.contains("@")) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
+
+        if (TextUtils.isEmpty(emailouUsuario)) {
+            mEmailView.setError("Campo obrigatório!");
             focusView = mEmailView;
             cancel = true;
         }
@@ -126,26 +172,18 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
 
-            clsUsuarios login;
+            showProgress(true);
             if(!mUsuarioView.getText().toString().equals(""))
             {
-                login = new clsUsuarios(mUsuarioView.getText().toString(),email,password);
-                clsJSONget a;
-                login.cadastraUsuario(LoginActivity.this);
+                mUsuario.nomeUsuario = mUsuarioView.getText().toString();
+                mUsuario.emailUsuario= emailouUsuario;
+                mUsuario.senhaUsuario=password;
+                mUsuario.cadastraUsuario(LoginActivity.this);
             }
 
-            login = clsUsuarios.carregaUsuario(email,password);
+            mUsuario.carregaUsuario(emailouUsuario,password,this);
 
-            showProgress(false);
-            if (login.idUsuario > 0) {
-                //todo login com sucesso
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            } else {
-                mPasswordView.setError("Senha Incorreta");
-                mPasswordView.requestFocus();
-            }
 
           //  mAuthTask = new UserLoginTask(email, mUsuarioView.getText().toString(), password);
             //mAuthTask.execute((Void) null);
@@ -204,6 +242,8 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, emails);
+        mEmailView.setAdapter(adapter);
     }
 
     @Override
@@ -222,16 +262,22 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         CheckBox cbxCadastra = (CheckBox) view;
         if(cbxCadastra.isChecked()) {
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            txtNomeOuEmail.setCompletionHint("Email");
+            txtNomeOuEmail.setHint("Email");
         }
         else
         {
             mUsuarioView.setText("");
             lp.height = 0;
-            txtNomeOuEmail.setCompletionHint("Email ou Usuário");
+            txtNomeOuEmail.setHint("Email ou Usuário");
         }
         habilitar.setLayoutParams(lp);
 
+    }
+
+    public void btnRecuperaSenha_click(View view) {
+        /*mPasswordView.setHeight(0);
+        mUsuarioView.setHeight(0);
+        mEmailView.setHint("Informe seu email ");*/
     }
 
     private interface ProfileQuery {
@@ -244,63 +290,6 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
-
-        private final String mEmail;
-        private final String mUsuario;
-        private final String mSenha;
-
-        UserLoginTask(String email, String mUsuario, String password) {
-            mEmail = email;
-            this.mUsuario = mUsuario;
-            mSenha = password;
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            clsUsuarios login;
-            if(!mUsuario.equals(""))
-            {
-                login = new clsUsuarios(mUsuario,mEmail,mSenha);
-                login.cadastraUsuario(LoginActivity.this);
-            }
-
-            login = clsUsuarios.carregaUsuario(mEmail,mSenha);
-            if(mEmail.equals("a@")&& mSenha.equals("aa"))
-                return 1;
-
-            return login.idUsuario;
-        }
-
-        @Override
-        protected void onPostExecute( Integer success) {
-            mAuthTask = null;
-            showProgress(false);
-            if (success > 0) {
-                // login com sucesso
-
-                SharedPreferences settings = getSharedPreferences("USUARIO", MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putInt("ID_USUARIO", success);
-                editor.apply();
-
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 }
 
 

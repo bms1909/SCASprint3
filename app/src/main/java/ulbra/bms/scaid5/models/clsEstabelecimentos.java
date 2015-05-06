@@ -92,15 +92,15 @@ public class clsEstabelecimentos {
         this.ouvinteDetalhesEstabelecimento= listener;
     }
 
-    public void estabelecimentosPorCategoria(float raio, LatLng local, int idCategoria) {
-        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude + "&idCategoria=" + idCategoria);
+    public void estabelecimentosPorCategoria(float raio, LatLng local, int idCategoria,Context contexto) {
+        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude + "&idCategoria=" + idCategoria,contexto);
     }
-    public void estabelecimentosPorRaio(float raio, LatLng local) {
-        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
+    public void estabelecimentosPorRaio(float raio, LatLng local,Context contexto) {
+        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude,contexto);
     }
 
-    private void carregaEstabelecimentos(String URL) {
-        clsJSONgetAssincrono executor = new clsJSONgetAssincrono();
+    private void carregaEstabelecimentos(String URL,Context contexto) {
+        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
 
 
         executor.addListener(new downloadFeitoListener() {
@@ -109,7 +109,6 @@ public class clsEstabelecimentos {
                 ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
                 try {
                     if (result != null) {
-
                         JSONObject loop;
                         for (int i = 0; i < result.length(); i++) {
                             loop = result.getJSONObject(i);

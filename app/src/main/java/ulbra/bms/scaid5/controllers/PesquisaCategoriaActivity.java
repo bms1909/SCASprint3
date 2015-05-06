@@ -38,6 +38,7 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
     public ListView lista;
     private LatLng localAtual;
     private int idCategoria;
+    private EditText txtPesquisa;
     private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
     private List<Map<String, String>> elementosLista = new ArrayList<>();
 
@@ -45,7 +46,7 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pesquisa_categoria);
-
+        txtPesquisa = (EditText) findViewById(R.id.txt_busca_categoria);
         localAtual = clsApiClientSingleton.ultimoLocal(this);
 
         Intent recebido = getIntent();
@@ -86,15 +87,14 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
                         @Override
                         public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
                             estabelecimentosCarregados = estabelecimentos;
+                            if (txtPesquisa.getText().length() > 0) {
+                                buscaTexto(txtPesquisa.getText());
+                            }
+                            populaLista();
                         }
                     });
-                    listener.estabelecimentosPorCategoria(raio, localAtual, idCategoria);
+                    listener.estabelecimentosPorCategoria(raio, localAtual, idCategoria,PesquisaCategoriaActivity.this);
                 }
-                EditText pesquisa = (EditText) findViewById(R.id.txt_busca_categoria);
-                if (pesquisa.getText().length() > 0) {
-                    buscaTexto(pesquisa.getText());
-                }
-                populaLista();
             }
 
             @Override
@@ -102,8 +102,7 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
             }
         });
 
-        EditText busca = (EditText) findViewById(R.id.txt_busca_categoria);
-        busca.addTextChangedListener(new TextWatcher() {
+        txtPesquisa.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -162,13 +161,16 @@ public class PesquisaCategoriaActivity extends ActionBarActivity {
 
     private void buscaTexto(CharSequence parametro) {
         elementosLista.clear();
-        for (clsEstabelecimentos busca : estabelecimentosCarregados) {
-            if (busca.nomeEstabelecimento.toLowerCase().contains(parametro)) {
-                Map<String, String> m = new HashMap<>();
-                m.put("linha1", "" + busca.idEstabelecimento);
-                m.put("linha2", busca.nomeEstabelecimento);
-                m.put("linha3", busca.enderecoEstabelecimento);
-                elementosLista.add(m);
+        if(!parametro.equals("")) {
+            parametro = parametro.toString().toLowerCase();
+            for (clsEstabelecimentos busca : estabelecimentosCarregados) {
+                if (busca.nomeEstabelecimento.toLowerCase().contains(parametro)) {
+                    Map<String, String> m = new HashMap<>();
+                    m.put("linha1", "" + busca.idEstabelecimento);
+                    m.put("linha2", busca.nomeEstabelecimento);
+                    m.put("linha3", busca.enderecoEstabelecimento);
+                    elementosLista.add(m);
+                }
             }
         }
     }

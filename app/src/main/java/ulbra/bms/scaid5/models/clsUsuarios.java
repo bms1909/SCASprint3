@@ -8,10 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.concurrent.ExecutionException;
-
-import ulbra.bms.scaid5.controllers.clsJSONget;
+import ulbra.bms.scaid5.controllers.clsJSONgetAssincrono;
 import ulbra.bms.scaid5.controllers.clsJSONpost;
+import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
+import ulbra.bms.scaid5.interfaces.usuarioCarregadoListener;
 
 /**
  * Criador por Bruno em 16/03/2015.
@@ -21,6 +21,7 @@ public class clsUsuarios {
     public String nomeUsuario;
     public String emailUsuario;
     public String senhaUsuario;
+    private usuarioCarregadoListener ouvinte;
 
     public clsUsuarios(String nome, String email, String senha) {
         this.nomeUsuario = nome;
@@ -35,29 +36,38 @@ public class clsUsuarios {
         this.senhaUsuario = senha;
     }
 
-    public static clsUsuarios carregaUsuario(String nomeOuEmail, String senha) {
-        clsUsuarios retorno = null;
-        clsJSONget executor = new clsJSONget();
-        JSONArray recebido = null;
-        JSONObject loop;
+    public clsUsuarios() {
+        super();
+    }
+
+    public void addListener(usuarioCarregadoListener listener)
+    {
+        ouvinte=listener;
+    }
+
+    public void carregaUsuario(String nomeOuEmail, String senha,Context contexto) {
+
+        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
+
+        executor.addListener(new downloadFeitoListener() {
+            @Override
+            public void downloadConcluido(JSONArray result) {
+                clsUsuarios retorno = null;
+                try {
+                if (result != null) {
+                    JSONObject loop;
+                        loop = result.getJSONObject(0);
+                        retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
+                    }
+                }
+                catch (JSONException e) {
+                    Log.d(null, e.getMessage());
+                }
+                ouvinte.usuarioCarregado(retorno);
+            }
+        });
 
         executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeouEmail=" + Uri.encode(nomeOuEmail) + "&senha=" + Uri.encode(senha));
-
-        try {
-            recebido = executor.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Log.d(null, e.getMessage());
-        }
-        if (recebido != null) {
-            try {
-                loop = recebido.getJSONObject(0);
-                retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
-
-            } catch (JSONException e) {
-                Log.d(null, e.getMessage());
-            }
-        }
-        return retorno;
     }
 
     public void cadastraUsuario(Context context) {

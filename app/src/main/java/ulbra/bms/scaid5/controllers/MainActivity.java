@@ -15,9 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationListener;
@@ -46,7 +46,7 @@ import ulbra.bms.scaid5.models.clsEstabelecimentos;
  * Criado por Bruno on 19/03/2015.
  * classe padrão que atua como controller da tela activity_main
  */
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, Checkable {
+public class MainActivity extends ActionBarActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap objMapa;
     private boolean segueUsuario;
@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private clsEstabelecimentos estabelecimentoSelecionado;
     private clsAlertas alertasListener = new clsAlertas();
     private clsEstabelecimentos estabelecimentosListener = new clsEstabelecimentos();
-
+    private SharedPreferences spIdUsuario;
 
     //region Mapa
     @Override
@@ -84,9 +84,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-        //ativa botão de localizar minha posição
+        //desativa botões de direcionamento diretamente no mapa
+        objMapa.getUiSettings().setMapToolbarEnabled(false);
+        //ativa botão de localizar minha posição e icone azul no meu local
         objMapa.setMyLocationEnabled(true);
         //listener do botão de minha localização
+
         objMapa.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
@@ -100,14 +103,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     private void carregaMarcadores(Location localCarga, int raioCargaMarcadores) {
         if (objMapa != null) {
-            if (!clsJSONget.temInternet()) {
-                Toast.makeText(this, "Sem acesso a internet, as informações podem estar desatualizadas", Toast.LENGTH_LONG).show();
-            } else {
                 LatLng local = new LatLng(localCarga.getLatitude(), localCarga.getLongitude());
-                alertasListener.carregaAlertas(raioCargaMarcadores,local);
-                estabelecimentosListener.estabelecimentosPorRaio(raioCargaMarcadores,local);
+                alertasListener.carregaAlertas(raioCargaMarcadores,local,this);
+                estabelecimentosListener.estabelecimentosPorRaio(raioCargaMarcadores,local,this);
                 mLocalUltimaCargaMarcadores = localCarga;
-            }
         }
     }
 
@@ -116,7 +115,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(Marker marker) {
         alertaSelecionado = null;
         estabelecimentoSelecionado = null;
-        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+        final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
 
         //busca entre os alertas carregados, o alerta correspondente as coordenadas do selecionado
         for (int x = 0; x < alertasCarregados.size(); x++) {
@@ -124,6 +123,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 alertaSelecionado = alertasCarregados.get(x);
             }
         }
+
         if (alertaSelecionado == null) {
             //se não é um alerta, busca entre os estabelecimentos
             for (int x = 0; x < estabelecimentosCarregados.size(); x++) {
@@ -133,9 +133,9 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             }
 
-            dlgAlert.setTitle("Estabelecimento");
-            dlgAlert.setIcon(R.drawable.common_signin_btn_icon_focus_dark);
-            dlgAlert.setMessage(estabelecimentoSelecionado.nomeEstabelecimento);
+            dlgAlert.setTitle(estabelecimentoSelecionado.nomeEstabelecimento);
+            dlgAlert.setIcon(R.drawable.ic_estabelecimento);
+            dlgAlert.setMessage(estabelecimentoSelecionado.mediaEstrelasAtendimento + " Estrelas \n" + estabelecimentoSelecionado.enderecoEstabelecimento);
             dlgAlert.setPositiveButton("Abrir", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -146,25 +146,110 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             dlgAlert.setNeutralButton("Voltar", null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
+
         } else {
             //pop-up marcações
-            dlgAlert.setTitle("Alerta");
-            dlgAlert.setIcon(R.drawable.common_signin_btn_icon_focus_light);
-            dlgAlert.setMessage("Este Marcador é " + alertaSelecionado.descricaoAlerta);
+            //0= buraco
+            //1=largura calçada
+            //2=rampa
+            if (alertaSelecionado.tipoAlerta == 0) {
+                dlgAlert.setTitle("Buraco");
+                if(alertaSelecionado.riscoAlerta==0)
+                    dlgAlert.setIcon(R.drawable.ic_buraco_alto);
+                else if(alertaSelecionado.riscoAlerta==1)
+                    dlgAlert.setIcon(R.drawable.ic_buraco_medio);
+                else
+                    dlgAlert.setIcon(R.drawable.ic_buraco_baixo);
+            } else if (alertaSelecionado.tipoAlerta == 1) {
+                dlgAlert.setTitle("Calçada Estreita");
+                if(alertaSelecionado.riscoAlerta==0)
+                    dlgAlert.setIcon(R.drawable.ic_largura_alto);
+                else if(alertaSelecionado.riscoAlerta==1)
+                    dlgAlert.setIcon(R.drawable.ic_largura_medio);
+                else
+                    dlgAlert.setIcon(R.drawable.ic_largura_baixo);
+            } else {
+                dlgAlert.setTitle("Rampa com Defeito");
+                if(alertaSelecionado.riscoAlerta==0)
+                    dlgAlert.setIcon(R.drawable.ic_rampa_alto);
+                else if(alertaSelecionado.riscoAlerta==1)
+                    dlgAlert.setIcon(R.drawable.ic_rampa_medio);
+                else
+                    dlgAlert.setIcon(R.drawable.ic_rampa_baixo);
+            }
+            dlgAlert.setMessage("Comentário:\n" + alertaSelecionado.descricaoAlerta);
             dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //TODO pegar id do usuário
-                    clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, 1, MainActivity.this);
-                    Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!)", Toast.LENGTH_LONG).show();
+
+                        clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, spIdUsuario.getInt("ID_USUARIO", 0), MainActivity.this);
+                        //a classe clsJSONpost garante o envio de dados com o armazenamento em banco até a confirmação de envio
+                        Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!", Toast.LENGTH_LONG).show();
                 }
             });
-            dlgAlert.setNeutralButton("Voltar", null);
+            if(alertaSelecionado.idUsuario==spIdUsuario.getInt("ID_USUARIO", 0)) {
+                dlgAlert.setNegativeButton("Editar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == DialogInterface.BUTTON_NEGATIVE) {
+
+                            AlertDialog.Builder dlgEdita = new AlertDialog.Builder(MainActivity.this);
+                            dlgEdita.setTitle("Edita Alerta");
+                            LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+                            final View viewDetalhes = inflater.inflate(R.layout.layout_edita_alerta,null);
+                            final Spinner spTipo = (Spinner) viewDetalhes.findViewById(R.id.sp_editaalerta_tipo);
+                            final RadioGroup rgRisco = (RadioGroup) viewDetalhes.findViewById(R.id.rg_editaalerta_risco);
+                            final EditText txtDescricao = (EditText) viewDetalhes.findViewById(R.id.txt_editaalerta_descricao);
+
+                            spTipo.setSelection(alertaSelecionado.tipoAlerta);
+                            switch (alertaSelecionado.riscoAlerta) {
+                                case 0: rgRisco.check(R.id.rbAlto);
+                                    break;
+                                case 1: rgRisco.check(R.id.rbMedio);
+                                    break;
+                                case 2: rgRisco.check(R.id.rbBaixo);
+                                    break;
+                            }
+                            txtDescricao.setText(alertaSelecionado.descricaoAlerta);
+                            dlgEdita.setView(viewDetalhes);
+
+                            dlgEdita.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    int valorRisco=0;
+                                    switch (rgRisco.getCheckedRadioButtonId())
+                                    {
+                                        case R.id.rbBaixo:valorRisco=2;
+                                            break;
+                                        case R.id.rbMedio:valorRisco=1;
+                                            break;
+                                        case R.id.rbAlto:valorRisco=0;
+                                            break;
+                                    }
+                                    clsAlertas alterar = alertaSelecionado;
+                                    alterar.editaAlerta(valorRisco,spTipo.getSelectedItemPosition(),txtDescricao.getText().toString(),MainActivity.this);
+                                }
+                            });
+                            dlgEdita.setNeutralButton("Excluir", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    alertaSelecionado.excluiAlerta(MainActivity.this);
+                                }
+                            });
+                            dlgEdita.setNegativeButton("Cancelar",null);
+                            dlgEdita.create().show();
+
+                        }
+                    }
+                });
+            }
+            dlgAlert.setNeutralButton("Voltar",null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
         }
 
-        //
         return false;
     }
 //endregion
@@ -191,15 +276,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
     }
 
-    public void btnBusca_Click(View view) {
-        startActivity(new Intent(MainActivity.this, PesquisaLocaisActivity.class));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //objeto shared preferences, armazena o id do usuário logado
+        spIdUsuario = getSharedPreferences("USUARIO", MODE_PRIVATE);
         //executa operações de POST pendentes
         if (clsJSONget.temInternet())
             clsJSONpost.executaPendentes(this);
@@ -216,13 +298,34 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         //0= buraco
                         //1=largura calçada
                         //2=rampa
-                        MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta).title(percorre.descricaoAlerta);
+                        //risco alto = 0
+                        //risco medio =1
+                        //risco baixo =2
+                        MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta);
                         if (percorre.tipoAlerta == 0) {
-                            icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco));
+                            icone.title("Buraco");
+                            if(percorre.riscoAlerta==0)
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_alto));
+                            else if(percorre.riscoAlerta==1)
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_medio));
+                            else
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_baixo));
                         } else if (percorre.tipoAlerta == 1) {
-                            icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura));
-                        } else if (percorre.tipoAlerta == 2) {
-                            icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa));
+                            icone.title("Calçada Estreita");
+                            if(percorre.riscoAlerta==0)
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_alto));
+                            else if(percorre.riscoAlerta==1)
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_medio));
+                            else
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_baixo));
+                        } else {
+                            icone.title("Rampa com defeito");
+                            if(percorre.riscoAlerta==0)
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_alto));
+                            else if(percorre.riscoAlerta==1)
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_medio));
+                            else
+                                icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_baixo));
                         }
                         objMapa.addMarker(icone);
                     }
@@ -307,6 +410,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         .findFragmentById(R.id.map);
                 mapFragment.getMapAsync(this);
             }
+            else if(mlocalAtual!=null)
+            {
+                carregaMarcadores(mlocalAtual,1);
+            }
         }
     }
 
@@ -345,13 +452,13 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Toast.makeText(this, "você clicou em configurações, aguarde novas atualizações!", Toast.LENGTH_LONG).show();
+        if (id == R.id.btn_main_busca) {
+            startActivity(new Intent(MainActivity.this, PesquisaLocaisActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
     }
-//endregion
+    //endregion
 
     //region Alertas
 
@@ -361,22 +468,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             Toast.makeText(MainActivity.this, "Aguardando local preciso", Toast.LENGTH_LONG).show();
         } else {
 
+
             final int[] selecionado = new int[1];
-            ArrayList<String> tiposAlerta = new ArrayList<>();
+            String[] tiposAlerta = getResources().getStringArray(R.array.valores_array_tipos_alerta);
+
             final AlertDialog.Builder detalhe = new AlertDialog.Builder(this);
             final AlertDialog.Builder alertas = new AlertDialog.Builder(this);
 
             LayoutInflater inflater = this.getLayoutInflater();
-            final View viewDetalhes = inflater.inflate(R.layout.layout_comenta_alerta, null);
+            final View viewDetalhes = inflater.inflate(R.layout.layout_comenta_alerta,null);
 
-            tiposAlerta.add("Buracos");
-            tiposAlerta.add("Calçada Estreita");
-            tiposAlerta.add("Meio-fio rebaixado");
-
-
-            // Inflate and set the layout for the dialog
-            // Pass null as the parent view because its going in the dialog layout
-
+            //adiciona o layout viewdetalhes como fonte para visual da view
             detalhe.setView(viewDetalhes);
             detalhe.setTitle("Detalhes");
             detalhe.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
@@ -397,13 +499,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             break;
                     }
 
-                    SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
-
-                    clsAlertas novo = new clsAlertas(id.getInt("ID_USUARIO",0), mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
+                    clsAlertas novo = new clsAlertas(spIdUsuario.getInt("ID_USUARIO",0), mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
                     novo.cadastraAlerta(MainActivity.this);
 
                     Toast.makeText(MainActivity.this, "Seu alerta aparecerá em breve, obrigado!", Toast.LENGTH_SHORT).show();
-
                     carregaMarcadores(mlocalAtual, 1);
                     dialog.cancel();
                 }
@@ -453,6 +552,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
 
             for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
+
                 tiposAlerta.add(percorre.nomeEstabelecimento);
             }
             AlertDialog.Builder alertas = new AlertDialog.Builder(this);
@@ -475,24 +575,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         }
     }
 
-    public void btnAPAGAESSAGAMBI(View view) {
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-    }
 
-    @Override
-    public void setChecked(boolean checked) {
 
-    }
-
-    @Override
-    public boolean isChecked() {
-        return false;
-    }
-
-    @Override
-    public void toggle() {
-
-    }
 
 
 //endregion

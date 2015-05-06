@@ -67,8 +67,10 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
                     temp.removeTemp(url);
                 else
                     return false;
-            } catch (Exception e) {
-                Log.d("pau no POSTsem internet", e.getLocalizedMessage());
+            } catch (Exception o) {
+                //previne crash se a mensagem for vazia
+                if (o.getMessage()!=null)
+                    Log.d("pau no POSTsem internet", o.getMessage());
                 return false;
             }
         }

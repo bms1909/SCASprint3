@@ -9,10 +9,46 @@
     <string name="title_activity_pesquisa_categoria">PesquisaCategoriaActivity</string>
 
     <string-array name="valores_array_raios">
-        <item>500 Metros</item>
-        <item>2 KM</item>
-        <item>5 KM</item>
-        <item>10 KM</item>
-        <item>25 KM</item>
+        <item id="0.5">500 Metros</item>
+        <item id="2">2 KM</item>
+        <item id="5">5 KM</item>
+        <item id="10">10 KM</item>
+        <item id="25">25 KM</item>
+    </string-array>
+
+    <string-array name="valores_array_tipos_alerta">
+        <item id="buraco">Buracos</item>
+        <item id="calcada">Calçada Estreita</item>
+        <item id="rampa">Rampa com Defeito</item>
+    </string-array>
+
+    <string-array name="valores_array_estados">
+        <item id="AC">Acre</item>
+        <item id="AL">Alagoas</item>
+        <item id="AP">Amapá</item>
+        <item id="AM">Amazonas</item>
+        <item id="BA">Bahia</item>
+        <item id="CE">Ceará</item>
+        <item id="DF">Distrito Federal</item>
+        <item id="ES">Espírito Santo</item>
+        <item id="GO">Goiás</item>
+        <item id="MA">Maranhão</item>
+        <item id="MT">Mato Grosso</item>
+        <item id="MS">Mato Grosso do Sul</item>
+        <item id="MG">Minas Gerais</item>
+        <item id="PA">Pará</item>
+        <item id="PB">Paraíba</item>
+        <item id="PR">Paraná</item>
+        <item id="PE">Pernambuco</item>
+        <item id="PI">Piauí</item>
+        <item id="RJ">Rio de Janeiro</item>
+        <item id="RN">Rio Grande do Norte</item>
+        <item id="RS">Rio Grande do Sul</item>
+        <item id="RO">Rondônia</item>
+        <item id="RR">Roraima</item>
+        <item id="SC">Santa Catarina</item>
+        <item id="SP">São Paulo</item>
+        <item id="SE">Sergipe</item>
+        <item id="TO">Tocantins</item>
     </string-array>
 </resources>

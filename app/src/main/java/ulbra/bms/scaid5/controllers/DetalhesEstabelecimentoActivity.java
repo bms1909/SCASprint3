@@ -4,6 +4,7 @@ package ulbra.bms.scaid5.controllers;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -19,7 +20,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -70,8 +70,8 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         // envia ao WS a avaliação do estabelecimento
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
 
-        //TODO,obter id do usuário
-        estabCarregado.avaliaEstabelecimento(rb.getProgress(), 1, this);
+        SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
+        estabCarregado.avaliaEstabelecimento(rb.getProgress(), id.getInt("ID_USUARIO",0), this);
         finish();
     }
 
@@ -84,9 +84,10 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         Intent recebido = getIntent();
         estabCarregado = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
         //tarefa síncrona pois o início da activity depende desses dados
-        estabCarregado.carregaDetalhesEstabelecimento();
+        estabCarregado=estabCarregado.carregaDetalhesEstabelecimento();
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
+
 
         final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(DetalhesEstabelecimentoActivity.this);
         dlgAlert.setTitle("Confirmação");
@@ -125,8 +126,8 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
 
         atualizaTela();
-        //TODO colocar id do usuário
-        jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(1, estabCarregado.idEstabelecimento);
+        SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
+        jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(id.getInt("ID_USUARIO",0), estabCarregado.idEstabelecimento);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
         list = mgr.queryIntentActivities(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:9999")),
                 PackageManager.MATCH_DEFAULT_ONLY);
-        if (list.size() == 0)
+        if (list.size() == 0||estabCarregado.telefoneEstabelecimento.equals(""))
             menu.removeItem(R.id.btnEstabelecimentoTelefone);
         return true;
     }
@@ -160,10 +161,10 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
             case R.id.btnEstabelecimentoTelefone:
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + estabCarregado.telefoneEstabelecimento)));
                 break;
-            case R.id.btnEstabelecimentoEditar:
+            /*case R.id.btnEstabelecimentoEditar:
                 Toast.makeText(this, "em breve", Toast.LENGTH_SHORT).show();
                 break;
-           /*TODO código para envio de dados a página de cadastro previamente preenchida
+           TODO código para envio de dados a página de cadastro previamente preenchida
 
                 rb.setIsIndicator(false);
                 */

@@ -39,7 +39,7 @@
         android:layout_below="@+id/txt_busca_categoria"
         android:layout_toEndOf="@+id/textView"
         android:layout_toRightOf="@+id/textView"
-        android:entries="@array/valores_array_raios"></Spinner>
+        android:entries="@array/valores_array_raios"/>
 
     <ListView
         android:id="@+id/list_busca_categoria"

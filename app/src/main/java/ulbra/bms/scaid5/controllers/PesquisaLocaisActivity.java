@@ -37,6 +37,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
     //busca local de emissão do alerta
     private final LatLng localAtual = clsApiClientSingleton.ultimoLocal(this);
     public ListView lista;
+    private EditText txtPesquisa;
     private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
     private ArrayList<clsCategorias> categoriasCarregadas = clsCategorias.carregaCategorias();
     private List<Map<String, String>> elementosLista = new ArrayList<>();
@@ -45,7 +46,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pesquisa_locais);
-        final EditText busca = (EditText) findViewById(R.id.txt_busca);
+        txtPesquisa = (EditText) findViewById(R.id.txt_busca);
         Spinner sp = (Spinner) findViewById(R.id.sp_busca_raio);
         sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -76,22 +77,23 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                         @Override
                         public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
                             estabelecimentosCarregados = estabelecimentos;
+                            if (txtPesquisa.getText().length() > 0) {
+                                buscaTexto(txtPesquisa.getText());
+                            }
+                            populaLista();
                         }
                     });
-                    listener.estabelecimentosPorRaio(raio, localAtual);
+                    listener.estabelecimentosPorRaio(raio, localAtual,PesquisaLocaisActivity.this);
                 }
-                EditText pesquisa = (EditText) findViewById(R.id.txt_busca);
-                if (pesquisa.getText().length() > 0) {
-                    buscaTexto(pesquisa.getText());
-                }
-                populaLista();
+
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        busca.addTextChangedListener(new TextWatcher() {
+        txtPesquisa.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -118,6 +120,8 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                 }
             }
         });
+        buscaCategoria("");
+        //preenche lista com as categorias existentes
         populaLista();
     }
 
@@ -152,10 +156,10 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
         }
     }
 
-    private void buscaTexto(CharSequence parametro) {
-        elementosLista.clear();
+    private void buscaCategoria(CharSequence parametro)
+    {
         for (clsCategorias busca : categoriasCarregadas) {
-            if (busca.getNomeCategoria().contains(parametro)) {
+            if (busca.getNomeCategoria().toLowerCase().contains(parametro)||parametro.length()==0) {
                 Map<String, String> m = new HashMap<>();
                 m.put("linha0", "c");
                 m.put("linha1", "" + busca.getIdCategoria());
@@ -164,23 +168,30 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                 elementosLista.add(m);
             }
         }
-        for (clsEstabelecimentos busca : estabelecimentosCarregados) {
-            if (busca.nomeEstabelecimento.contains(parametro)) {
-                Map<String, String> m = new HashMap<>();
-                m.put("linha0", "e");
-                m.put("linha1", "" + busca.idEstabelecimento);
-                m.put("linha2", busca.nomeEstabelecimento);
+    }
+    private void buscaTexto(CharSequence parametro) {
+        elementosLista.clear();
+        if(!parametro.equals("")) {
+            parametro = parametro.toString().toLowerCase();
+            buscaCategoria(parametro);
+            for (clsEstabelecimentos busca : estabelecimentosCarregados) {
+                if (busca.nomeEstabelecimento.toLowerCase().contains(parametro)) {
+                    Map<String, String> m = new HashMap<>();
+                    m.put("linha0", "e");
+                    m.put("linha1", "" + busca.idEstabelecimento);
+                    m.put("linha2", busca.nomeEstabelecimento);
 
-                for (clsCategorias nome : categoriasCarregadas) {
-                    if (nome.getIdCategoria() == busca.idCategoria) {
-                        m.put("linha3", nome.getNomeCategoria());
-                        break;
+                    for (clsCategorias nome : categoriasCarregadas) {
+                        if (nome.getIdCategoria() == busca.idCategoria) {
+                            m.put("linha3", nome.getNomeCategoria());
+                            break;
+                        }
                     }
+                    elementosLista.add(m);
                 }
-                elementosLista.add(m);
             }
+            //TODO adicionar lógica para busca de endereço aqui
         }
-        //TODO adicionar lógica para busca de endereço aqui
     }
 
     private void populaLista() {
