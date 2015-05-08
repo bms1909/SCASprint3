@@ -28,7 +28,7 @@
                 android:layout_alignParentTop="true"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="Nome do Local"
+                android:hint="@string/cadastra_nome_local"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textImeMultiLine"
                 android:selectAllOnFocus="true"
@@ -54,7 +54,7 @@
                 android:layout_marginTop="10dp"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="Rua, Nº, Complemento..."
+                android:hint="@string/cadastra_dica_endereco"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
                 android:selectAllOnFocus="true" />
@@ -73,7 +73,7 @@
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
                 android:selectAllOnFocus="true"
-                android:hint="Bairro" />
+                android:hint="@string/cadastra_dica_bairro" />
 
             <EditText
                 android:id="@+id/txt_novoestabelecimento_cidade"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="Cidade"
+                android:hint="@string/cadastra_dica_cidade"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
                 android:selectAllOnFocus="true"
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="DDD e Telefone"
+                android:hint="@string/cadastra_dica_telefone"
                 android:inputType="phone"
                 android:selectAllOnFocus="true"
                 android:layout_below="@+id/sp_novoestabelecimento_estado"
@@ -122,7 +122,8 @@
                 android:layout_below="@+id/txt_novoestabelecimento_telefone"
                 android:layout_centerHorizontal="true"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp" />
+                android:paddingTop="10dp"
+                android:max="5"/>
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_possui_banheiro"
@@ -131,7 +132,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/rb_novoestabelecimento_classificacao"
-                android:text="Banheiro Adaptado"
+                android:text="@string/cadastra_banheiro_adaptado"
                 android:visibility="visible" />
 
             <CheckBox
@@ -141,7 +142,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_possui_banheiro"
-                android:text="Vagas Exclusivas" />
+                android:text="@string/cadastra_vagas_exclusivas" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_altura_certa"
@@ -150,7 +151,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_possui_estacionamento"
-                android:text="Objetos ao alcance" />
+                android:text="@string/cadastra_objetos_ao_alcance" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_possui_rampa"
@@ -159,7 +160,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_altura_certa"
-                android:text="Possui Rampas" />
+                android:text="@string/cadastra_possui_rampas" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_largura_suficiente"
@@ -169,12 +170,12 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_possui_rampa"
                 android:layout_marginBottom="30dp"
-                android:text="Largura Suficiente" />
+                android:text="@string/cadastra_largura_suficiente" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Estado"
+                android:text="@string/cadastra_dica_estado"
                 android:id="@+id/tv_novoestabelecimento_estado"
                 android:layout_below="@+id/txt_novoestabelecimento_cidade"
                 android:layout_alignParentLeft="true"
@@ -185,7 +186,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Categoria"
+                android:text="@string/cadastra_dica_categorias"
                 android:id="@+id/textView3"
                 android:layout_below="@+id/txt_novoestabelecimento_nome"
                 android:layout_alignParentLeft="true"
@@ -219,7 +220,7 @@
             android:layout_weight="1"
             android:background="#ffffffff"
             android:onClick="salvaAvaliacao_Click"
-            android:text="Salvar" />
+            android:text="@string/btn_salvar" />
 
     </LinearLayout>
 </RelativeLayout>

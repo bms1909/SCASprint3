@@ -24,20 +24,22 @@
             android:ems="10"
             android:hint="Usuário"
             android:id="@+id/txt_login_usuario"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:enabled="false"
+            />
     </LinearLayout>
-
 
     <AutoCompleteTextView android:id="@+id/txt_login_email" android:layout_width="match_parent"
         android:layout_height="wrap_content" android:hint="Email ou Usuário"
         android:inputType="textEmailAddress" android:maxLines="1"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:imeOptions="flagNavigateNext"
+        />
 
     <EditText android:id="@+id/password" android:layout_width="match_parent"
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content" android:hint="Senha"
-        android:imeActionId="@+id/login"
-        android:imeActionLabel="@string/action_sign_in_short"
+        android:imeActionLabel="Acessar"
         android:imeOptions="actionUnspecified" android:inputType="textPassword"
         android:maxLines="1" android:singleLine="true" />
 
@@ -55,7 +57,6 @@
         android:textStyle="bold"
         android:onClick="btnLogin_Click"/>
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,7 +65,7 @@
         android:id="@+id/textView4"
         android:layout_gravity="center_horizontal"
         android:textColor="#ff5e5fff"
-        android:onClick="btnRecuperaSenha_click"/>
+        android:onClick="txtRecuperaSenha_Click"/>
 
     <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
         android:layout_height="match_parent">

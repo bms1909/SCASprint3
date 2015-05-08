@@ -48,18 +48,14 @@ public class clsCategorias {
                 Log.d(null, e.getMessage());
             }
         }
-
-
-
-
     /*  testes
-
         ArrayList<clsCategorias> a = new ArrayList<>();
-        a.add(new clsCategorias(1,"Restaurante"));
+        /*a.add(new clsCategorias(1,"Restaurante"));
         a.add(new clsCategorias(2,"Pizzaria"));
         a.add(new clsCategorias(2,"Prédio Público"));
         a.add(new clsCategorias(2,"Livraria"));
-        a.add(new clsCategorias(2,"Outros"));*/
+        a.add(new clsCategorias(2,"Outros"));
+        return a;*/
         return retorno;
     }
 

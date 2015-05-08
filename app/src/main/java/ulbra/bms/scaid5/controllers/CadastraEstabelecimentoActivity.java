@@ -19,13 +19,10 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.model.LatLng;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import ulbra.bms.scaid5.R;
 import ulbra.bms.scaid5.models.clsApiClientSingleton;
 import ulbra.bms.scaid5.models.clsCategorias;

@@ -8,7 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Criado por Bruno on 02/04/2015.
  */
 public class clsBdLocalConstrutor extends SQLiteOpenHelper {
-    private static final String NOME_BD = "teste";
+    private static final String NOME_BD = "BD";
+    //incrementar versao_bd a cada mudança na estrutura das tabelas
     private static final int VERSAO_BD = 1;
 
     public clsBdLocalConstrutor(Context context) {
@@ -18,7 +19,7 @@ public class clsBdLocalConstrutor extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //sem _ antes do id, auto incremento não funciona
-        db.execSQL("CREATE TABLE temp" +
+        db.execSQL("CREATE TABLE postcache" +
                 "(" +
                 "_id integer primary key autoincrement," +
                 "comando text not null" +
@@ -27,7 +28,7 @@ public class clsBdLocalConstrutor extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table cache;");
+        db.execSQL("drop table postcache;");
         onCreate(db);
     }
 }

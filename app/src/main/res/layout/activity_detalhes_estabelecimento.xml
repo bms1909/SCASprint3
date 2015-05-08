@@ -74,7 +74,8 @@
                 android:layout_below="@+id/tv_estabelecimento_cidade"
                 android:layout_centerHorizontal="true"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp" />
+                android:paddingTop="10dp"
+                android:max="5" />
 
             <CheckBox
                 android:id="@+id/cbx_estabelecimento_possui_banheiro"
@@ -85,7 +86,8 @@
                 android:layout_below="@+id/rb_estabelecimento_classificacao"
                 android:clickable="false"
                 android:text="Banheiro Adaptado"
-                android:visibility="visible" />
+                android:visibility="visible"
+                />
 
             <CheckBox
                 android:id="@+id/cbx_estabelecimento_possui_estacionamento"

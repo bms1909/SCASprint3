@@ -49,7 +49,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         tvFone.setText(estabCarregado.telefoneEstabelecimento);
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
-        rb.setMax(5);
         rb.setRating(estabCarregado.mediaEstrelasAtendimento);
 
 

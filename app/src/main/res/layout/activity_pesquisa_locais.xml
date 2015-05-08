@@ -12,46 +12,69 @@
 
     <EditText
         android:id="@+id/txt_busca"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="30dp"
-        android:editable="true"
-        android:hint="Busque Categoria, Locais ou Endereço" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/sp_busca_raio"
-        android:layout_marginRight="10dp"
-        android:text="Raio da\nBusca:"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Spinner
-        android:id="@+id/sp_busca_raio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_busca"
-        android:layout_toEndOf="@+id/textView"
-        android:layout_toRightOf="@+id/textView"
-        android:entries="@array/valores_array_raios"></Spinner>
+        android:hint="@string/pesquisalocais_dica"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="30sp"/>
 
     <ListView
         android:id="@+id/list_busca"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
+        android:scrollbarStyle="outsideOverlay"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/gridLayout" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridLayout"
+        android:weightSum="4"
+        android:layout_below="@+id/txt_busca"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView"
-        android:scrollbarStyle="outsideOverlay" />
+        android:layout_alignParentEnd="true">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/pesquisalocais_raio_da_busca"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+             />
+
+        <Spinner
+            android:id="@+id/sp_busca_raio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:entries="@array/valores_array_raios"
+            />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/pesquisalocais_ordenar_por"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+             />
+
+        <Spinner
+            android:id="@+id/sp_busca_ordena"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:entries="@array/valores_array_ordenacao"
+             />
+    </LinearLayout>
 
 
 </RelativeLayout>

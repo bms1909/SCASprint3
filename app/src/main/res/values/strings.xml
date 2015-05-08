@@ -8,12 +8,35 @@
     <string name="title_activity_pesquisa_locais">Pesquisa Locais</string>
     <string name="title_activity_pesquisa_categoria">PesquisaCategoriaActivity</string>
 
+    <string name="pesquisalocais_raio_da_busca">Raio da\nBusca:</string>
+    <string name="pesquisalocais_ordenar_por">Ordenar\nPor:</string>
+    <string name="pesquisalocais_dica">Busque Categoria, Locais ou Endereço</string>
+    <string name="cadastra_nome_local">Nome do Local</string>
+    <string name="cadastra_dica_endereco">Rua, Nº, Complemento...</string>
+    <string name="cadastra_dica_bairro">Bairro</string>
+    <string name="cadastra_dica_cidade">Cidade</string>
+    <string name="cadastra_dica_telefone">DDD e Telefone</string>
+    <string name="cadastra_banheiro_adaptado">Banheiro Adaptado</string>
+    <string name="cadastra_vagas_exclusivas">Vagas Exclusivas</string>
+    <string name="cadastra_objetos_ao_alcance">Objetos ao alcance</string>
+    <string name="cadastra_possui_rampas">Possui Rampas</string>
+    <string name="cadastra_largura_suficiente">Largura Suficiente</string>
+    <string name="cadastra_dica_estado">Estado</string>
+    <string name="cadastra_dica_categorias">Categoria</string>
+    <string name="btn_salvar">Salvar</string>
+    <string name="txt_detalhes">Detalhes</string>
+    <string name="btn_cancelar">Cancelar</string>
+
     <string-array name="valores_array_raios">
         <item id="0.5">500 Metros</item>
         <item id="2">2 KM</item>
         <item id="5">5 KM</item>
         <item id="10">10 KM</item>
         <item id="25">25 KM</item>
+    </string-array>
+    <string-array name="valores_array_ordenacao">
+        <item id="classificacao">Classificação</item>
+        <item id="distancia">Distância</item>
     </string-array>
 
     <string-array name="valores_array_tipos_alerta">

@@ -58,14 +58,6 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".controllers.PesquisaCategoriaActivity"
-            android:label="@string/title_activity_pesquisa_categoria"
-            android:parentActivityName=".controllers.PesquisaLocaisActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".controllers.PesquisaLocaisActivity" />
-        </activity>
-        <activity
             android:name=".controllers.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="1"
+    android:layout_margin="10dp"
+    >
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_layoutlista_linha1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Supermercado Ofertao"
+            android:layout_gravity="center_vertical"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:textColor="#ff000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:id="@+id/tv_layoutlista_estrelas"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_gravity="center|right" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:id="@+id/img_layoutlista_estrela"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:src="@android:drawable/btn_star_big_on"
+            android:layout_gravity="right" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/tv_layoutlista_linha2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:textSize="15sp"
+            android:text="Supermercado"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_gravity="left|center_vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25"
+            android:id="@+id/tv_layoutlista_distancia"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_gravity="center|right"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:text="KM"
+            android:id="@+id/tv_layoutlista_km"
+            android:layout_row="1"
+            android:layout_column="2"
+            android:layout_gravity="center"
+            android:layout_marginRight="0dp" />
+    </TableRow>
+
+
+</TableLayout>

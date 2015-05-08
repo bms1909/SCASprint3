@@ -86,6 +86,4 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
         }
         return retorno;
     }
-
-
 }

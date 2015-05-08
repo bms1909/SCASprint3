@@ -9,7 +9,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +31,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ulbra.bms.scaid5.R;
@@ -52,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private boolean segueUsuario;
     private Location mLocalUltimaCargaMarcadores;
     private Location mlocalAtual;
+    private Location localEnderecoRecebido;
     private LocationListener mLocationListener;
     private Location mLocalFocoCamera;
     private clsApiClientSingleton mGerenciadorApiClient;
@@ -63,6 +62,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private clsEstabelecimentos estabelecimentosListener = new clsEstabelecimentos();
     private SharedPreferences spIdUsuario;
 
+
     //region Mapa
     @Override
     /* ativado quando o mapa estiver instanciado */
@@ -70,15 +70,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //passa para um objeto local o googleMap instanciado
         objMapa = map;
         mLocalFocoCamera = new Location("");
-        mLocalFocoCamera.setTime(new Date().getTime());
         objMapa.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition cameraPosition) {
                 if (!segueUsuario) {
                     mLocalFocoCamera.setLatitude(cameraPosition.target.latitude);
                     mLocalFocoCamera.setLongitude(cameraPosition.target.longitude);
-                    if (mLocalFocoCamera.distanceTo(mLocalUltimaCargaMarcadores) > 1000) {
-                        carregaMarcadores(mLocalFocoCamera, 1);
+                    if (mLocalUltimaCargaMarcadores != null && mLocalFocoCamera.distanceTo(mLocalUltimaCargaMarcadores) > 1000) {
+                        carregaMarcadores(mLocalFocoCamera, 1, false);
                     }
                 }
             }
@@ -99,10 +98,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
         //amarra evento de clique no marcador
         objMapa.setOnMarkerClickListener(this);
+        if(localEnderecoRecebido!=null)
+        {
+            moveCamera(localEnderecoRecebido);
+            carregaMarcadores(localEnderecoRecebido,1,true);
+        }
     }
 
-    private void carregaMarcadores(Location localCarga, int raioCargaMarcadores) {
+    private void carregaMarcadores(Location localCarga, int raioCargaMarcadores,boolean limpaMapa) {
         if (objMapa != null) {
+                if(limpaMapa) {
+                    objMapa.clear();
+                }
                 LatLng local = new LatLng(localCarga.getLatitude(), localCarga.getLongitude());
                 alertasListener.carregaAlertas(raioCargaMarcadores,local,this);
                 estabelecimentosListener.estabelecimentosPorRaio(raioCargaMarcadores,local,this);
@@ -214,7 +221,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             txtDescricao.setText(alertaSelecionado.descricaoAlerta);
                             dlgEdita.setView(viewDetalhes);
 
-                            dlgEdita.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
+                            dlgEdita.setPositiveButton(getString(R.string.btn_salvar), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -240,7 +247,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             });
                             dlgEdita.setNegativeButton("Cancelar",null);
                             dlgEdita.create().show();
-
                         }
                     }
                 });
@@ -249,7 +255,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
         }
-
+        carregaMarcadores(mlocalAtual,1,true);
         return false;
     }
 //endregion
@@ -257,9 +263,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     //region Activity
 
     private void moveCamera(Location localAtual) {
-        try {
+        if(objMapa!=null) {
             //desloca a visualização do mapa para a coordenada informada
-
             objMapa.animateCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(localAtual.getLatitude(), localAtual.getLongitude())), 17), new GoogleMap.CancelableCallback() {
                 @Override
                 public void onFinish() {
@@ -271,8 +276,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     segueUsuario = false;
                 }
             });
-        } catch (NullPointerException e) {
-            Log.d("erro ao mover camera", e.getMessage());
         }
     }
 
@@ -282,6 +285,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         //objeto shared preferences, armazena o id do usuário logado
         spIdUsuario = getSharedPreferences("USUARIO", MODE_PRIVATE);
+
         //executa operações de POST pendentes
         if (clsJSONget.temInternet())
             clsJSONpost.executaPendentes(this);
@@ -343,10 +347,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-
+        Intent recebido = getIntent();
         //configura se o método movecamera deve ser acionado ao mudar a localização
-        segueUsuario = true;
-
+        if(recebido.hasExtra("LATITUDE"))
+        {
+            segueUsuario = false;
+            localEnderecoRecebido= new Location("");
+            localEnderecoRecebido.setLatitude(recebido.getDoubleExtra("LATITUDE", 0));
+            localEnderecoRecebido.setLongitude(recebido.getDoubleExtra("LONGITUDE", 0));
+        }
+        else {
+            segueUsuario = true;
+        }
         //cria o listener local de localização e implementa o método de monitoramento do mesmo
         mLocationListener = new LocationListener() {
             @Override
@@ -357,11 +369,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
                 //se não houver nenhuma carga de dados anterior, executa
                 if (mLocalUltimaCargaMarcadores == null) {
-                    carregaMarcadores(localAtual, 1);
+                    carregaMarcadores(localAtual, 1,false);
                 }
                 //compara a distância da última carga de dados realizada com a atual, em metros
                 else if (localAtual.distanceTo(mLocalUltimaCargaMarcadores) > 300) {
-                    carregaMarcadores(localAtual, 1);
+                    carregaMarcadores(localAtual, 1,false);
                 }
                 mlocalAtual = localAtual;
             }
@@ -412,7 +424,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
             else if(mlocalAtual!=null)
             {
-                carregaMarcadores(mlocalAtual,1);
+                carregaMarcadores(mlocalAtual,1,false);
             }
         }
     }
@@ -455,7 +467,17 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         if (id == R.id.btn_main_busca) {
             startActivity(new Intent(MainActivity.this, PesquisaLocaisActivity.class));
         }
-
+        else if(id==R.id.btn_main_sincroniza)
+        {
+            //limpa e recarrega o mapa e sincroniza operações pendentes
+            if(clsJSONget.temInternet()) {
+                segueUsuario=true;
+                carregaMarcadores(mlocalAtual, 2, true);
+                clsJSONpost.executaPendentes(this);
+            }
+            else
+                Toast.makeText(this,"Sem internet, confira conexão e tente de novo",Toast.LENGTH_LONG).show();
+        }
         return super.onOptionsItemSelected(item);
     }
     //endregion
@@ -465,7 +487,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void btnAlertar_Click(View a) {
         //confere precisão do local obtido
         if (mlocalAtual == null || mlocalAtual.getAccuracy() > 20) {
-            Toast.makeText(MainActivity.this, "Aguardando local preciso", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Aguardando local preciso", Toast.LENGTH_SHORT).show();
         } else {
 
 
@@ -480,8 +502,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             //adiciona o layout viewdetalhes como fonte para visual da view
             detalhe.setView(viewDetalhes);
-            detalhe.setTitle("Detalhes");
-            detalhe.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
+            detalhe.setTitle(getString(R.string.txt_detalhes));
+            detalhe.setPositiveButton(getString(R.string.btn_salvar), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     RadioGroup rdGrupo = (RadioGroup) viewDetalhes.findViewById(R.id.rgDetalhesAlerta);
@@ -501,13 +523,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
                     clsAlertas novo = new clsAlertas(spIdUsuario.getInt("ID_USUARIO",0), mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
                     novo.cadastraAlerta(MainActivity.this);
-
                     Toast.makeText(MainActivity.this, "Seu alerta aparecerá em breve, obrigado!", Toast.LENGTH_SHORT).show();
-                    carregaMarcadores(mlocalAtual, 1);
+                    carregaMarcadores(mlocalAtual, 1,false);
                     dialog.cancel();
                 }
             });
-            detalhe.setNegativeButton("Cancelar", null);
+            detalhe.setNegativeButton(getString(R.string.btn_cancelar), null);
             //click fora do AlertDialog
      /*       detalhe.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override

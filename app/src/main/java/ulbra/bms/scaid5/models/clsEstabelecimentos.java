@@ -47,7 +47,7 @@ public class clsEstabelecimentos {
     }
 
     //cadastro
-    public clsEstabelecimentos(int idCat, String nome, String endereco, String cidade, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, boolean estacionamento, String telefone, LatLng latlon, float nota) {
+    public clsEstabelecimentos(int idCat, String nome, String endereco, String cidade, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, boolean estacionamento, String telefone, LatLng latlon, int nota) {
         this.idCategoria = idCat;
         this.nomeEstabelecimento = nome;
         this.enderecoEstabelecimento = endereco;

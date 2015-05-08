@@ -3,31 +3,23 @@ package ulbra.bms.scaid5.controllers;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Toast;
 
 import ulbra.bms.scaid5.R;
 import ulbra.bms.scaid5.interfaces.usuarioCarregadoListener;
@@ -37,7 +29,7 @@ import ulbra.bms.scaid5.models.clsUsuarios;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends ActionBarActivity{
 
     private clsUsuarios mUsuario;
 
@@ -46,7 +38,6 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
     private EditText mUsuarioView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +46,6 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.txt_login_email);
-        popularAutoComplete();
         mUsuario= new clsUsuarios();
         mUsuario.addListener(new usuarioCarregadoListener() {
             @Override
@@ -94,7 +84,7 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
                     builder.setPositiveButton("Repetir", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(which==1)
+                            if(which==DialogInterface.BUTTON_POSITIVE)
                             {
                                 tentarLogin();
                             }
@@ -113,7 +103,7 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                if ( id == EditorInfo.IME_NULL) {
                     tentarLogin();
                     return true;
                 }
@@ -121,22 +111,10 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
             }
         });
 
-
-
-        mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void popularAutoComplete() {
-        getLoaderManager().initLoader(0, null, this);
-    }
 
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     public void tentarLogin() {
 
         // Reset errors.
@@ -174,19 +152,48 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
             // perform the user login attempt.
 
             showProgress(true);
-            if(!mUsuarioView.getText().toString().equals(""))
+            if(mUsuarioView.getHeight()>0)
             {
                 mUsuario.nomeUsuario = mUsuarioView.getText().toString();
                 mUsuario.emailUsuario= emailouUsuario;
                 mUsuario.senhaUsuario=password;
-                mUsuario.cadastraUsuario(LoginActivity.this);
+                String retornoCadastro=mUsuario.cadastraUsuario();
+                switch (retornoCadastro) {
+                    case "SUCESSO":
+                        mUsuario.carregaUsuario(emailouUsuario, password, this);
+                        break;
+                    case "JA_CADASTRADO":
+                        mEmailView.setError("Usuário ou email já cadastrados!");
+                        mUsuarioView.setError("Usuário ou email já cadastrados!");
+                        mEmailView.requestFocus();
+                        showProgress(false);
+                        break;
+                    case "ERRO_DOWNLOAD": {
+                        AlertDialog.Builder novo = new AlertDialog.Builder(this);
+                        novo.setMessage("Erro de conexão com a internet, confira sua internet e tente novamente");
+                        novo.setPositiveButton("OK", null);
+                        novo.show();
+                        showProgress(false);
+                        break;
+                    }
+                    default: {
+                        AlertDialog.Builder novo = new AlertDialog.Builder(this);
+                        novo.setMessage("Erro desconhecido, confira a estabilidade de sua internet e tente novamente, se persistir, contate o desenvolvedor e informe o código:\n" + retornoCadastro);
+                        novo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        });
+                        novo.show();
+                        showProgress(false);
+                        break;
+                    }
+                }
             }
-
-            mUsuario.carregaUsuario(emailouUsuario,password,this);
-
-
-          //  mAuthTask = new UserLoginTask(email, mUsuarioView.getText().toString(), password);
-            //mAuthTask.execute((Void) null);
+            else {
+                mUsuario.carregaUsuario(emailouUsuario, password, this);
+            }
         }
     }
 
@@ -197,16 +204,6 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
     public void showProgress(final boolean show) {
 
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mProgressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
@@ -215,40 +212,6 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
                     mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
                 }
             });
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, emails);
-        mEmailView.setAdapter(adapter);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
     }
 
     public void btnLogin_Click(View view) {
@@ -274,20 +237,32 @@ public class LoginActivity extends ActionBarActivity implements LoaderCallbacks<
 
     }
 
-    public void btnRecuperaSenha_click(View view) {
-        /*mPasswordView.setHeight(0);
-        mUsuarioView.setHeight(0);
-        mEmailView.setHint("Informe seu email ");*/
-    }
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
+    public void txtRecuperaSenha_Click(View view) {
+        AlertDialog.Builder dlgRecupera = new AlertDialog.Builder(this);
+        dlgRecupera.setTitle("Recuperar Conta");
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View recuperaSenha = inflater.inflate(R.layout.layout_recupera_senha, null);
+        //adiciona o layout recuperasenha como fonte para visual da view
+        dlgRecupera.setView(recuperaSenha);
+        dlgRecupera.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EditText nomeOuEmail = (EditText) recuperaSenha.findViewById(R.id.txt_recuperasenha);
+                if (nomeOuEmail.getText().toString().equals("")) {
+                    nomeOuEmail.setError("Campo obrigatório!");
+                    nomeOuEmail.requestFocus();
+                } else {
+                    if(clsUsuarios.recuperaUsuario(nomeOuEmail.getText().toString())) {
+                        Toast.makeText(LoginActivity.this, "Sua senha será enviada para o email cadastrado em breve", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(LoginActivity.this, "Não foi possível reconhecer seu email ou usuário, confira os dados informados", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+        dlgRecupera.setCancelable(true);
+        dlgRecupera.show();
     }
 
 }

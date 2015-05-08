@@ -21,14 +21,14 @@ public class clsBdLocal {
     public void insereTemp(String comando) {
         ContentValues valores = new ContentValues();
         valores.put("comando", comando);
-        db.insert("temp", null, valores);
+        db.insert("postcache", null, valores);
     }
 
     public void removeTemp(String comando) {
         // ContentValues valores = new ContentValues();
         //   valores.put("comando", comando);
         //  db.delete("temp","where comando = '"+comando+"'",null);
-        db.execSQL("DELETE FROM temp where comando = '" + comando + "'");
+        db.execSQL("DELETE FROM postcache where comando = '" + comando + "'");
     }
 
     public ArrayList<String> buscaTemp() {
@@ -36,7 +36,7 @@ public class clsBdLocal {
         String[] colunaConsulta = new String[]{"comando"};
         //nome tabela,colunas da consulta,where,where args,groupby,having,orderby
 
-        Cursor cursor = db.query("temp", colunaConsulta, null /*"comando != null"*/, null, null, null, null);
+        Cursor cursor = db.query("postcache", colunaConsulta, null /*"comando != null"*/, null, null, null, null);
 
         while (cursor.moveToNext()) {
             retorno.add(cursor.getString(0));

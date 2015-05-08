@@ -94,15 +94,13 @@ public class clsAlertas {
 
     public void editaAlerta(int riscoAlerta, int tipoAlerta, String descricaoAlerta,Context contexto) {
         clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idUsuario=" + this.idUsuario + "&lat=" + this.latlonAlerta.latitude + "&lon=" + this.latlonAlerta.longitude + "&tipo=" + tipoAlerta + "&descricao=" + Uri.encode(descricaoAlerta) + "&risco=" + riscoAlerta);
-
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idAlerta="+this.idAlerta+"&tipo="+tipoAlerta+"&descricao="+Uri.encode(descricaoAlerta)+"&risco="+riscoAlerta);
     }
 
     public void excluiAlerta(Context contexto) {
-        //TODO fazer esse e o de cima no WebService
         clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idUsuario=" + this.idUsuario + "&lat=" + this.latlonAlerta.latitude + "&lon=" + this.latlonAlerta.longitude + "&tipo=" + this.tipoAlerta + "&descricao=" + Uri.encode(this.descricaoAlerta) + "&risco=" + this.riscoAlerta);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idAlerta="+this.idAlerta);
     }
 
-    }
+}
 
