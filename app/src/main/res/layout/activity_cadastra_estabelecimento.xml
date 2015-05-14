@@ -75,7 +75,7 @@
                 android:selectAllOnFocus="true"
                 android:hint="@string/cadastra_dica_bairro" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/txt_novoestabelecimento_cidade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -89,7 +89,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignRight="@+id/txt_novoestabelecimento_bairro"
-                android:layout_alignEnd="@+id/txt_novoestabelecimento_bairro" />
+                android:layout_alignEnd="@+id/txt_novoestabelecimento_bairro"
+                android:autoText="false" />
 
             <Spinner
                 android:id="@+id/sp_novoestabelecimento_estado"

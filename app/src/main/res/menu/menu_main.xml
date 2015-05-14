@@ -16,5 +16,10 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_search"
         />
-
+    <item
+        android:id="@+id/btn_main_sobre"
+        android:orderInCategory="100"
+        android:title="Sobre"
+        app:showAsAction="never"
+        />
 </menu>

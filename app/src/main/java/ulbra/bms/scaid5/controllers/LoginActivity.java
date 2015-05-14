@@ -46,6 +46,10 @@ public class LoginActivity extends ActionBarActivity{
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.txt_login_email);
+        mUsuarioView = (EditText) findViewById(R.id.txt_login_usuario);
+        mPasswordView = (EditText) findViewById(R.id.txt_login_senha);
+        mEmailView.setNextFocusForwardId(R.id.txt_login_senha);
+
         mUsuario= new clsUsuarios();
         mUsuario.addListener(new usuarioCarregadoListener() {
             @Override
@@ -98,8 +102,6 @@ public class LoginActivity extends ActionBarActivity{
                 showProgress(false);
             }
         });
-        mUsuarioView = (EditText) findViewById(R.id.txt_login_usuario);
-        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -129,8 +131,8 @@ public class LoginActivity extends ActionBarActivity{
         View focusView = null;
 
 
-        // Check for a valid password, if the user entered one.TODO alterar para 4
-        if (!TextUtils.isEmpty(password) && !(password.length() > 1)) {
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !(password.length() > 4)) {
             mPasswordView.setError("Senha inválida, deve ser maior que 4 dígitos");
             focusView = mPasswordView;
             cancel = true;
@@ -221,20 +223,22 @@ public class LoginActivity extends ActionBarActivity{
     public void cbxNovoUsuario_Click(View view) {
         LinearLayout habilitar = (LinearLayout) findViewById(R.id.ll_login);
         ViewGroup.LayoutParams lp = habilitar.getLayoutParams();
-        AutoCompleteTextView txtNomeOuEmail = (AutoCompleteTextView) findViewById(R.id.txt_login_email);
         CheckBox cbxCadastra = (CheckBox) view;
         if(cbxCadastra.isChecked()) {
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            txtNomeOuEmail.setHint("Email");
+            mEmailView.setHint("Email");
+            mUsuarioView.setEnabled(true);
+            mEmailView.setNextFocusForwardId(R.id.txt_login_usuario);
         }
         else
         {
+            mEmailView.setNextFocusForwardId(R.id.txt_login_senha);
+            mUsuarioView.setEnabled(false);
             mUsuarioView.setText("");
             lp.height = 0;
-            txtNomeOuEmail.setHint("Email ou Usuário");
+            mEmailView.setHint("Email ou Usuário");
         }
         habilitar.setLayoutParams(lp);
-
     }
 
     public void txtRecuperaSenha_Click(View view) {
@@ -264,7 +268,6 @@ public class LoginActivity extends ActionBarActivity{
         dlgRecupera.setCancelable(true);
         dlgRecupera.show();
     }
-
 }
 
 

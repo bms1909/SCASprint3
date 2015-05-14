@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -64,6 +65,23 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
 
     //region Mapa
+
+    private void moveCamera(Location localAtual) {
+        if(objMapa!=null) {
+            //desloca a visualização do mapa para a coordenada informada
+            objMapa.animateCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(localAtual.getLatitude(), localAtual.getLongitude())), 19), new GoogleMap.CancelableCallback() {
+                @Override
+                public void onFinish() {
+                }
+
+                //ativado se o usuário interromper a movimentação da camera
+                @Override
+                public void onCancel() {
+                    segueUsuario = false;
+                }
+            });
+        }
+    }
     @Override
     /* ativado quando o mapa estiver instanciado */
     public void onMapReady(GoogleMap map) {
@@ -102,6 +120,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         {
             moveCamera(localEnderecoRecebido);
             carregaMarcadores(localEnderecoRecebido,1,true);
+        }
+        //busca do sharedPreferences ultimo local conhecido para foco da camera
+        if (spIdUsuario.contains("UltimaLatitude")&&spIdUsuario.contains("UltimaLongitude")) {
+            objMapa.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(spIdUsuario.getFloat("UltimaLatitude", 0), spIdUsuario.getFloat("UltimaLongitude", 0))), 19));
         }
     }
 
@@ -262,28 +284,26 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     //region Activity
 
-    private void moveCamera(Location localAtual) {
-        if(objMapa!=null) {
-            //desloca a visualização do mapa para a coordenada informada
-            objMapa.animateCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(localAtual.getLatitude(), localAtual.getLongitude())), 17), new GoogleMap.CancelableCallback() {
-                @Override
-                public void onFinish() {
-                }
+    @Override
+    protected void onSaveInstanceState(Bundle Save)
+    {
+        Save.putParcelable("LocalAtual", mlocalAtual);
+        super.onSaveInstanceState(Save);
+    }
 
-                //ativado se o usuário interromper a movimentação da camera
-                @Override
-                public void onCancel() {
-                    segueUsuario = false;
-                }
-            });
-        }
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
+    {
+        mlocalAtual = savedInstanceState.getParcelable("LocalAtual");
+        moveCamera(mlocalAtual);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //objeto shared preferences, armazena o id do usuário logado
+        //objeto shared preferences, armazena o id do usuário logado e ultimo local conhecido
         spIdUsuario = getSharedPreferences("USUARIO", MODE_PRIVATE);
 
         //executa operações de POST pendentes
@@ -296,7 +316,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             public void alertasCarregados(ArrayList<clsAlertas> alertas) {
                     alertasCarregados = alertas;
                     for (clsAlertas percorre : alertas) {
-                        //TODO fazer ícones
                         // .icon personaliza o ícone,
                         //adiciona o marcador ver https://developers.google.com/maps/documentation/android/marker#customize_the_marker_image
                         //0= buraco
@@ -446,6 +465,10 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         mLocalUltimaCargaMarcadores = null;
         objMapa = null;
         mLocationListener = null;
+        SharedPreferences.Editor editor = spIdUsuario.edit();
+        editor.putFloat("UltimaLatitude", (float) mlocalAtual.getLatitude());
+        editor.putFloat("UltimaLongitude", (float) mlocalAtual.getLongitude());
+        editor.apply();
         super.onDestroy();
     }
 
@@ -471,12 +494,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         {
             //limpa e recarrega o mapa e sincroniza operações pendentes
             if(clsJSONget.temInternet()) {
-                segueUsuario=true;
-                carregaMarcadores(mlocalAtual, 2, true);
-                clsJSONpost.executaPendentes(this);
+                if (mlocalAtual!=null) {
+                    segueUsuario = true;
+                    carregaMarcadores(mlocalAtual, 2, true);
+                    clsJSONpost.executaPendentes(this);
+                }
             }
             else
-                Toast.makeText(this,"Sem internet, confira conexão e tente de novo",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"Sem internet, confira conexão e tente de novo",Toast.LENGTH_SHORT).show();
+        }
+        else if(id==R.id.btn_main_sobre)
+        {
+            startActivity(new Intent(MainActivity.this, SobreActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -555,9 +584,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     public void btnNovoEstabelecimento_Click(View view) {
         //estabelecimentos já vem ordenados do webservice
-        if(estabelecimentosCarregados==null)
+        //aguarda precisão suficiente ou obtenção da localização
+        if (mlocalAtual == null || mlocalAtual.getAccuracy() > 1000) {
+            Toast.makeText(MainActivity.this, "Aguardando local preciso...", Toast.LENGTH_SHORT).show();
+        }
+        //se nao ha estabelecimentos proximos, avança direto para cadastro
+        else if(estabelecimentosCarregados==null)
         {
-            Toast.makeText(this,"inicializando aplicativo, se a mensagem persistir, confira sua internet",Toast.LENGTH_SHORT);
+            startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
         }
         else {
             ArrayList<String> tiposAlerta = new ArrayList<>();
@@ -567,8 +601,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 List<clsEstabelecimentos> temp = estabelecimentosCarregados.subList(0, 15);
                 estabelecimentoSugeridos.addAll(temp);
             }
-            else
-            {
+            else {
                 estabelecimentoSugeridos.addAll(estabelecimentosCarregados);
             }
 

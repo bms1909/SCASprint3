@@ -4,11 +4,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -21,18 +20,18 @@ import android.widget.Spinner;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import ulbra.bms.scaid5.R;
+import ulbra.bms.scaid5.models.clsPesquisaEndereco;
 import ulbra.bms.scaid5.interfaces.adapterListViewEstabelecimentos;
+import ulbra.bms.scaid5.interfaces.enderecoEncontradoListener;
 import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
 import ulbra.bms.scaid5.models.clsApiClientSingleton;
 import ulbra.bms.scaid5.models.clsCategorias;
@@ -50,6 +49,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
     private float raioBusca;
     private boolean ordenarPorClassificacao;
     private int idCategoriaPesquisa;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +93,6 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                     });
                     listener.estabelecimentosPorRaio(raioBusca, localAtual, PesquisaLocaisActivity.this);
                 }
-
-
             }
 
             @Override
@@ -153,6 +151,28 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle Save)
+    {
+        Save.putInt("idCategoria",idCategoriaPesquisa);
+        Save.putSerializable("Estabelecimentos",estabelecimentosCarregados);
+        Save.putSerializable("Categorias",categoriasCarregadas);
+        super.onSaveInstanceState(Save);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
+    {
+        idCategoriaPesquisa = savedInstanceState.getInt("idCategoria");
+        if (idCategoriaPesquisa>0)
+            somenteCategoria(idCategoriaPesquisa);
+        //noinspection unchecked
+        estabelecimentosCarregados = (ArrayList<clsEstabelecimentos>) savedInstanceState.getSerializable("Estabelecimentos");
+        //noinspection unchecked
+        categoriasCarregadas = (ArrayList<clsCategorias>) savedInstanceState.getSerializable("Categorias");
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void onBackPressed() {
         if (idCategoriaPesquisa>0)
             somenteCategoria(0);
@@ -178,7 +198,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
         else {
             txtPesquisa.setHint(R.string.pesquisalocais_dica);
             ab.setTitle(R.string.title_activity_pesquisa_locais);
-            categoriasCarregadas=clsCategorias.carregaCategorias();
+            categoriasCarregadas= clsCategorias.carregaCategorias();
         }
         populaLista();
     }
@@ -241,7 +261,6 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                         m.put("linha1", "" + busca.idEstabelecimento);
                         m.put("linha2", busca.nomeEstabelecimento);
                         m.put("linha3", "" + DF.format(busca.mediaEstrelasAtendimento));
-                        //todo avaliar nomecategoria no objeto
                         for (clsCategorias nome : categoriasCarregadas) {
                             if (nome.getIdCategoria() == busca.idCategoria) {
                                 m.put("linha4", nome.getNomeCategoria());
@@ -255,58 +274,18 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                     }
                 }
             }
-            if(((parametro.toString().startsWith("rua")&&parametro.length()>4)||(parametro.toString().startsWith("av")&&parametro.length()>8))&& idCategoriaPesquisa ==0)
+            if(((parametro.toString().startsWith("rua"))||(parametro.toString().startsWith("av"))||(parametro.length()>4))&& idCategoriaPesquisa ==0)
             {
-                List<Address> listaEnderecos;
-                Geocoder localizaEndereco = new Geocoder(this,Locale.getDefault());
-                try {
-                    //TODO lógica errada
-                    /*é possível fazer uma correspondência aproximada de coordenadas geográficas com os seguintes valores:
-                    * EX: -31.245678
-                    * 1=possui precisão de 111.11km
-                     * 2=precisão de 11.1km
-                     * 4=1.11km
-                     * 5=110m
-                     * 6=11m
-                     * 7=1.1m
-                     * 8=0.11m
-                     */
-                    double latMax,latMin,lonMax,lonMin;
+                clsPesquisaEndereco pesquisaEndereco = new clsPesquisaEndereco(this, raioBusca, localAtual, parametro.toString(), new enderecoEncontradoListener() {
+                    @Override
+                    public void enderecosEncontrados(List<Map<String, String>> Enderecos) {
+                        elementosLista.addAll(Enderecos);
+                        populaLista();
+                    }
+                });
+                pesquisaEndereco.execute();
 
-                    int divisor = 1; //X.0
-                    if (raioBusca < 11)
-                    {
-                        divisor = 100;    //0.0X
-                    }
-                    else if (raioBusca < 111)
-                    {
-                        divisor = 10;      //0.X
-                    }
-                    //TODO lógica errada
-                    latMin = localAtual.latitude - (raioBusca / divisor);
-                    lonMin = localAtual.longitude - (raioBusca / divisor);
-                    latMax = localAtual.latitude + (raioBusca / divisor);
-                    lonMax = localAtual.longitude + (raioBusca / divisor);
-
-                    listaEnderecos=localizaEndereco.getFromLocationName(parametro.toString(),10,latMin,lonMin,latMax,lonMax);
-                    Map<String, String> m = new HashMap<>();
-                    for (Address percorre:listaEnderecos)
-                    {
-                        m.put("linha0", ""+percorre.getLatitude());
-                        m.put("linha1", ""+percorre.getLongitude());
-                        m.put("linha2", percorre.getAddressLine(0));
-                        m.put("linha4", percorre.getLocality());
-                        float[] distancia = new float[1];
-                        DecimalFormat DF = new DecimalFormat("0.0");
-                        Location.distanceBetween(localAtual.latitude, localAtual.longitude, percorre.getLatitude(), percorre.getLongitude(), distancia);
-                        m.put("linha5",""+ DF.format(distancia[0] / 1000));
-                        elementosLista.add(m);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
-            //TODO adicionar lógica para busca de endereço aqui
         }
 
     private void populaLista() {

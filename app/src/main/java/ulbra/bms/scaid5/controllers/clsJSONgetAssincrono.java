@@ -20,6 +20,7 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
 
     private downloadFeitoListener ouvinte;
     private final Context contexto;
+    private boolean deuErroInternet = false;
 
     public clsJSONgetAssincrono(Context ctx)
     {
@@ -32,15 +33,16 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
 
     @Override
     protected void onPostExecute(JSONArray result) {
-        if(result!=null)
-            ouvinte.downloadConcluido(result);
-        else
+        //utilizado pois o webservice pode retornar null em uma consulta sem resultados
+        if(deuErroInternet)
             Toast.makeText(contexto,"Erro de internet, alertas e estabelecimentos podem estar desatualizados",Toast.LENGTH_LONG).show();
+        else
+            ouvinte.downloadConcluido(result);
     }
 
     @Override
     protected JSONArray doInBackground(String... params) {
-        JSONArray retorno;
+        JSONArray retorno = null;
 
         StringBuilder builder = new StringBuilder();
         for (String s : params) {
@@ -62,7 +64,13 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
             //conversao de inputstream para string
             IOUtils.copy(conn.getInputStream(), intermediario);
             String conteudo = intermediario.toString();
-            if (!conteudo.startsWith("[")) {
+            //se retorno for vazio
+            if ((conteudo.equals("[]")))
+            {
+                return null;
+            }
+            //se nao comeca com [, eh um JSON object, e para garantir o reuso, eh transformado em jsonArray
+            else if (!conteudo.startsWith("[")) {
                 builder = new StringBuilder();
                 builder.append("[");
                 if (conteudo.startsWith("t") || conteudo.startsWith("f")) {
@@ -75,14 +83,19 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
                 builder.append("]");
                 conteudo = builder.toString();
             }
-                retorno = new JSONArray(conteudo); //converte os dados recebidos de uma string para um objeto manipulável
+            retorno = new JSONArray(conteudo); //converte os dados recebidos de uma string para um objeto manipulável
 
-
-        } catch (IOException | JSONException o) {
+        } catch (IOException o) {
             //previne crash se a mensagem for vazia
-            if (o.getMessage()!=null)
+            if (o.getMessage()!=null) {
                 Log.d("get ", o.getMessage());
-            return null;
+            }
+            deuErroInternet = true;
+        } catch (JSONException o) {
+            //previne crash se a mensagem for vazia
+            if (o.getMessage()!=null) {
+                Log.d("json ", o.getMessage());
+            }
         }
         return retorno;
     }

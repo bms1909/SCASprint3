@@ -16,7 +16,6 @@ import java.util.concurrent.ExecutionException;
 import ulbra.bms.scaid5.controllers.clsJSONget;
 import ulbra.bms.scaid5.controllers.clsJSONgetAssincrono;
 import ulbra.bms.scaid5.controllers.clsJSONpost;
-import ulbra.bms.scaid5.interfaces.detalhesEstabelecimentoCarregadoListener;
 import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
 import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
 
@@ -28,8 +27,12 @@ public class clsEstabelecimentos {
     public int idEstabelecimento;
     public LatLng latlonEstabelecimento;
     public String nomeEstabelecimento;
+
     public String enderecoEstabelecimento;
+    public String bairroEstabelecimento;
     public String cidadeEstabelecimento;
+    public String estadoEstabelecimento;
+
     public float mediaEstrelasAtendimento;
     public boolean possuiBanheiro;
     public boolean possuiEstacionamento;
@@ -39,7 +42,6 @@ public class clsEstabelecimentos {
     public String telefoneEstabelecimento;
 
     private estabelecimentosCarregadosListener ouvinte;
-    private detalhesEstabelecimentoCarregadoListener ouvinteDetalhesEstabelecimento;
 
     //region Construtores
     public clsEstabelecimentos(int idEstabelecimento) {
@@ -47,11 +49,13 @@ public class clsEstabelecimentos {
     }
 
     //cadastro
-    public clsEstabelecimentos(int idCat, String nome, String endereco, String cidade, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, boolean estacionamento, String telefone, LatLng latlon, int nota) {
+    public clsEstabelecimentos(int idCat, String nome, String endereco, String bairro,String cidade,String estado, boolean possBanheiro, boolean altCerta, boolean rampa, boolean largo, boolean estacionamento, String telefone, LatLng latlon, int nota) {
         this.idCategoria = idCat;
         this.nomeEstabelecimento = nome;
         this.enderecoEstabelecimento = endereco;
         this.cidadeEstabelecimento = cidade;
+        this.estadoEstabelecimento = estado;
+        this.bairroEstabelecimento = bairro;
         this.possuiBanheiro = possBanheiro;
         this.alturaCerta = altCerta;
         this.possuiRampa = rampa;
@@ -62,12 +66,14 @@ public class clsEstabelecimentos {
         this.possuiEstacionamento = estacionamento;
     }
 
-    private clsEstabelecimentos(int idCat, int idEstab, String nome, String endereco, String cidade, double avgEstrelas, boolean possBanheiro, boolean estacionamento, boolean altCerta, boolean rampa, boolean largo, String telefone, double latitude, double longitude) {
+    private clsEstabelecimentos(int idCat, int idEstab, String nome, String endereco, String bairro,String cidade,String estado, double avgEstrelas, boolean possBanheiro, boolean estacionamento, boolean altCerta, boolean rampa, boolean largo, String telefone, double latitude, double longitude) {
         this.idCategoria = idCat;
         this.idEstabelecimento = idEstab;
         this.nomeEstabelecimento = nome;
         this.enderecoEstabelecimento = endereco;
         this.cidadeEstabelecimento = cidade;
+        this.bairroEstabelecimento = bairro;
+        this.estadoEstabelecimento = estado;
         this.mediaEstrelasAtendimento = (float) avgEstrelas;
         this.possuiEstacionamento = estacionamento;
         this.possuiBanheiro = possBanheiro;
@@ -87,14 +93,10 @@ public class clsEstabelecimentos {
     {
         this.ouvinte= listener;
     }
-    public void addListener(detalhesEstabelecimentoCarregadoListener listener)
-    {
-        this.ouvinteDetalhesEstabelecimento= listener;
-    }
-
+    /*
     public void estabelecimentosPorCategoria(float raio, LatLng local, int idCategoria,Context contexto) {
         this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude + "&idCategoria=" + idCategoria,contexto);
-    }
+    }*/
     public void estabelecimentosPorRaio(float raio, LatLng local,Context contexto) {
         this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude,contexto);
     }
@@ -117,7 +119,9 @@ public class clsEstabelecimentos {
                                     loop.getInt("idEstabelecimento"),
                                     loop.getString("nomeEstabelecimento"),
                                     loop.getString("enderecoEstabelecimento"),
+                                    loop.getString("bairroEstabelecimento"),
                                     loop.getString("cidadeEstabelecimento"),
+                                    loop.getString("estadoEstabelecimento"),
                                     loop.getDouble("estrelasEstabelecimento"),
                                     loop.getBoolean("possuiBanheiro"),
                                     loop.getBoolean("possuiEstacionamento"),
@@ -191,7 +195,9 @@ public class clsEstabelecimentos {
                         loop.getInt("idEstabelecimento"),
                         loop.getString("nomeEstabelecimento"),
                         loop.getString("enderecoEstabelecimento"),
+                        loop.getString("bairroEstabelecimento"),
                         loop.getString("cidadeEstabelecimento"),
+                        loop.getString("estadoEstabelecimento"),
                         loop.getDouble("estrelasEstabelecimento"),
                         loop.getBoolean("possuiBanheiro"),
                         loop.getBoolean("possuiEstacionamento"),
@@ -202,8 +208,6 @@ public class clsEstabelecimentos {
                         loop.getDouble("latitudeEstabelecimento"),
                         loop.getDouble("longitudeEstabelecimento"));
             }
-
-
         } catch (JSONException e) {
             Log.d(null, e.getMessage());
         }
@@ -217,7 +221,11 @@ public class clsEstabelecimentos {
 
     public void cadastraEstabelecimento(int idUsuario, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + this.mediaEstrelasAtendimento);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro="+Uri.encode(this.bairroEstabelecimento)+  "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado="+this.estadoEstabelecimento+"&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
     }
 
+    public void editaEstabelecimento(int idUsuario, Context context) {
+        clsJSONpost executor = new clsJSONpost(context);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento="+this.idEstabelecimento+"&idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro="+Uri.encode(this.bairroEstabelecimento)+  "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado="+this.estadoEstabelecimento+"&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
+    }
 }

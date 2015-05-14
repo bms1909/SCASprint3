@@ -53,18 +53,22 @@ public class adapterListViewEstabelecimentos extends BaseAdapter {
         ((TextView) convertView.findViewById(R.id.tv_layoutlista_estrelas)).setText(item.get("linha3"));
         ((TextView) convertView.findViewById(R.id.tv_layoutlista_linha2)).setText(item.get("linha4"));
         ((TextView) convertView.findViewById(R.id.tv_layoutlista_distancia)).setText(item.get("linha5"));
-        if(!item.get("linha0").equals("a"))
-        {
-            (convertView.findViewById(R.id.img_layoutlista_estrela)).setVisibility(View.INVISIBLE);
-        }
-        if(item.get("linha0").equals("c"))
-        {
-            (convertView.findViewById(R.id.tv_layoutlista_km)).setVisibility(View.INVISIBLE);
-        }
-        else
+        //e=estabelecimento
+        //c=categoria
+        //numeros==endereco
+        if(item.get("linha0").equals("e"))
         {
             (convertView.findViewById(R.id.tv_layoutlista_km)).setVisibility(View.VISIBLE);
             (convertView.findViewById(R.id.img_layoutlista_estrela)).setVisibility(View.VISIBLE);
+        }
+        else if(item.get("linha0").equals("c"))
+        {
+            (convertView.findViewById(R.id.tv_layoutlista_km)).setVisibility(View.INVISIBLE);
+            (convertView.findViewById(R.id.img_layoutlista_estrela)).setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            (convertView.findViewById(R.id.img_layoutlista_estrela)).setVisibility(View.INVISIBLE);
         }
         return convertView;
     }

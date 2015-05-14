@@ -73,6 +73,14 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         estabCarregado.avaliaEstabelecimento(rb.getProgress(), id.getInt("ID_USUARIO",0), this);
         finish();
     }
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        //tarefa sincrona pois o inicio da activity depende desses dados
+        estabCarregado=estabCarregado.carregaDetalhesEstabelecimento();
+        atualizaTela();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +90,14 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         //recebe os dados da outra página e carrega o objeto local
         Intent recebido = getIntent();
         estabCarregado = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
-        //tarefa síncrona pois o início da activity depende desses dados
-        estabCarregado=estabCarregado.carregaDetalhesEstabelecimento();
+
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
 
 
         final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(DetalhesEstabelecimentoActivity.this);
         dlgAlert.setTitle("Confirmação");
-        //TODO ver se dá pra recuperar nota
-        dlgAlert.setMessage("Estabelecimento já avaliado com a nota x, deseja alterar?");
+        dlgAlert.setMessage("Você já avaliou este Estabelecimento, deseja alterar?");
 
 
         //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
@@ -122,9 +128,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                 return false;
             }
         });
-
-
-        atualizaTela();
         SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
         jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(id.getInt("ID_USUARIO",0), estabCarregado.idEstabelecimento);
     }
@@ -152,7 +155,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //tratamento de botões na activityBar
-
         switch (item.getItemId()) {
             case R.id.btnEstabelecimentoAbrirMaps:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + estabCarregado.latlonEstabelecimento.latitude + "," + estabCarregado.latlonEstabelecimento.longitude + "(" + Uri.encode(estabCarregado.nomeEstabelecimento) + ")")));
@@ -160,15 +162,10 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
             case R.id.btnEstabelecimentoTelefone:
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + estabCarregado.telefoneEstabelecimento)));
                 break;
-            /*case R.id.btnEstabelecimentoEditar:
-                Toast.makeText(this, "em breve", Toast.LENGTH_SHORT).show();
+            case R.id.btnEstabelecimentoEditar:
+                startActivity(new Intent(DetalhesEstabelecimentoActivity.this, CadastraEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabCarregado.idEstabelecimento));
                 break;
-           TODO código para envio de dados a página de cadastro previamente preenchida
-
-                rb.setIsIndicator(false);
-                */
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

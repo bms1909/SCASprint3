@@ -20,7 +20,7 @@ import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
 /**
  * Criador por Bruno em 13/03/2015.
  */
-public class clsAlertas {
+public class clsAlertas{
 
     public int idUsuario;
     public int idAlerta;

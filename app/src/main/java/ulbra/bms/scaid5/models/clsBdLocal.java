@@ -17,6 +17,17 @@ public class clsBdLocal {
         clsBdLocalConstrutor auxBD = new clsBdLocalConstrutor(ctx);
         db = auxBD.getWritableDatabase();
     }
+    //chamado quando o objeto vai ser destruido, neste caso, fechando a conexao com o BD local
+    @Override
+    public void finalize()
+    {
+        db.close();
+        try {
+            super.finalize();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 
     public void insereTemp(String comando) {
         ContentValues valores = new ContentValues();
@@ -42,5 +53,6 @@ public class clsBdLocal {
             retorno.add(cursor.getString(0));
         }
         return retorno;
+
     }
 }

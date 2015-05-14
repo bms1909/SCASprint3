@@ -13,6 +13,15 @@
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginBottom="8dp" android:visibility="gone" />
     <!--inicia sem ocupar espaço na interface-->
+
+
+    <AutoCompleteTextView android:id="@+id/txt_login_email" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:hint="Email ou Usuário"
+        android:inputType="textEmailAddress" android:maxLines="1"
+        android:singleLine="true"
+        android:imeOptions="flagNavigateNext"
+        />
+
     <LinearLayout
         android:id="@+id/ll_login"
         android:layout_width="match_parent"
@@ -26,22 +35,20 @@
             android:id="@+id/txt_login_usuario"
             android:visibility="visible"
             android:enabled="false"
+            android:imeOptions="flagNavigateNext"
             />
     </LinearLayout>
-
-    <AutoCompleteTextView android:id="@+id/txt_login_email" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:hint="Email ou Usuário"
-        android:inputType="textEmailAddress" android:maxLines="1"
-        android:singleLine="true"
-        android:imeOptions="flagNavigateNext"
-        />
-
-    <EditText android:id="@+id/password" android:layout_width="match_parent"
+    <EditText android:id="@+id/txt_login_senha" android:layout_width="match_parent"
         android:layout_marginTop="10dp"
-        android:layout_height="wrap_content" android:hint="Senha"
+        android:layout_height="wrap_content"
+        android:hint="Senha"
         android:imeActionLabel="Acessar"
-        android:imeOptions="actionUnspecified" android:inputType="textPassword"
-        android:maxLines="1" android:singleLine="true" />
+        android:imeOptions="actionUnspecified"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:nextFocusUp="@id/txt_login_email"
+        />
 
     <CheckBox
         android:layout_width="228dp"

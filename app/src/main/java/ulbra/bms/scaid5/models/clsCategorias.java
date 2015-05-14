@@ -55,7 +55,8 @@ public class clsCategorias {
         a.add(new clsCategorias(2,"Prédio Público"));
         a.add(new clsCategorias(2,"Livraria"));
         a.add(new clsCategorias(2,"Outros"));
-        return a;*/
+        return a;
+        retorno = R.array.valores_array_categorias;*/
         return retorno;
     }
 
