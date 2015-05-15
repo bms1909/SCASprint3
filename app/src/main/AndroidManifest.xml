@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ulbra.bms.scaid5" >
+    package="ulbra.bms.sca">
 
     <!-- Permissões pra lidar com mapas e rede -->
 
@@ -26,7 +26,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!-- TODO tá aqui os paranauê de mapa -->
+        <!-- tá aqui os paranauê de mapa -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -35,21 +35,21 @@
             android:value="AIzaSyADbEXJKyDAy2zDPld273YPMoYpnCxMNxM" />
 
         <activity
-            android:name=".controllers.MainActivity"
+            android:name="ulbra.bms.sca.controllers.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".controllers.DetalhesEstabelecimentoActivity"
+            android:name="ulbra.bms.sca.controllers.DetalhesEstabelecimentoActivity"
             android:label="@string/title_activity_detalhes_estabelecimento"
-            android:parentActivityName=".controllers.MainActivity" />
+            android:parentActivityName="ulbra.bms.sca.controllers.MainActivity" />
         <activity
-            android:name=".controllers.CadastraEstabelecimentoActivity"
+            android:name="ulbra.bms.sca.controllers.CadastraEstabelecimentoActivity"
             android:label="@string/title_activity_cadastra_estabelecimento"
-            android:parentActivityName=".controllers.MainActivity" />
+            android:parentActivityName="ulbra.bms.sca.controllers.MainActivity" />
         <activity
-            android:name=".controllers.PesquisaLocaisActivity"
+            android:name="ulbra.bms.sca.controllers.PesquisaLocaisActivity"
             android:label="@string/title_activity_pesquisa_locais"
-            android:parentActivityName=".controllers.MainActivity" >
+            android:parentActivityName="ulbra.bms.sca.controllers.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -59,7 +59,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".controllers.LoginActivity"
+            android:name="ulbra.bms.sca.controllers.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
@@ -68,12 +68,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".controllers.SobreActivity"
+            android:name="ulbra.bms.sca.controllers.SobreActivity"
             android:label="Sobre"
-            android:parentActivityName=".controllers.MainActivity" >
+            android:parentActivityName="ulbra.bms.sca.controllers.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ulbra.bms.scaid5.controllers.MainActivity" />
+                android:value="ulbra.bms.sca.controllers.MainActivity" />
         </activity>
     </application>
 

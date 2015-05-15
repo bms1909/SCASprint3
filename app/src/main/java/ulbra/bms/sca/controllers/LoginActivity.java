@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -21,9 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.interfaces.usuarioCarregadoListener;
-import ulbra.bms.scaid5.models.clsUsuarios;
+import ulbra.bms.sca.R;
+import ulbra.bms.sca.interfaces.usuarioCarregadoListener;
+import ulbra.bms.sca.models.clsUsuarios;
 
 
 /**
@@ -117,17 +117,20 @@ public class LoginActivity extends ActionBarActivity{
     }
 
 
-    public void tentarLogin() {
+    private void tentarLogin() {
 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+        mUsuarioView.setError(null);
 
         // Store values at the time of the login attempt.
         String emailouUsuario = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String usuario = mUsuarioView.getText().toString();
 
         boolean cancel = false;
+        boolean cadastrando = mUsuarioView.getHeight() > 0;
         View focusView = null;
 
 
@@ -144,6 +147,16 @@ public class LoginActivity extends ActionBarActivity{
             focusView = mEmailView;
             cancel = true;
         }
+        if ((cadastrando) && (TextUtils.isEmpty(usuario))) {
+            mUsuarioView.setError("Campo obrigatório!");
+            focusView = mUsuarioView;
+            cancel = true;
+        }
+        if ((cadastrando) && (!emailouUsuario.contains("@") || !emailouUsuario.contains("."))) {
+            mEmailView.setError("Insira um email válido!");
+            focusView = mEmailView;
+            cancel = true;
+        }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
@@ -154,7 +167,7 @@ public class LoginActivity extends ActionBarActivity{
             // perform the user login attempt.
 
             showProgress(true);
-            if(mUsuarioView.getHeight()>0)
+            if (cadastrando)
             {
                 mUsuario.nomeUsuario = mUsuarioView.getText().toString();
                 mUsuario.emailUsuario= emailouUsuario;
@@ -203,7 +216,7 @@ public class LoginActivity extends ActionBarActivity{
     /**
      * Shows the progress UI and hides the login form.
      */
-    public void showProgress(final boolean show) {
+    private void showProgress(final boolean show) {
 
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);

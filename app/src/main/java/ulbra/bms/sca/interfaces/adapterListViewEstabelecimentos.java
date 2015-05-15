@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.interfaces;
+package ulbra.bms.sca.interfaces;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Map;
 
-import ulbra.bms.scaid5.R;
+import ulbra.bms.sca.R;
 
 /**
  * kibado por Bruno on 07/05/2015. de Arthur Lehdermann https://arthurlehdermann.wordpress.com/2013/03/11/android-criando-um-listview-personalizado/

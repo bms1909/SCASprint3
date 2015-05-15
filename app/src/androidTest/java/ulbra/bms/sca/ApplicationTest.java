@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5;
+package ulbra.bms.sca;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

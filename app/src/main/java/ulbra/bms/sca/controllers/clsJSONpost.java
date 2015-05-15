@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import ulbra.bms.scaid5.models.clsBdLocal;
+import ulbra.bms.sca.models.clsBdLocal;
 
 /**
  * Criador por Bruno em 17/03/2015.

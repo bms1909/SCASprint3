@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
+import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
 public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
 
-    private downloadFeitoListener ouvinte;
     private final Context contexto;
+    private downloadFeitoListener ouvinte;
     private boolean deuErroInternet = false;
 
     public clsJSONgetAssincrono(Context ctx)

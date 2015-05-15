@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.models;
+package ulbra.bms.sca.models;
 
 import android.content.Context;
 import android.location.Address;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import ulbra.bms.scaid5.interfaces.enderecoEncontradoListener;
+import ulbra.bms.sca.interfaces.enderecoEncontradoListener;
 
 /**
  * Criado por Bruno on 08/05/2015.

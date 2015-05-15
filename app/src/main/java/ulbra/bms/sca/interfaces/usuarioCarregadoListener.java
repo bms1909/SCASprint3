@@ -1,6 +1,6 @@
-package ulbra.bms.scaid5.interfaces;
+package ulbra.bms.sca.interfaces;
 
-import ulbra.bms.scaid5.models.clsUsuarios;
+import ulbra.bms.sca.models.clsUsuarios;
 
 /**
  * Criado por Bruno on 28/04/2015.

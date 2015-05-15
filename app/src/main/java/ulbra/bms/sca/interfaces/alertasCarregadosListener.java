@@ -1,8 +1,8 @@
-package ulbra.bms.scaid5.interfaces;
+package ulbra.bms.sca.interfaces;
 
 import java.util.ArrayList;
 
-import ulbra.bms.scaid5.models.clsAlertas;
+import ulbra.bms.sca.models.clsAlertas;
 
 /**
  * Criado por Bruno on 27/04/2015.

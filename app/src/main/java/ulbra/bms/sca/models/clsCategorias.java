@@ -1,5 +1,7 @@
-package ulbra.bms.scaid5.models;
+package ulbra.bms.sca.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -9,13 +11,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import ulbra.bms.scaid5.controllers.clsJSONget;
+import ulbra.bms.sca.controllers.clsJSONget;
 
 /**
  * Criador por Bruno em 18/03/2015.
  */
-
-public class clsCategorias {
+//gambiarra confessa, sem isso travava ao solicitar as activities Main e DetalhesEstabelecimento
+public class clsCategorias implements Parcelable {
     private int idCategoria;
     private String nomeCategoria;
 
@@ -75,5 +77,16 @@ public class clsCategorias {
 
     public String getNomeCategoria() {
         return nomeCategoria;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -34,12 +34,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.interfaces.alertasCarregadosListener;
-import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
-import ulbra.bms.scaid5.models.clsAlertas;
-import ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.sca.R;
+import ulbra.bms.sca.interfaces.alertasCarregadosListener;
+import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
+import ulbra.bms.sca.models.clsAlertas;
+import ulbra.bms.sca.models.clsApiClientSingleton;
+import ulbra.bms.sca.models.clsEstabelecimentos;
 
 /**
  * Criado por Bruno on 19/03/2015.
@@ -51,7 +51,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private boolean segueUsuario;
     private Location mLocalUltimaCargaMarcadores;
     private Location mlocalAtual;
-    private Location localEnderecoRecebido;
     private LocationListener mLocationListener;
     private Location mLocalFocoCamera;
     private clsApiClientSingleton mGerenciadorApiClient;
@@ -116,13 +115,22 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         });
         //amarra evento de clique no marcador
         objMapa.setOnMarkerClickListener(this);
-        if(localEnderecoRecebido!=null)
+
+        //se foi passado uma coordenada como parametro, foca no local passado
+        Intent recebido = getIntent();
+        if (recebido.hasExtra("LATITUDE") && recebido.hasExtra("LONGITUDE"))
         {
-            moveCamera(localEnderecoRecebido);
-            carregaMarcadores(localEnderecoRecebido,1,true);
+            //desabilita movimentacao automatica da camera
+            segueUsuario = false;
+            Location localEnderecoRecebido = new Location("");
+            localEnderecoRecebido.setLatitude(recebido.getDoubleExtra("LATITUDE", 0));
+            localEnderecoRecebido.setLongitude(recebido.getDoubleExtra("LONGITUDE", 0));
+            //move a camera sem animacao
+            objMapa.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(localEnderecoRecebido.getLatitude(), localEnderecoRecebido.getLongitude())), 17));
+            carregaMarcadores(localEnderecoRecebido, 1, true);
         }
         //busca do sharedPreferences ultimo local conhecido para foco da camera
-        if (spIdUsuario.contains("UltimaLatitude")&&spIdUsuario.contains("UltimaLongitude")) {
+        else if (spIdUsuario.contains("UltimaLatitude") && spIdUsuario.contains("UltimaLongitude")) {
             objMapa.moveCamera(CameraUpdateFactory.newLatLngZoom((new LatLng(spIdUsuario.getFloat("UltimaLatitude", 0), spIdUsuario.getFloat("UltimaLongitude", 0))), 19));
         }
     }
@@ -207,16 +215,15 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     dlgAlert.setIcon(R.drawable.ic_rampa_baixo);
             }
             dlgAlert.setMessage("Comentário:\n" + alertaSelecionado.descricaoAlerta);
-            dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
 
-                        clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, spIdUsuario.getInt("ID_USUARIO", 0), MainActivity.this);
-                        //a classe clsJSONpost garante o envio de dados com o armazenamento em banco até a confirmação de envio
-                        Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!", Toast.LENGTH_LONG).show();
-                }
-            });
             if(alertaSelecionado.idUsuario==spIdUsuario.getInt("ID_USUARIO", 0)) {
+                dlgAlert.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertaSelecionado.excluiAlerta(MainActivity.this);
+                        carregaMarcadores(mLocalFocoCamera, 1, true);
+                    }
+                });
                 dlgAlert.setNegativeButton("Editar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -226,18 +233,21 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             dlgEdita.setTitle("Edita Alerta");
                             LayoutInflater inflater = MainActivity.this.getLayoutInflater();
 
-                            final View viewDetalhes = inflater.inflate(R.layout.layout_edita_alerta,null);
+                            final View viewDetalhes = inflater.inflate(R.layout.layout_edita_alerta, null);
                             final Spinner spTipo = (Spinner) viewDetalhes.findViewById(R.id.sp_editaalerta_tipo);
                             final RadioGroup rgRisco = (RadioGroup) viewDetalhes.findViewById(R.id.rg_editaalerta_risco);
                             final EditText txtDescricao = (EditText) viewDetalhes.findViewById(R.id.txt_editaalerta_descricao);
 
                             spTipo.setSelection(alertaSelecionado.tipoAlerta);
                             switch (alertaSelecionado.riscoAlerta) {
-                                case 0: rgRisco.check(R.id.rbAlto);
+                                case 0:
+                                    rgRisco.check(R.id.rbAlto);
                                     break;
-                                case 1: rgRisco.check(R.id.rbMedio);
+                                case 1:
+                                    rgRisco.check(R.id.rbMedio);
                                     break;
-                                case 2: rgRisco.check(R.id.rbBaixo);
+                                case 2:
+                                    rgRisco.check(R.id.rbBaixo);
                                     break;
                             }
                             txtDescricao.setText(alertaSelecionado.descricaoAlerta);
@@ -247,37 +257,43 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    int valorRisco=0;
-                                    switch (rgRisco.getCheckedRadioButtonId())
-                                    {
-                                        case R.id.rbBaixo:valorRisco=2;
+                                    int valorRisco = 0;
+                                    switch (rgRisco.getCheckedRadioButtonId()) {
+                                        case R.id.rbBaixo:
+                                            valorRisco = 2;
                                             break;
-                                        case R.id.rbMedio:valorRisco=1;
+                                        case R.id.rbMedio:
+                                            valorRisco = 1;
                                             break;
-                                        case R.id.rbAlto:valorRisco=0;
+                                        case R.id.rbAlto:
+                                            valorRisco = 0;
                                             break;
                                     }
                                     clsAlertas alterar = alertaSelecionado;
-                                    alterar.editaAlerta(valorRisco,spTipo.getSelectedItemPosition(),txtDescricao.getText().toString(),MainActivity.this);
+                                    alterar.editaAlerta(valorRisco, spTipo.getSelectedItemPosition(), txtDescricao.getText().toString(), MainActivity.this);
                                 }
                             });
-                            dlgEdita.setNeutralButton("Excluir", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    alertaSelecionado.excluiAlerta(MainActivity.this);
-                                }
-                            });
-                            dlgEdita.setNegativeButton("Cancelar",null);
+                            dlgEdita.setNegativeButton("Cancelar", null);
                             dlgEdita.create().show();
                         }
                     }
                 });
+            } else {
+                dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, spIdUsuario.getInt("ID_USUARIO", 0), MainActivity.this);
+                        //a classe clsJSONpost garante o envio de dados com o armazenamento em banco até a confirmação de envio
+                        Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-            dlgAlert.setNeutralButton("Voltar",null);
+            dlgAlert.setNeutralButton("Voltar", null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
         }
-        carregaMarcadores(mlocalAtual,1,true);
+        carregaMarcadores(mlocalAtual, 1, true);
         return false;
     }
 //endregion
@@ -354,6 +370,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     }
             }
         });
+        //listener da carga de dados concluida
         estabelecimentosListener.addListener(new estabelecimentosCarregadosListener() {
             @Override
             public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
@@ -366,18 +383,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
         });
 
-        Intent recebido = getIntent();
-        //configura se o método movecamera deve ser acionado ao mudar a localização
-        if(recebido.hasExtra("LATITUDE"))
-        {
-            segueUsuario = false;
-            localEnderecoRecebido= new Location("");
-            localEnderecoRecebido.setLatitude(recebido.getDoubleExtra("LATITUDE", 0));
-            localEnderecoRecebido.setLongitude(recebido.getDoubleExtra("LONGITUDE", 0));
-        }
-        else {
-            segueUsuario = true;
-        }
         //cria o listener local de localização e implementa o método de monitoramento do mesmo
         mLocationListener = new LocationListener() {
             @Override
@@ -397,6 +402,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 mlocalAtual = localAtual;
             }
         };
+        //configura se o metodo movecamera deve seguir o usuario
+        segueUsuario = true;
     }
 
     //ativado após o retorno da activity ao foco principal
@@ -465,6 +472,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         mLocalUltimaCargaMarcadores = null;
         objMapa = null;
         mLocationListener = null;
+        //salva ultima localizacao conhecida para zoom automatico no mapa
         SharedPreferences.Editor editor = spIdUsuario.edit();
         editor.putFloat("UltimaLatitude", (float) mlocalAtual.getLatitude());
         editor.putFloat("UltimaLongitude", (float) mlocalAtual.getLongitude());
@@ -506,6 +514,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         else if(id==R.id.btn_main_sobre)
         {
             startActivity(new Intent(MainActivity.this, SobreActivity.class));
+        } else if (id == R.id.btn_main_logoff) {
+            SharedPreferences.Editor editor = spIdUsuario.edit();
+            editor.remove("ID_USUARIO");
+            editor.apply();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -589,7 +602,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             Toast.makeText(MainActivity.this, "Aguardando local preciso...", Toast.LENGTH_SHORT).show();
         }
         //se nao ha estabelecimentos proximos, avança direto para cadastro
-        else if(estabelecimentosCarregados==null)
+        else if (estabelecimentosCarregados == null || estabelecimentosCarregados.size() == 0)
         {
             startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
         }

@@ -8,44 +8,44 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ulbra.bms.scaid5.controllers.PesquisaLocaisActivity">
+    tools:context="ulbra.bms.sca.controllers.PesquisaLocaisActivity">
 
     <EditText
         android:id="@+id/txt_busca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/pesquisalocais_dica"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:hint="@string/pesquisalocais_dica"
         android:textSize="30sp"/>
 
     <ListView
         android:id="@+id/list_busca"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbarStyle="outsideOverlay"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/gridLayout" />
+        android:layout_below="@+id/gridLayout"
+        android:scrollbarStyle="outsideOverlay" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/gridLayout"
-        android:weightSum="4"
-        android:layout_below="@+id/txt_busca"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txt_busca"
+        android:orientation="horizontal"
+        android:weightSum="4">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/pesquisalocais_raio_da_busca"
             android:textAppearance="?android:attr/textAppearanceMedium"
              />
@@ -53,16 +53,16 @@
         <Spinner
             android:id="@+id/sp_busca_raio"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:entries="@array/valores_array_raios"
             />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/pesquisalocais_ordenar_por"
             android:textAppearance="?android:attr/textAppearanceMedium"
              />
@@ -70,8 +70,8 @@
         <Spinner
             android:id="@+id/sp_busca_ordena"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:entries="@array/valores_array_ordenacao"
              />
     </LinearLayout>

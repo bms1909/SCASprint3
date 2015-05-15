@@ -6,7 +6,7 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="30dp"
-    tools:context="ulbra.bms.scaid5.controllers.LoginActivity">
+    tools:context="ulbra.bms.sca.controllers.LoginActivity">
 
     <!-- Login progress -->
     <ProgressBar android:id="@+id/login_progress" style="?android:attr/progressBarStyleLarge"
@@ -17,9 +17,10 @@
 
     <AutoCompleteTextView android:id="@+id/txt_login_email" android:layout_width="match_parent"
         android:layout_height="wrap_content" android:hint="Email ou Usuário"
-        android:inputType="textEmailAddress" android:maxLines="1"
-        android:singleLine="true"
         android:imeOptions="flagNavigateNext"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:singleLine="true"
         />
 
     <LinearLayout
@@ -27,52 +28,53 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
         <EditText
+            android:id="@+id/txt_login_usuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
             android:ems="10"
-            android:hint="Usuário"
-            android:id="@+id/txt_login_usuario"
-            android:visibility="visible"
             android:enabled="false"
+            android:hint="Usuário"
             android:imeOptions="flagNavigateNext"
+            android:inputType="textEmailAddress"
+            android:visibility="visible"
             />
     </LinearLayout>
     <EditText android:id="@+id/txt_login_senha" android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:hint="Senha"
         android:imeActionLabel="Acessar"
         android:imeOptions="actionUnspecified"
         android:inputType="textPassword"
         android:maxLines="1"
-        android:singleLine="true"
         android:nextFocusUp="@id/txt_login_email"
+        android:singleLine="true"
         />
 
     <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="228dp"
         android:layout_height="wrap_content"
-        android:text="Novo Usuário?"
-        android:id="@+id/checkBox"
         android:onClick="cbxNovoUsuario_Click"
+        android:text="Novo Usuário?"
         />
 
     <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" android:text="Login"
-        android:textStyle="bold"
-        android:onClick="btnLogin_Click"/>
+        android:layout_marginTop="16dp"
+        android:onClick="btnLogin_Click"
+        android:text="Login"
+        android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Esqueci a Senha"
-        android:id="@+id/textView4"
         android:layout_gravity="center_horizontal"
-        android:textColor="#ff5e5fff"
-        android:onClick="txtRecuperaSenha_Click"/>
+        android:onClick="txtRecuperaSenha_Click"
+        android:text="Esqueci a Senha"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ff5e5fff" />
 
     <ScrollView android:id="@+id/login_form" android:layout_width="match_parent"
         android:layout_height="match_parent">

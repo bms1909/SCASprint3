@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.interfaces;
+package ulbra.bms.sca.interfaces;
 
 import org.json.JSONArray;
 

@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,10 +25,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.sca.R;
+import ulbra.bms.sca.models.clsApiClientSingleton;
+import ulbra.bms.sca.models.clsCategorias;
+import ulbra.bms.sca.models.clsEstabelecimentos;
 
 
 public class CadastraEstabelecimentoActivity extends ActionBarActivity {
@@ -194,19 +194,31 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
     }
 
     public void salvaAvaliacao_Click(View view) {
+        txtBairro.setError(null);
+        txtCidade.setError(null);
+        txtTitulo.setError(null);
+        txtEndereco.setError(null);
+        txtCidade.setError(null);
 
-        if (txtTitulo.getText().toString().isEmpty())
+        if (txtTitulo.getText().toString().isEmpty()) {
             txtTitulo.setError("Campo Obrigatório!");
-        else if (txtEndereco.getText().toString().isEmpty())
+            txtTitulo.requestFocus();
+        } else if (txtEndereco.getText().toString().isEmpty()) {
             txtEndereco.setError("Campo Obrigatório!");
-        else if (txtCidade.getText().toString().isEmpty())
+            txtEndereco.requestFocus();
+        } else if (txtCidade.getText().toString().isEmpty()) {
             txtCidade.setError("Campo Obrigatório!");
-        else if(txtBairro.getText().toString().isEmpty())
+            txtCidade.requestFocus();
+        } else if (txtBairro.getText().toString().isEmpty()) {
             txtBairro.setError("Campo Obrigatório!");
-        else if (txtCidade.getText().toString().matches("[0-9]*"))
+            txtBairro.requestFocus();
+        } else if (txtCidade.getText().toString().matches("[0-9]*")) {
             txtCidade.setError("Campo não permite números!");
-        else if (txtBairro.getText().toString().matches("[0-9]*"))
+            txtCidade.requestFocus();
+        } else if (txtBairro.getText().toString().matches("[0-9]*")) {
             txtBairro.setError("Campo não permite números!");
+            txtBairro.requestFocus();
+        }
         else {
             String selecionado = spCategorias.getSelectedItem().toString();
             int idCategoria = 0;

@@ -1,7 +1,9 @@
-package ulbra.bms.scaid5.models;
+package ulbra.bms.sca.models;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -13,16 +15,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import ulbra.bms.scaid5.controllers.clsJSONget;
-import ulbra.bms.scaid5.controllers.clsJSONgetAssincrono;
-import ulbra.bms.scaid5.controllers.clsJSONpost;
-import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
-import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
+import ulbra.bms.sca.controllers.clsJSONget;
+import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.controllers.clsJSONpost;
+import ulbra.bms.sca.interfaces.downloadFeitoListener;
+import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
 
 /**
  * Criador por Bruno em 16/03/2015.
  */
-public class clsEstabelecimentos {
+
+//gambiarra confessa, sem isso travava ao solicitar as activities Main e DetalhesEstabelecimento
+public class clsEstabelecimentos implements Parcelable {
     public int idCategoria;
     public int idEstabelecimento;
     public LatLng latlonEstabelecimento;
@@ -89,16 +93,41 @@ public class clsEstabelecimentos {
     }
     //endregion
 
+    public static boolean estabelecimentoFoiAvaliado(int idUsuario, int idEstabelecimento) {
+        JSONObject retorno;
+        JSONArray recebido = null;
+        clsJSONget executor = new clsJSONget();
+        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
+
+        try {
+            recebido = executor.get();
+        } catch (InterruptedException | ExecutionException e) {
+            Log.d(null, e.getMessage());
+        }
+
+        try {
+
+            if (recebido != null) {
+                retorno = recebido.getJSONObject(0);
+                return retorno.getBoolean("resposta");
+            }
+        } catch (Exception e) {
+            Log.d(null, e.getMessage());
+        }
+        return false;
+    }
+
     public void addListener(estabelecimentosCarregadosListener listener)
     {
         this.ouvinte= listener;
     }
+
     /*
     public void estabelecimentosPorCategoria(float raio, LatLng local, int idCategoria,Context contexto) {
         this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude + "&idCategoria=" + idCategoria,contexto);
     }*/
     public void estabelecimentosPorRaio(float raio, LatLng local,Context contexto) {
-        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude,contexto);
+        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude, contexto);
     }
 
     private void carregaEstabelecimentos(String URL,Context contexto) {
@@ -145,30 +174,6 @@ public class clsEstabelecimentos {
         executor.execute(URL);
 
 
-    }
-
-    public static boolean estabelecimentoFoiAvaliado(int idUsuario, int idEstabelecimento) {
-        JSONObject retorno;
-        JSONArray recebido = null;
-        clsJSONget executor = new clsJSONget();
-        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
-
-        try {
-            recebido = executor.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Log.d(null, e.getMessage());
-        }
-
-        try {
-
-            if (recebido != null) {
-                retorno = recebido.getJSONObject(0);
-                return retorno.getBoolean("resposta");
-            }
-        } catch (Exception e) {
-            Log.d(null, e.getMessage());
-        }
-        return false;
     }
 
     public clsEstabelecimentos carregaDetalhesEstabelecimento() {
@@ -227,5 +232,15 @@ public class clsEstabelecimentos {
     public void editaEstabelecimento(int idUsuario, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
         executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento="+this.idEstabelecimento+"&idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro="+Uri.encode(this.bairroEstabelecimento)+  "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado="+this.estadoEstabelecimento+"&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

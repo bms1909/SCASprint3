@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.models;
+package ulbra.bms.sca.models;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,10 +15,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-import ulbra.bms.scaid5.controllers.clsJSONget;
-import ulbra.bms.scaid5.controllers.clsJSONgetAssincrono;
-import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
-import ulbra.bms.scaid5.interfaces.usuarioCarregadoListener;
+import ulbra.bms.sca.controllers.clsJSONget;
+import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.interfaces.downloadFeitoListener;
+import ulbra.bms.sca.interfaces.usuarioCarregadoListener;
 
 /**
  * Criador por Bruno em 16/03/2015.
@@ -37,7 +37,7 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
         this.senhaUsuario = senha;
     }
 
-    public clsUsuarios(int id, String nome, String email, String senha) {
+    private clsUsuarios(int id, String nome, String email, String senha) {
         this.idUsuario = id;
         this.nomeUsuario = nome;
         this.emailUsuario = email;
@@ -46,6 +46,22 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
 
     public clsUsuarios() {
         super();
+    }
+
+    public static boolean recuperaUsuario(String nomeOuEmail) {
+        clsJSONget executor = new clsJSONget();
+        executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
+        JSONArray retorno;
+        JSONObject recebido;
+        try {
+            retorno = executor.get();
+            recebido = retorno.getJSONObject(0);
+
+            return recebido.getBoolean("resposta");
+        } catch (JSONException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
@@ -74,7 +90,6 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
             }
         }
 
-
     public void addListener(usuarioCarregadoListener listener)
     {
         ouvinte=listener;
@@ -89,13 +104,12 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
             public void downloadConcluido(JSONArray result) {
                 clsUsuarios retorno = null;
                 try {
-                if (result != null) {
-                    JSONObject loop;
+                    if (result != null) {
+                        JSONObject loop;
                         loop = result.getJSONObject(0);
                         retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
                     }
-                }
-                catch (JSONException e) {
+                } catch (JSONException e) {
                     Log.d(null, e.getMessage());
                 }
                 ouvinte.usuarioCarregado(retorno);
@@ -115,22 +129,6 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
             e.printStackTrace();
         }
         return "ERRO_ASYNCTASK";
-    }
-
-    public static boolean recuperaUsuario(String nomeOuEmail) {
-        clsJSONget executor = new clsJSONget();
-        executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeOuEmail="+Uri.encode(nomeOuEmail));
-        JSONArray retorno;
-        JSONObject recebido;
-        try {
-        retorno = executor.get();
-        recebido = retorno.getJSONObject(0);
-
-            return recebido.getBoolean("resposta");
-        } catch (JSONException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }
 

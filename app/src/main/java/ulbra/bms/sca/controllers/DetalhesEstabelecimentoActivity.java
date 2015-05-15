@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 
 import android.app.AlertDialog;
@@ -23,9 +23,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.sca.R;
+import ulbra.bms.sca.models.clsCategorias;
+import ulbra.bms.sca.models.clsEstabelecimentos;
 
 
 public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
@@ -76,10 +76,10 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
     @Override
     protected void onResume()
     {
-        super.onResume();
         //tarefa sincrona pois o inicio da activity depende desses dados
         estabCarregado=estabCarregado.carregaDetalhesEstabelecimento();
         atualizaTela();
+        super.onResume();
     }
 
     @Override
@@ -95,11 +95,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
 
 
-        final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(DetalhesEstabelecimentoActivity.this);
-        dlgAlert.setTitle("Confirmação");
-        dlgAlert.setMessage("Você já avaliou este Estabelecimento, deseja alterar?");
-
-
         //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
         rb.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -110,6 +105,9 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                     a.height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
                     if ((jaAvaliado) && (btnBar.getHeight() == 0)) {
+                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(DetalhesEstabelecimentoActivity.this);
+                        dlgAlert.setTitle("Confirmação");
+                        dlgAlert.setMessage("Você já avaliou este Estabelecimento, deseja alterar?");
                         dlgAlert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -129,6 +127,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
             }
         });
         SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
+        //recupera do webservice se usuario ja avaliou o estabelecimento
         jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(id.getInt("ID_USUARIO",0), estabCarregado.idEstabelecimento);
     }
 
@@ -137,16 +136,18 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         // executado ao criar o menu, o código abaixo confere se há algum app que responda a intent, se não houver,
         // remove o botão correspondente a ação
         getMenuInflater().inflate(R.menu.menu_detalhes_estabelecimento, menu);
-
+        //confere se existe algum aplicativo de GPS instalado
         final PackageManager mgr = this.getPackageManager();
         List<ResolveInfo> list =
                 mgr.queryIntentActivities(new Intent(Intent.ACTION_VIEW, Uri.parse("geo: -29.331124, -49.751402")),
                         PackageManager.MATCH_DEFAULT_ONLY);
+        //se nao houver, remove o botao
         if (list.size() == 0)
             menu.removeItem(R.id.btnEstabelecimentoAbrirMaps);
-
+        //confere se existe algum aplicativo de discador instalado
         list = mgr.queryIntentActivities(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:9999")),
                 PackageManager.MATCH_DEFAULT_ONLY);
+        //se nao houver, remove o botao
         if (list.size() == 0||estabCarregado.telefoneEstabelecimento.equals(""))
             menu.removeItem(R.id.btnEstabelecimentoTelefone);
         return true;

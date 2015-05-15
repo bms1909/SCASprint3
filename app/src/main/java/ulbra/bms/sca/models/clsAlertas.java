@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.models;
+package ulbra.bms.sca.models;
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,10 +12,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ulbra.bms.scaid5.controllers.clsJSONgetAssincrono;
-import ulbra.bms.scaid5.controllers.clsJSONpost;
-import ulbra.bms.scaid5.interfaces.alertasCarregadosListener;
-import ulbra.bms.scaid5.interfaces.downloadFeitoListener;
+import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.controllers.clsJSONpost;
+import ulbra.bms.sca.interfaces.alertasCarregadosListener;
+import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
 /**
  * Criador por Bruno em 13/03/2015.
@@ -50,6 +50,12 @@ public class clsAlertas{
     {
         super();
     }
+
+    public static void denunciaAlerta(int idAlerta, int idUsuario, Context contexto) {
+        clsJSONpost executor = new clsJSONpost(contexto);
+        executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idAlerta=" + idAlerta + "&idUsuario=" + idUsuario);
+    }
+
     public void addListener(alertasCarregadosListener listener)
     {
         ouvinte = listener;
@@ -79,11 +85,6 @@ public class clsAlertas{
         });
 
         executor.execute("http://scaws.azurewebsites.net/api/clsAlertas?raioLongoemKM=" + raio + "&lat=" + local.latitude + "&lon=" + local.longitude);
-    }
-
-    public static void denunciaAlerta(int idAlerta, int idUsuario, Context contexto) {
-        clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idAlerta=" + idAlerta + "&idUsuario=" + idUsuario);
     }
 
     public void cadastraAlerta(Context contexto) {

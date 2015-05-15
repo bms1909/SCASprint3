@@ -15,7 +15,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="20dp"
-            tools:context="ulbra.bms.scaid5.controllers.CadastraEstabelecimentoActivity">
+            tools:context="ulbra.bms.sca.controllers.CadastraEstabelecimentoActivity">
 
             <EditText
                 android:id="@+id/txt_novoestabelecimento_nome"
@@ -38,9 +38,9 @@
                 android:id="@+id/sp_novoestabelecimento_categorias"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textView3"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textView3" />
 
             <EditText
                 android:id="@+id/txt_novoestabelecimento_endereco"
@@ -59,62 +59,62 @@
                 android:inputType="textCapWords|textPostalAddress"
                 android:selectAllOnFocus="true" />
             <EditText
+                android:id="@+id/txt_novoestabelecimento_bairro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/txt_novoestabelecimento_bairro"
-                android:layout_below="@+id/txt_novoestabelecimento_endereco"
-                android:layout_alignRight="@+id/txt_novoestabelecimento_endereco"
                 android:layout_alignEnd="@+id/txt_novoestabelecimento_endereco"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_alignRight="@+id/txt_novoestabelecimento_endereco"
+                android:layout_below="@+id/txt_novoestabelecimento_endereco"
+                android:ems="10"
                 android:focusable="true"
                 android:gravity="top|start|end"
+                android:hint="@string/cadastra_dica_bairro"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
-                android:selectAllOnFocus="true"
-                android:hint="@string/cadastra_dica_bairro" />
+                android:selectAllOnFocus="true" />
 
             <AutoCompleteTextView
                 android:id="@+id/txt_novoestabelecimento_cidade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/txt_novoestabelecimento_bairro"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignRight="@+id/txt_novoestabelecimento_bairro"
+                android:layout_below="@+id/txt_novoestabelecimento_bairro"
+                android:autoText="false"
                 android:focusable="true"
                 android:gravity="top|start|end"
                 android:hint="@string/cadastra_dica_cidade"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
-                android:selectAllOnFocus="true"
-                android:layout_below="@+id/txt_novoestabelecimento_bairro"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/txt_novoestabelecimento_bairro"
-                android:layout_alignEnd="@+id/txt_novoestabelecimento_bairro"
-                android:autoText="false" />
+                android:selectAllOnFocus="true" />
 
             <Spinner
                 android:id="@+id/sp_novoestabelecimento_estado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_novoestabelecimento_estado"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_below="@+id/tv_novoestabelecimento_estado"
                 android:entries="@array/valores_array_estados"/>
 
             <EditText
                 android:id="@+id/txt_novoestabelecimento_telefone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/sp_novoestabelecimento_estado"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignRight="@+id/sp_novoestabelecimento_estado"
+                android:layout_below="@+id/sp_novoestabelecimento_estado"
                 android:focusable="true"
                 android:gravity="top|start|end"
                 android:hint="@string/cadastra_dica_telefone"
                 android:inputType="phone"
-                android:selectAllOnFocus="true"
-                android:layout_below="@+id/sp_novoestabelecimento_estado"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignRight="@+id/sp_novoestabelecimento_estado"
-                android:layout_alignEnd="@+id/sp_novoestabelecimento_estado" />
+                android:selectAllOnFocus="true" />
 
             <RatingBar
                 android:id="@+id/rb_novoestabelecimento_classificacao"
@@ -122,9 +122,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txt_novoestabelecimento_telefone"
                 android:layout_centerHorizontal="true"
+                android:max="5"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:max="5"/>
+                android:paddingTop="10dp" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_possui_banheiro"
@@ -174,24 +174,24 @@
                 android:text="@string/cadastra_largura_suficiente" />
 
             <TextView
+                android:id="@+id/tv_novoestabelecimento_estado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/cadastra_dica_estado"
-                android:id="@+id/tv_novoestabelecimento_estado"
-                android:layout_below="@+id/txt_novoestabelecimento_cidade"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/txt_novoestabelecimento_cidade"
+                android:text="@string/cadastra_dica_estado" />
 
 
 
             <TextView
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/cadastra_dica_categorias"
-                android:id="@+id/textView3"
-                android:layout_below="@+id/txt_novoestabelecimento_nome"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/txt_novoestabelecimento_nome"
+                android:text="@string/cadastra_dica_categorias" />
 
         </RelativeLayout>
     </ScrollView>

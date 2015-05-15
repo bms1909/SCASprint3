@@ -12,7 +12,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="20dp"
-            tools:context="ulbra.bms.scaid5.controllers.DetalhesEstabelecimentoActivity">
+            tools:context="ulbra.bms.sca.controllers.DetalhesEstabelecimentoActivity">
 
 
             <TextView
@@ -73,9 +73,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_estabelecimento_cidade"
                 android:layout_centerHorizontal="true"
+                android:max="5"
                 android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:max="5" />
+                android:paddingTop="10dp" />
 
             <CheckBox
                 android:id="@+id/cbx_estabelecimento_possui_banheiro"

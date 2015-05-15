@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.controllers;
+package ulbra.bms.sca.controllers;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,20 +28,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ulbra.bms.scaid5.R;
-import ulbra.bms.scaid5.models.clsPesquisaEndereco;
-import ulbra.bms.scaid5.interfaces.adapterListViewEstabelecimentos;
-import ulbra.bms.scaid5.interfaces.enderecoEncontradoListener;
-import ulbra.bms.scaid5.interfaces.estabelecimentosCarregadosListener;
-import ulbra.bms.scaid5.models.clsApiClientSingleton;
-import ulbra.bms.scaid5.models.clsCategorias;
-import ulbra.bms.scaid5.models.clsEstabelecimentos;
+import ulbra.bms.sca.R;
+import ulbra.bms.sca.interfaces.adapterListViewEstabelecimentos;
+import ulbra.bms.sca.interfaces.enderecoEncontradoListener;
+import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
+import ulbra.bms.sca.models.clsApiClientSingleton;
+import ulbra.bms.sca.models.clsCategorias;
+import ulbra.bms.sca.models.clsEstabelecimentos;
+import ulbra.bms.sca.models.clsPesquisaEndereco;
 
 public class PesquisaLocaisActivity extends ActionBarActivity {
 
     //busca local de emissão do alerta
     private final LatLng localAtual = clsApiClientSingleton.ultimoLocal(this);
-    public ListView lista;
+    private ListView lista;
     private EditText txtPesquisa;
     private ArrayList<clsEstabelecimentos> estabelecimentosCarregados;
     private ArrayList<clsCategorias> categoriasCarregadas;

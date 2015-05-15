@@ -1,4 +1,4 @@
-package ulbra.bms.scaid5.models;
+package ulbra.bms.sca.models;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
