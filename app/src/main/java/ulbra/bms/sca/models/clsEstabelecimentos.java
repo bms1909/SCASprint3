@@ -122,17 +122,8 @@ public class clsEstabelecimentos implements Parcelable {
         this.ouvinte= listener;
     }
 
-    /*
-    public void estabelecimentosPorCategoria(float raio, LatLng local, int idCategoria,Context contexto) {
-        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude + "&idCategoria=" + idCategoria,contexto);
-    }*/
     public void estabelecimentosPorRaio(float raio, LatLng local,Context contexto) {
-        this.carregaEstabelecimentos("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude, contexto);
-    }
-
-    private void carregaEstabelecimentos(String URL,Context contexto) {
         clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
-
 
         executor.addListener(new downloadFeitoListener() {
             @Override
@@ -170,11 +161,7 @@ public class clsEstabelecimentos implements Parcelable {
             }
         });
 
-
-
-        executor.execute(URL);
-
-
+        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
     }
 
     public clsEstabelecimentos carregaDetalhesEstabelecimento() {

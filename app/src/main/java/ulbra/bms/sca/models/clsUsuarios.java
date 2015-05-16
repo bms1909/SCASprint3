@@ -105,11 +105,9 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
                 if (result != null) {
                     clsUsuarios retorno = null;
                     try {
-                        if (result != null) {
-                            JSONObject loop;
-                            loop = result.getJSONObject(0);
-                            retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
-                        }
+                        JSONObject loop;
+                        loop = result.getJSONObject(0);
+                        retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
                     } catch (JSONException e) {
                         Log.d(null, e.getMessage());
                     }
