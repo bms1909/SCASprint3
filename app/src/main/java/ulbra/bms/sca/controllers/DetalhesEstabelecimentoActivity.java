@@ -43,8 +43,12 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         tvTitulo.setText(estabCarregado.nomeEstabelecimento);
         TextView tvEndereco = (TextView) findViewById(R.id.tv_estabelecimento_endereco);
         tvEndereco.setText(estabCarregado.enderecoEstabelecimento);
+        TextView bairro = (TextView) findViewById(R.id.tv_estabelecimento_bairro);
+        bairro.setText(estabCarregado.bairroEstabelecimento);
         TextView tvCidade = (TextView) findViewById(R.id.tv_estabelecimento_cidade);
         tvCidade.setText(estabCarregado.cidadeEstabelecimento);
+        TextView estado = (TextView) findViewById(R.id.tv_estabelecimento_estado);
+        estado.setText(estabCarregado.estadoEstabelecimento);
         TextView tvFone = (TextView) findViewById(R.id.tv_estabelecimento_telefone);
         tvFone.setText(estabCarregado.telefoneEstabelecimento);
 
@@ -93,7 +97,8 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
-
+        //escala até 5
+        rb.setMax(5);
 
         //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
         rb.setOnTouchListener(new View.OnTouchListener() {
@@ -158,7 +163,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         //tratamento de botões na activityBar
         switch (item.getItemId()) {
             case R.id.btnEstabelecimentoAbrirMaps:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + estabCarregado.latlonEstabelecimento.latitude + "," + estabCarregado.latlonEstabelecimento.longitude + "(" + Uri.encode(estabCarregado.nomeEstabelecimento) + ")")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=" + estabCarregado.latlonEstabelecimento.latitude + "," + estabCarregado.latlonEstabelecimento.longitude)));
                 break;
             case R.id.btnEstabelecimentoTelefone:
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + estabCarregado.telefoneEstabelecimento)));

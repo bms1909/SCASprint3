@@ -137,9 +137,9 @@ public class clsEstabelecimentos implements Parcelable {
         executor.addListener(new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
-                ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
-                try {
-                    if (result != null) {
+                if (result != null) {
+                    ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
+                    try {
                         JSONObject loop;
                         for (int i = 0; i < result.length(); i++) {
                             loop = result.getJSONObject(i);
@@ -161,11 +161,12 @@ public class clsEstabelecimentos implements Parcelable {
                                     loop.getDouble("latitudeEstabelecimento"),
                                     loop.getDouble("longitudeEstabelecimento")));
                         }
+                    } catch (JSONException e) {
+                        Log.d(null, e.getMessage());
                     }
-                } catch (JSONException e) {
-                    Log.d(null, e.getMessage());
-                }
-                ouvinte.estabelecimentosCarregados(retorno);
+                    ouvinte.estabelecimentosCarregados(retorno);
+                } else
+                    ouvinte.estabelecimentosCarregados(null);
             }
         });
 

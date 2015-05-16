@@ -68,19 +68,21 @@ public class clsAlertas{
         executor.addListener(new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
-                ArrayList<clsAlertas> retorno = new ArrayList<>();
-                JSONObject loop;
-                try {
-                    if (result != null) {
+                if (result != null) {
+                    ArrayList<clsAlertas> retorno = new ArrayList<>();
+                    JSONObject loop;
+                    try {
                         for (int i = 0; i < result.length(); i++) {
                             loop = result.getJSONObject(i);
                             retorno.add(new clsAlertas(loop.getInt("idAlerta"), loop.getInt("idUsuario"), loop.getDouble("latitudeAlerta"), loop.getDouble("longitudeAlerta"), loop.getString("descricaoAlerta"), loop.getInt("tipoAlerta"), loop.getInt("riscoAlerta")));
                         }
+                    } catch (JSONException | NullPointerException e) {
+                        Log.d(null, e.getMessage());
                     }
-                } catch (JSONException | NullPointerException e) {
-                    Log.d(null, e.getMessage());
-                }
-                ouvinte.alertasCarregados(retorno);
+                    ouvinte.alertasCarregados(retorno);
+                } else
+                    ouvinte.alertasCarregados(null);
+
             }
         });
 

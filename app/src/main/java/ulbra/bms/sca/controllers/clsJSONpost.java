@@ -52,8 +52,8 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
                 URL link = new URL(url);
                 HttpURLConnection conn = (HttpURLConnection) link.openConnection();
 
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setReadTimeout(30000 /* milliseconds */);
+                conn.setConnectTimeout(30000 /* milliseconds */);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
 
@@ -65,15 +65,20 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
                 IOUtils.copy(conn.getInputStream(), intermediario);
                 if (intermediario.toString().equals("true"))
                     temp.removeTemp(url);
-                else
+                else {
+                    temp.desconectaBanco();
                     return false;
+                }
             } catch (Exception o) {
                 //previne crash se a mensagem for vazia
                 if (o.getMessage()!=null)
                     Log.d("pau no POSTsem internet", o.getMessage());
+                temp.desconectaBanco();
                 return false;
             }
         }
+        //fecha conexão com o banco local
+        temp.desconectaBanco();
         return true;
     }
 

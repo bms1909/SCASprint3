@@ -19,6 +19,7 @@
         android:layout_height="wrap_content" android:hint="Email ou Usuário"
         android:imeOptions="flagNavigateNext"
         android:inputType="textEmailAddress"
+        android:maxLength="50"
         android:maxLines="1"
         android:singleLine="true"
         />
@@ -36,6 +37,7 @@
             android:hint="Usuário"
             android:imeOptions="flagNavigateNext"
             android:inputType="textEmailAddress"
+            android:maxLength="50"
             android:visibility="visible"
             />
     </LinearLayout>
@@ -46,6 +48,7 @@
         android:imeActionLabel="Acessar"
         android:imeOptions="actionUnspecified"
         android:inputType="textPassword"
+        android:maxLength="50"
         android:maxLines="1"
         android:nextFocusUp="@id/txt_login_email"
         android:singleLine="true"

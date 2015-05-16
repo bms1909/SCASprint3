@@ -62,7 +62,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     private clsEstabelecimentos estabelecimentosListener = new clsEstabelecimentos();
     private SharedPreferences spIdUsuario;
 
-
     //region Mapa
 
     private void moveCamera(Location localAtual) {
@@ -153,13 +152,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         alertaSelecionado = null;
         estabelecimentoSelecionado = null;
         final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-
         //busca entre os alertas carregados, o alerta correspondente as coordenadas do selecionado
         for (int x = 0; x < alertasCarregados.size(); x++) {
             if (marker.getPosition().equals(alertasCarregados.get(x).latlonAlerta)) {
                 alertaSelecionado = alertasCarregados.get(x);
             }
-        }
+            }
 
         if (alertaSelecionado == null) {
             //se não é um alerta, busca entre os estabelecimentos
@@ -293,7 +291,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
         }
-        carregaMarcadores(mlocalAtual, 1, true);
+        carregaMarcadores(mLocalFocoCamera, 1, true);
         return false;
     }
 //endregion
@@ -330,6 +328,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         alertasListener.addListener(new alertasCarregadosListener() {
             @Override
             public void alertasCarregados(ArrayList<clsAlertas> alertas) {
+                if (alertas != null) {
                     alertasCarregados = alertas;
                     for (clsAlertas percorre : alertas) {
                         // .icon personaliza o ícone,
@@ -343,30 +342,33 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta);
                         if (percorre.tipoAlerta == 0) {
                             icone.title("Buraco");
-                            if(percorre.riscoAlerta==0)
+                            if (percorre.riscoAlerta == 0)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_alto));
-                            else if(percorre.riscoAlerta==1)
+                            else if (percorre.riscoAlerta == 1)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_medio));
                             else
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_baixo));
                         } else if (percorre.tipoAlerta == 1) {
                             icone.title("Calçada Estreita");
-                            if(percorre.riscoAlerta==0)
+                            if (percorre.riscoAlerta == 0)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_alto));
-                            else if(percorre.riscoAlerta==1)
+                            else if (percorre.riscoAlerta == 1)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_medio));
                             else
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_baixo));
                         } else {
                             icone.title("Rampa com defeito");
-                            if(percorre.riscoAlerta==0)
+                            if (percorre.riscoAlerta == 0)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_alto));
-                            else if(percorre.riscoAlerta==1)
+                            else if (percorre.riscoAlerta == 1)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_medio));
                             else
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_baixo));
                         }
                         objMapa.addMarker(icone);
+                        }
+                } else {
+                    alertasCarregados = new ArrayList<>();
                     }
             }
         });
@@ -374,11 +376,15 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         estabelecimentosListener.addListener(new estabelecimentosCarregadosListener() {
             @Override
             public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
-                estabelecimentosCarregados = estabelecimentos;
-                //carrega as listas de objetos alertas e estabelecimentos do webService
-                //foreach do java
-                for (clsEstabelecimentos percorre : estabelecimentosCarregados) {
-                    objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_estabelecimento)));
+                if (estabelecimentos != null) {
+                    estabelecimentosCarregados = estabelecimentos;
+                    //carrega as listas de objetos alertas e estabelecimentos do webService
+                    //foreach do java
+                    for (clsEstabelecimentos percorre : estabelecimentosCarregados) {
+                        objMapa.addMarker(new MarkerOptions().position(percorre.latlonEstabelecimento).title(percorre.nomeEstabelecimento).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_estabelecimento)));
+                    }
+                } else {
+                    estabelecimentosCarregados = new ArrayList<>();
                 }
             }
         });
@@ -466,17 +472,20 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     protected void onDestroy() {
+        //salva ultima localizacao conhecida para zoom automatico no mapa
+        if (mlocalAtual != null && spIdUsuario != null) {
+            SharedPreferences.Editor editor = spIdUsuario.edit();
+            editor.putFloat("UltimaLatitude", (float) mlocalAtual.getLatitude());
+            editor.putFloat("UltimaLongitude", (float) mlocalAtual.getLongitude());
+            editor.apply();
+        }
         if (mGerenciadorApiClient != null)
             mGerenciadorApiClient.suspendeLocalizacao(mLocationListener);
         mGerenciadorApiClient = null;
         mLocalUltimaCargaMarcadores = null;
         objMapa = null;
         mLocationListener = null;
-        //salva ultima localizacao conhecida para zoom automatico no mapa
-        SharedPreferences.Editor editor = spIdUsuario.edit();
-        editor.putFloat("UltimaLatitude", (float) mlocalAtual.getLatitude());
-        editor.putFloat("UltimaLongitude", (float) mlocalAtual.getLongitude());
-        editor.apply();
+
         super.onDestroy();
     }
 
@@ -503,8 +512,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //limpa e recarrega o mapa e sincroniza operações pendentes
             if(clsJSONget.temInternet()) {
                 if (mlocalAtual!=null) {
-                    segueUsuario = true;
-                    carregaMarcadores(mlocalAtual, 2, true);
+                    carregaMarcadores(mLocalFocoCamera, 2, true);
                     clsJSONpost.executaPendentes(this);
                 }
             }
@@ -544,6 +552,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             //adiciona o layout viewdetalhes como fonte para visual da view
             detalhe.setView(viewDetalhes);
+            //detalhes eh o segundo dialog do cadastro
             detalhe.setTitle(getString(R.string.txt_detalhes));
             detalhe.setPositiveButton(getString(R.string.btn_salvar), new DialogInterface.OnClickListener() {
                 @Override
@@ -580,6 +589,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             });*/
 
+            //alertas eh o primeiro dialog do cadastro
             alertas.setTitle("Informar");
             alertas.setNegativeButton("Voltar", null);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);

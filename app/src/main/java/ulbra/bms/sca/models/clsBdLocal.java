@@ -21,12 +21,17 @@ public class clsBdLocal {
     @Override
     public void finalize()
     {
-        db.close();
+        desconectaBanco();
         try {
             super.finalize();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+    }
+
+    //fecha a conexao com o BD local
+    public void desconectaBanco() {
+        db.close();
     }
 
     public void insereTemp(String comando) {
@@ -48,10 +53,10 @@ public class clsBdLocal {
         //nome tabela,colunas da consulta,where,where args,groupby,having,orderby
 
         Cursor cursor = db.query("postcache", colunaConsulta, null /*"comando != null"*/, null, null, null, null);
-
         while (cursor.moveToNext()) {
             retorno.add(cursor.getString(0));
         }
+        cursor.close();
         return retorno;
 
     }

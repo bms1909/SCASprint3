@@ -69,8 +69,8 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
             try {
                 URL link = new URL(comando);
                 HttpURLConnection conn = (HttpURLConnection) link.openConnection();
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setReadTimeout(30000 /* milliseconds */);
+                conn.setConnectTimeout(30000 /* milliseconds */);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
 
@@ -102,17 +102,21 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
         executor.addListener(new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
-                clsUsuarios retorno = null;
-                try {
-                    if (result != null) {
-                        JSONObject loop;
-                        loop = result.getJSONObject(0);
-                        retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
+                if (result != null) {
+                    clsUsuarios retorno = null;
+                    try {
+                        if (result != null) {
+                            JSONObject loop;
+                            loop = result.getJSONObject(0);
+                            retorno = new clsUsuarios(loop.getInt("idUsuario"), loop.getString("nomeUsuario"), loop.getString("emailUsuario"), loop.getString("senhaUsuario"));
+                        }
+                    } catch (JSONException e) {
+                        Log.d(null, e.getMessage());
                     }
-                } catch (JSONException e) {
-                    Log.d(null, e.getMessage());
+                    ouvinte.usuarioCarregado(retorno);
+                } else {
+                    ouvinte.usuarioCarregado(null);
                 }
-                ouvinte.usuarioCarregado(retorno);
             }
         });
         executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeouEmail=" + Uri.encode(nomeOuEmail) + "&senha=" + Uri.encode(senha));

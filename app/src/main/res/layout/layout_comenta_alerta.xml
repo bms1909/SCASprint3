@@ -48,8 +48,9 @@
             android:id="@+id/txt_descricao_alerta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="Descreva o alerta (opcional)"
             android:inputType="text"
-            android:hint="Descreva o alerta (opcional)" />
+            android:maxLength="50" />
 
     </LinearLayout>
 </LinearLayout>

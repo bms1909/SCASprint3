@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -84,11 +85,14 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                     listener.addListener(new estabelecimentosCarregadosListener() {
                         @Override
                         public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
-                            estabelecimentosCarregados = estabelecimentos;
-                            if (txtPesquisa.getText().length() > 0) {
-                                buscaTexto(txtPesquisa.getText());
-                            }
-                            populaLista();
+                            if (estabelecimentos != null) {
+                                estabelecimentosCarregados = estabelecimentos;
+                                if (txtPesquisa.getText().length() > 0) {
+                                    buscaTexto(txtPesquisa.getText());
+                                }
+                                populaLista();
+                            } else
+                                Toast.makeText(PesquisaLocaisActivity.this, "Problema de conexão com o servidor, pesquisa de estabelecimentos indisponível", Toast.LENGTH_LONG).show();
                         }
                     });
                     listener.estabelecimentosPorRaio(raioBusca, localAtual, PesquisaLocaisActivity.this);

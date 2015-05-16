@@ -35,9 +35,8 @@ public class clsJSONgetAssincrono extends AsyncTask<String, Void, JSONArray>{
     protected void onPostExecute(JSONArray result) {
         //utilizado pois o webservice pode retornar null em uma consulta sem resultados
         if(deuErroInternet)
-            Toast.makeText(contexto,"Erro de internet, alertas e estabelecimentos podem estar desatualizados",Toast.LENGTH_LONG).show();
-        else
-            ouvinte.downloadConcluido(result);
+            Toast.makeText(contexto,"Erro de conexão com o servidor, confira sua internet",Toast.LENGTH_LONG).show();
+        ouvinte.downloadConcluido(result);
     }
 
     @Override

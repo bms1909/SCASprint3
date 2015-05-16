@@ -54,50 +54,53 @@ public class LoginActivity extends ActionBarActivity{
         mUsuario.addListener(new usuarioCarregadoListener() {
             @Override
             public void usuarioCarregado(clsUsuarios Usuario) {
-                //login com sucesso
-                if (Usuario.idUsuario > 0) {
-                    SharedPreferences settings = getSharedPreferences("USUARIO", 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putInt("ID_USUARIO", Usuario.idUsuario);
-                    editor.apply();
-
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-
-                } else if(Usuario.senhaUsuario.equals("INCORRETA")){
-                    //senha incorreta
-                    mPasswordView.setError("Senha Incorreta");
-                    mPasswordView.requestFocus();
-                }
-                else if(Usuario.nomeUsuario.equals("INVALIDO"))
-                {
-                    mEmailView.setError("Usuário ou senha incorretos");
+                if (Usuario == null) {
+                    AlertDialog.Builder internet = new AlertDialog.Builder(LoginActivity.this);
+                    internet.setTitle("Erro");
+                    internet.setMessage("Não foi possível realizar o login por um problema com sua conexão ou com o servidor, por favor, tente mais tarde");
+                    internet.show();
                 }
                 else
                 {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                    builder.setTitle("Erro desconhecido");
-                    builder.setMessage("Não foi possível processar o seu login, por favor, confira a estabilidade de sua conexão com a internet e tente novamente, se o erro persistir, contate o desenvolvedor");
-                    //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
-                    builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            finish();
-                        }
-                    });
+                    //login com sucesso
+                    if (Usuario.idUsuario > 0) {
+                        SharedPreferences settings = getSharedPreferences("USUARIO", 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putInt("ID_USUARIO", Usuario.idUsuario);
+                        editor.apply();
 
-                    builder.setPositiveButton("Repetir", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if(which==DialogInterface.BUTTON_POSITIVE)
-                            {
-                                tentarLogin();
-                            }
-                            else {
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                    } else if (Usuario.senhaUsuario.equals("INCORRETA")) {
+                        //senha incorreta
+                        mPasswordView.setError("Senha Incorreta");
+                        mPasswordView.requestFocus();
+                    } else if (Usuario.nomeUsuario.equals("INVALIDO")) {
+                        mEmailView.setError("Usuário ou senha incorretos");
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                        builder.setTitle("Erro desconhecido");
+                        builder.setMessage("Não foi possível processar o seu login, por favor, confira a estabilidade de sua conexão com a internet e tente novamente, se o erro persistir, contate o desenvolvedor");
+                        //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
                                 finish();
                             }
-                        }
-                    }).setNegativeButton("Fechar", null);
-                    builder.create().show();
+                        });
+
+                        builder.setPositiveButton("Repetir", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
+                                    tentarLogin();
+                                } else {
+                                    finish();
+                                }
+                            }
+                        }).setNegativeButton("Fechar", null);
+                        builder.create().show();
+                    }
                 }
                 showProgress(false);
             }
