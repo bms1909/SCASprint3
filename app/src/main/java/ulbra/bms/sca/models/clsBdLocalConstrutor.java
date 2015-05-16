@@ -24,11 +24,19 @@ public class clsBdLocalConstrutor extends SQLiteOpenHelper {
                 "_id integer primary key autoincrement," +
                 "comando text not null" +
                 ");");
+        //tabela de categorias carregadas do servidor
+        db.execSQL("CREATE TABLE categorias" +
+                "(" +
+                "_id integer primary key autoincrement, " +
+                "idcategoria integer not null, " +
+                "nomecategoria text not null" +
+                ");");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table postcache;");
+        db.execSQL("drop table categorias;");
         onCreate(db);
     }
 }

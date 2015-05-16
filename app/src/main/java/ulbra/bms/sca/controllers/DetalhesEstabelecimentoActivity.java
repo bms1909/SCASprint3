@@ -37,7 +37,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
     //carrega todas as informações do estabelecimento a partir do objeto global
     private void atualizaTela() {
         ActionBar ab = getSupportActionBar();
-        ab.setTitle(clsCategorias.getNomeCategoria(estabCarregado.idCategoria));
+        ab.setTitle(clsCategorias.getNomeCategoria(estabCarregado.idCategoria, this));
 
         TextView tvTitulo = (TextView) findViewById(R.id.tv_estabelecimento_nome);
         tvTitulo.setText(estabCarregado.nomeEstabelecimento);
@@ -74,7 +74,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
 
         SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
-        estabCarregado.avaliaEstabelecimento(rb.getProgress(), id.getInt("ID_USUARIO",0), this);
+        estabCarregado.avaliaEstabelecimento(rb.getProgress(), id.getInt("ID_USUARIO", 0), this);
         finish();
     }
     @Override

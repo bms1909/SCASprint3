@@ -80,7 +80,7 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
         rb.setMax(5);
 
         //region Spinner das Categorias
-        categoriasCarregadas = clsCategorias.carregaCategorias();
+        categoriasCarregadas = clsCategorias.carregaCategorias(this);
         clsCategorias percorre;
         String[] nomesCategoria = new String[categoriasCarregadas.size()];
         for (int x = 0; x < categoriasCarregadas.size(); x++) {

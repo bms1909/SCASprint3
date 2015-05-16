@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import ulbra.bms.sca.R;
 import ulbra.bms.sca.interfaces.usuarioCarregadoListener;
+import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsUsuarios;
 
 
@@ -43,6 +44,9 @@ public class LoginActivity extends ActionBarActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //sincroniza categorias com o servidor antes do login, tarefa assincrona, nao interfere nas demais
+        clsCategorias.sincronizaCategoriasServidor(LoginActivity.this);
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.txt_login_email);
@@ -70,7 +74,6 @@ public class LoginActivity extends ActionBarActivity{
                         editor.apply();
 
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
-
                     } else if (Usuario.senhaUsuario.equals("INCORRETA")) {
                         //senha incorreta
                         mPasswordView.setError("Senha Incorreta");
@@ -143,7 +146,6 @@ public class LoginActivity extends ActionBarActivity{
             focusView = mPasswordView;
             cancel = true;
         }
-
 
         if (TextUtils.isEmpty(emailouUsuario)) {
             mEmailView.setError("Campo obrigatório!");

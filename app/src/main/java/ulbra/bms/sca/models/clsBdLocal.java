@@ -34,6 +34,31 @@ public class clsBdLocal {
         db.close();
     }
 
+    public void insereCategoria(int idCategoria, String nomeCategoria) {
+        ContentValues valores = new ContentValues();
+        valores.put("idcategoria", idCategoria);
+        valores.put("nomecategoria", nomeCategoria);
+        db.insert("categorias", null, valores);
+    }
+
+    public void limpaCategorias() {
+        db.execSQL("DELETE FROM categorias ;");
+    }
+
+    public ArrayList<clsCategorias> buscaCategorias() {
+        ArrayList<clsCategorias> retorno = new ArrayList<>();
+        String[] colunaConsulta = new String[]{"idcategoria", "nomecategoria"};
+        //nome tabela,colunas da consulta,where,where args,groupby,having,orderby
+
+        Cursor cursor = db.query("categorias", colunaConsulta, null /*"comando != null"*/, null, null, null, null);
+        while (cursor.moveToNext()) {
+            retorno.add(new clsCategorias(cursor.getInt(0), cursor.getString(1)));
+        }
+        cursor.close();
+        return retorno;
+    }
+
+    //region temp
     public void insereTemp(String comando) {
         ContentValues valores = new ContentValues();
         valores.put("comando", comando);
@@ -58,6 +83,6 @@ public class clsBdLocal {
         }
         cursor.close();
         return retorno;
-
     }
+    //endregion
 }

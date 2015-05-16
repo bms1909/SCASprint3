@@ -193,7 +193,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
         ActionBar ab = getSupportActionBar();
         idCategoriaPesquisa=idCategoria;
         if (idCategoria>0) {
-            String nomeCategoria = clsCategorias.getNomeCategoria(idCategoria);
+            String nomeCategoria = clsCategorias.getNomeCategoria(idCategoria, this);
             ab.setTitle(nomeCategoria);
             categoriasCarregadas.clear();
             txtPesquisa.setHint("Pesquise por "+ nomeCategoria );
@@ -202,7 +202,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
         else {
             txtPesquisa.setHint(R.string.pesquisalocais_dica);
             ab.setTitle(R.string.title_activity_pesquisa_locais);
-            categoriasCarregadas= clsCategorias.carregaCategorias();
+            categoriasCarregadas = clsCategorias.carregaCategorias(this);
         }
         populaLista();
     }

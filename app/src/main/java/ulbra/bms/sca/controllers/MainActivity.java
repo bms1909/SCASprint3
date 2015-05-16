@@ -39,6 +39,7 @@ import ulbra.bms.sca.interfaces.alertasCarregadosListener;
 import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
 import ulbra.bms.sca.models.clsAlertas;
 import ulbra.bms.sca.models.clsApiClientSingleton;
+import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsEstabelecimentos;
 
 /**
@@ -513,8 +514,11 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             if(clsJSONget.temInternet()) {
                 if (mlocalAtual!=null) {
                     carregaMarcadores(mLocalFocoCamera, 2, true);
-                    clsJSONpost.executaPendentes(this);
                 }
+                //faz uma nova tentativa de sincronizacao de possiveis operacoes pendentes
+                clsJSONpost.executaPendentes(this);
+                //sincroniza categorias com o servidor, tarefa assincrona, nao interfere nas demais
+                clsCategorias.sincronizaCategoriasServidor(MainActivity.this);
             }
             else
                 Toast.makeText(this,"Sem internet, confira conexão e tente de novo",Toast.LENGTH_SHORT).show();

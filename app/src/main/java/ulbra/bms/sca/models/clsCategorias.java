@@ -1,5 +1,6 @@
 package ulbra.bms.sca.models;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -9,9 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
-import ulbra.bms.sca.controllers.clsJSONget;
+import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
 /**
  * Criador por Bruno em 18/03/2015.
@@ -21,49 +22,52 @@ public class clsCategorias implements Parcelable {
     private int idCategoria;
     private String nomeCategoria;
 
-    private clsCategorias(int id, String nome) {
+    public clsCategorias(int id, String nome) {
         this.idCategoria = id;
         this.nomeCategoria = nome;
     }
 
-    public static ArrayList<clsCategorias> carregaCategorias() {
-        ArrayList<clsCategorias> retorno = new ArrayList<>();
-        clsJSONget executor = new clsJSONget();
-        JSONArray recebido = null;
-        JSONObject loop;
-
-        executor.execute("http://scaws.azurewebsites.net/api/clsCategorias");
-
-        try {
-            recebido = executor.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Log.d(null, e.getMessage());
-        }
-
-        if (recebido != null) {
-            try {
-                for (int i = 0; i < recebido.length(); i++) {
-                    loop = recebido.getJSONObject(i);
-                    retorno.add(new clsCategorias(loop.getInt("idCategoria"), loop.getString("nomeCategoria")));
+    public static void sincronizaCategoriasServidor(Context contexto) {
+        final clsBdLocal BD = new clsBdLocal(contexto);
+        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
+        executor.addListener(new downloadFeitoListener() {
+            @Override
+            public void downloadConcluido(JSONArray result) {
+                if (result != null) {
+                    JSONObject loop;
+                    ArrayList<clsCategorias> salvar = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < result.length(); i++) {
+                            loop = result.getJSONObject(i);
+                            salvar.add(new clsCategorias(loop.getInt("idCategoria"), loop.getString("nomeCategoria")));
+                        }
+                    } catch (JSONException e) {
+                        Log.d(null, e.getMessage());
+                    }
+                    //apaga todas as categorias salvas localmente
+                    BD.limpaCategorias();
+                    //feito em duas etapas pra garantir que nao ocorreu nenhum JSONexception com o banco vazio
+                    for (clsCategorias percorre : salvar) {
+                        BD.insereCategoria(percorre.idCategoria, percorre.nomeCategoria);
+                    }
+                    BD.desconectaBanco();
                 }
-            } catch (JSONException e) {
-                Log.d(null, e.getMessage());
             }
-        }
-    /*  testes
-        ArrayList<clsCategorias> a = new ArrayList<>();
-        /*a.add(new clsCategorias(1,"Restaurante"));
-        a.add(new clsCategorias(2,"Pizzaria"));
-        a.add(new clsCategorias(2,"Prédio Público"));
-        a.add(new clsCategorias(2,"Livraria"));
-        a.add(new clsCategorias(2,"Outros"));
-        return a;
-        retorno = R.array.valores_array_categorias;*/
+        });
+        executor.execute("http://scaws.azurewebsites.net/api/clsCategorias");
+    }
+
+
+    public static ArrayList<clsCategorias> carregaCategorias(Context contexto) {
+
+        clsBdLocal BD = new clsBdLocal(contexto);
+        ArrayList<clsCategorias> retorno = BD.buscaCategorias();
+        BD.desconectaBanco();
         return retorno;
     }
 
-    public static String getNomeCategoria(int idCategoria) {
-        ArrayList<clsCategorias> percorre = carregaCategorias();
+    public static String getNomeCategoria(int idCategoria, Context contexto) {
+        ArrayList<clsCategorias> percorre = carregaCategorias(contexto);
         for (clsCategorias loop : percorre) {
             if (loop.idCategoria == idCategoria)
                 return loop.nomeCategoria;
