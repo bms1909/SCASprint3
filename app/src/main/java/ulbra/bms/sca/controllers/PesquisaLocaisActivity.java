@@ -33,10 +33,10 @@ import ulbra.bms.sca.R;
 import ulbra.bms.sca.interfaces.adapterListViewEstabelecimentos;
 import ulbra.bms.sca.interfaces.enderecoEncontradoListener;
 import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
-import ulbra.bms.sca.models.clsApiClientSingleton;
 import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsEstabelecimentos;
-import ulbra.bms.sca.models.clsPesquisaEndereco;
+import ulbra.bms.sca.utils.clsApiClientSingleton;
+import ulbra.bms.sca.utils.clsPesquisaEndereco;
 
 public class PesquisaLocaisActivity extends ActionBarActivity {
 

@@ -38,9 +38,9 @@ import ulbra.bms.sca.R;
 import ulbra.bms.sca.interfaces.alertasCarregadosListener;
 import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
 import ulbra.bms.sca.models.clsAlertas;
-import ulbra.bms.sca.models.clsApiClientSingleton;
 import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsEstabelecimentos;
+import ulbra.bms.sca.utils.clsApiClientSingleton;
 
 /**
  * Criado por Bruno on 19/03/2015.

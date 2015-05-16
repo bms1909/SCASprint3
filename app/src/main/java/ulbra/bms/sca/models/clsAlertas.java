@@ -90,7 +90,6 @@ public class clsAlertas{
     }
 
     public void cadastraAlerta(Context contexto) {
-
         clsJSONpost executor = new clsJSONpost(contexto);
         executor.executaPost("http://scaws.azurewebsites.net/api/clsAlertas?idUsuario=" + this.idUsuario + "&lat=" + this.latlonAlerta.latitude + "&lon=" + this.latlonAlerta.longitude + "&tipo=" + this.tipoAlerta + "&descricao=" + Uri.encode(this.descricaoAlerta) + "&risco=" + this.riscoAlerta);
     }

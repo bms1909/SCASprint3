@@ -1,4 +1,4 @@
-package ulbra.bms.sca.models;
+package ulbra.bms.sca.utils;
 
 import android.content.Context;
 import android.location.Address;

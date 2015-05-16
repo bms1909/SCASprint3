@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
+import ulbra.bms.sca.utils.clsBdLocalConstrutor;
+
 /**
  * Criado por Bruno on 06/04/2015.
  */

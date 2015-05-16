@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulbra.bms.sca.R;
-import ulbra.bms.sca.models.clsApiClientSingleton;
 import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsEstabelecimentos;
+import ulbra.bms.sca.utils.clsApiClientSingleton;
 
 
 public class CadastraEstabelecimentoActivity extends ActionBarActivity {
