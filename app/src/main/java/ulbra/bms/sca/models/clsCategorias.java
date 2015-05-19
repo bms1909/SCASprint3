@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.controllers.clsJSONget;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
 /**
@@ -29,7 +29,7 @@ public class clsCategorias implements Parcelable {
 
     public static void sincronizaCategoriasServidor(Context contexto) {
         final clsBdLocal BD = new clsBdLocal(contexto);
-        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
+        clsJSONget executor = new clsJSONget(contexto);
         executor.addListener(new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {

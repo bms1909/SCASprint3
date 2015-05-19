@@ -1,6 +1,8 @@
 package ulbra.bms.sca.controllers;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +26,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import ulbra.bms.sca.R;
+import ulbra.bms.sca.interfaces.booleanRetornadoListener;
+import ulbra.bms.sca.interfaces.detalhesEstabelecimentoCarregadoListener;
 import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsEstabelecimentos;
 
@@ -33,6 +37,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
     private clsEstabelecimentos estabCarregado;
     private RatingBar rb;
     private boolean jaAvaliado;
+    private Menu actionBarMenu;
 
     //carrega todas as informações do estabelecimento a partir do objeto global
     private void atualizaTela() {
@@ -73,34 +78,73 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         // envia ao WS a avaliação do estabelecimento
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
 
-        SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
+        SharedPreferences id = getSharedPreferences("USUARIO", MODE_PRIVATE);
         estabCarregado.avaliaEstabelecimento(rb.getProgress(), id.getInt("ID_USUARIO", 0), this);
         finish();
     }
+
+    private void showProgress(final boolean show) {
+        //mesmo sistema de animacao da loginActivity, fornecido automaticamente ao criar tela de login
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        final View progresso = findViewById(R.id.pb_estabelecimento);
+        progresso.setVisibility(show ? View.VISIBLE : View.GONE);
+        progresso.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                progresso.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+        View scrollView = findViewById(R.id.sv_estabelecimento);
+        if (show)
+            scrollView.setVisibility(View.GONE);
+        else
+            scrollView.setVisibility(View.VISIBLE);
+    }
+
     @Override
     protected void onResume()
     {
-        //tarefa sincrona pois o inicio da activity depende desses dados
-        estabCarregado=estabCarregado.carregaDetalhesEstabelecimento();
-        atualizaTela();
+        showProgress(true);
+        estabCarregado.carregaDetalhesEstabelecimento(new detalhesEstabelecimentoCarregadoListener() {
+            @Override
+            public void estabelecimentoCarregado(clsEstabelecimentos estabelecimento) {
+                estabCarregado = estabelecimento;
+                //remove botao de telefone se nao houver telefone cadastrado
+                if ((estabCarregado.telefoneEstabelecimento.equals("")) && actionBarMenu != null) {
+                    actionBarMenu.removeItem(R.id.btnEstabelecimentoTelefone);
+                }
+                atualizaTela();
+                showProgress(false);
+            }
+        }, this);
         super.onResume();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes_estabelecimento);
-        //recebe os dados da outra página e carrega o objeto local
+
+        //recebe os dados da outra pagina e carrega o objeto local
         Intent recebido = getIntent();
         estabCarregado = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
+
+        SharedPreferences id = getSharedPreferences("USUARIO", MODE_PRIVATE);
+        //recupera do webservice se usuario ja avaliou o estabelecimento
+        clsEstabelecimentos.estabelecimentoFoiAvaliado(new booleanRetornadoListener() {
+            @Override
+            public void booleanRetornado(boolean retorno) {
+                jaAvaliado = retorno;
+            }
+        }, id.getInt("ID_USUARIO", 0), estabCarregado.idEstabelecimento, this);
 
 
         rb = (RatingBar) findViewById(R.id.rb_estabelecimento_classificacao);
         //escala até 5
         rb.setMax(5);
 
-        //listener de pressionamento das estrelas de avaliação, quando acionado, altera altura da buttonBar e exibe botão "avaliar"
+        //listener de pressionamento das estrelas de avaliacao, quando acionado, altera altura da buttonBar e exibe botao "avaliar"
         rb.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -122,7 +166,14 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                                 }
                             }
                         });
-                        dlgAlert.setNegativeButton("Não", null);
+                        dlgAlert.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == DialogInterface.BUTTON_NEGATIVE) {
+                                    rb.setRating(estabCarregado.mediaEstrelasAtendimento);
+                                }
+                            }
+                        });
                         dlgAlert.create().show();
                     } else {
                         btnBar.setLayoutParams(a);
@@ -131,9 +182,6 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                 return false;
             }
         });
-        SharedPreferences id = getSharedPreferences("USUARIO",MODE_PRIVATE);
-        //recupera do webservice se usuario ja avaliou o estabelecimento
-        jaAvaliado = clsEstabelecimentos.estabelecimentoFoiAvaliado(id.getInt("ID_USUARIO",0), estabCarregado.idEstabelecimento);
     }
 
     @Override
@@ -153,8 +201,9 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
         list = mgr.queryIntentActivities(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:9999")),
                 PackageManager.MATCH_DEFAULT_ONLY);
         //se nao houver, remove o botao
-        if (list.size() == 0||estabCarregado.telefoneEstabelecimento.equals(""))
+        if (list.size() == 0)
             menu.removeItem(R.id.btnEstabelecimentoTelefone);
+        actionBarMenu = menu;
         return true;
     }
 
@@ -169,7 +218,25 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + estabCarregado.telefoneEstabelecimento)));
                 break;
             case R.id.btnEstabelecimentoEditar:
-                startActivity(new Intent(DetalhesEstabelecimentoActivity.this, CadastraEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabCarregado.idEstabelecimento));
+                startActivity(new Intent(DetalhesEstabelecimentoActivity.this, CadastraEstabelecimentoActivity.class)
+                                .putExtra("ID_ESTABELECIMENTO", estabCarregado.idEstabelecimento)
+                                .putExtra("ID_CATEGORIA", estabCarregado.idCategoria)
+                                .putExtra("NOME", estabCarregado.nomeEstabelecimento)
+                                .putExtra("ENDERECO", estabCarregado.enderecoEstabelecimento)
+                                .putExtra("BAIRRO", estabCarregado.bairroEstabelecimento)
+                                .putExtra("CIDADE", estabCarregado.cidadeEstabelecimento)
+                                .putExtra("ESTADO", estabCarregado.estadoEstabelecimento)
+                                .putExtra("ESTRELAS", estabCarregado.mediaEstrelasAtendimento)
+                                .putExtra("BANHEIRO", estabCarregado.possuiBanheiro)
+                                .putExtra("ESTACIONAMENTO", estabCarregado.possuiEstacionamento)
+                                .putExtra("ALTURA", estabCarregado.alturaCerta)
+                                .putExtra("RAMPA", estabCarregado.possuiRampa)
+                                .putExtra("LARGURA", estabCarregado.larguraSuficiente)
+                                .putExtra("TELEFONE", estabCarregado.telefoneEstabelecimento)
+                                .putExtra("LATITUDE", estabCarregado.latlonEstabelecimento.latitude)
+                                .putExtra("LONGITUDE", estabCarregado.latlonEstabelecimento.longitude)
+                );
+
                 break;
         }
         return super.onOptionsItemSelected(item);

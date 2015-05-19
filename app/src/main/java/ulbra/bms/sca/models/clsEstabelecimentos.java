@@ -13,11 +13,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import ulbra.bms.sca.controllers.clsJSONget;
-import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
 import ulbra.bms.sca.controllers.clsJSONpost;
+import ulbra.bms.sca.interfaces.booleanRetornadoListener;
+import ulbra.bms.sca.interfaces.detalhesEstabelecimentoCarregadoListener;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 import ulbra.bms.sca.interfaces.estabelecimentosCarregadosListener;
 
@@ -93,28 +93,26 @@ public class clsEstabelecimentos implements Parcelable {
     }
     //endregion
 
-    public static boolean estabelecimentoFoiAvaliado(int idUsuario, int idEstabelecimento) {
-        JSONObject retorno;
-        JSONArray recebido = null;
-        clsJSONget executor = new clsJSONget();
-        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
+    public static void estabelecimentoFoiAvaliado(final booleanRetornadoListener listener, int idUsuario, int idEstabelecimento, Context contexto) {
+        clsJSONget executor = new clsJSONget(contexto);
 
-        try {
-            recebido = executor.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Log.d(null, e.getMessage());
-        }
-
-        try {
-
-            if (recebido != null) {
-                retorno = recebido.getJSONObject(0);
-                return retorno.getBoolean("resposta");
+        executor.addListener(new downloadFeitoListener() {
+            @Override
+            public void downloadConcluido(JSONArray result) {
+                boolean retorno = false;
+                if (result != null) {
+                    JSONObject recebido;
+                    try {
+                        recebido = result.getJSONObject(0);
+                        retorno = recebido.getBoolean("resposta");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                listener.booleanRetornado(retorno);
             }
-        } catch (Exception e) {
-            Log.d(null, e.getMessage());
-        }
-        return false;
+        });
+        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
     }
 
     public void addListener(estabelecimentosCarregadosListener listener)
@@ -123,7 +121,7 @@ public class clsEstabelecimentos implements Parcelable {
     }
 
     public void estabelecimentosPorRaio(float raio, LatLng local,Context contexto) {
-        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
+        clsJSONget executor = new clsJSONget(contexto);
 
         executor.addListener(new downloadFeitoListener() {
             @Override
@@ -160,51 +158,45 @@ public class clsEstabelecimentos implements Parcelable {
                     ouvinte.estabelecimentosCarregados(null);
             }
         });
-
         executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
     }
 
-    public clsEstabelecimentos carregaDetalhesEstabelecimento() {
-        clsEstabelecimentos retorno = null;
-        clsJSONget executor = new clsJSONget();
-        JSONArray recebido = null;
-        JSONObject loop;
-        if (this.idEstabelecimento == 0)
-            return null;
-        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento);
+    public void carregaDetalhesEstabelecimento(final detalhesEstabelecimentoCarregadoListener listener, Context contexto) {
+        clsJSONget executor = new clsJSONget(contexto);
 
-        try {
-            recebido = executor.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Log.d(null, e.getMessage());
-        }
-
-        try {
-
-            if (recebido != null) {
-                loop = recebido.getJSONObject(0);
-                retorno = new clsEstabelecimentos(
-                        loop.getInt("idCategoria"),
-                        loop.getInt("idEstabelecimento"),
-                        loop.getString("nomeEstabelecimento"),
-                        loop.getString("enderecoEstabelecimento"),
-                        loop.getString("bairroEstabelecimento"),
-                        loop.getString("cidadeEstabelecimento"),
-                        loop.getString("estadoEstabelecimento"),
-                        loop.getDouble("estrelasEstabelecimento"),
-                        loop.getBoolean("possuiBanheiro"),
-                        loop.getBoolean("possuiEstacionamento"),
-                        loop.getBoolean("alturaCerta"),
-                        loop.getBoolean("possuiRampa"),
-                        loop.getBoolean("larguraSuficiente"),
-                        loop.getString("telefoneEstabelecimento"),
-                        loop.getDouble("latitudeEstabelecimento"),
-                        loop.getDouble("longitudeEstabelecimento"));
+        executor.addListener(new downloadFeitoListener() {
+            @Override
+            public void downloadConcluido(JSONArray result) {
+                clsEstabelecimentos retorno = new clsEstabelecimentos();
+                if (result != null) {
+                    JSONObject loop;
+                    try {
+                        loop = result.getJSONObject(0);
+                        retorno = new clsEstabelecimentos(
+                                loop.getInt("idCategoria"),
+                                loop.getInt("idEstabelecimento"),
+                                loop.getString("nomeEstabelecimento"),
+                                loop.getString("enderecoEstabelecimento"),
+                                loop.getString("bairroEstabelecimento"),
+                                loop.getString("cidadeEstabelecimento"),
+                                loop.getString("estadoEstabelecimento"),
+                                loop.getDouble("estrelasEstabelecimento"),
+                                loop.getBoolean("possuiBanheiro"),
+                                loop.getBoolean("possuiEstacionamento"),
+                                loop.getBoolean("alturaCerta"),
+                                loop.getBoolean("possuiRampa"),
+                                loop.getBoolean("larguraSuficiente"),
+                                loop.getString("telefoneEstabelecimento"),
+                                loop.getDouble("latitudeEstabelecimento"),
+                                loop.getDouble("longitudeEstabelecimento"));
+                    } catch (JSONException e) {
+                        Log.d(null, e.getMessage());
+                    }
             }
-        } catch (JSONException e) {
-            Log.d(null, e.getMessage());
-        }
-        return retorno;
+                listener.estabelecimentoCarregado(retorno);
+            }
+        });
+        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento);
     }
 
     public void avaliaEstabelecimento(int notaAvaliacao, int idUsuario, Context context) {
@@ -229,6 +221,5 @@ public class clsEstabelecimentos implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
     }
 }

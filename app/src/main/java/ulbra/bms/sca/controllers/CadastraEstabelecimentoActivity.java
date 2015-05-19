@@ -98,36 +98,56 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
 
         //recebe dados para edição
         Intent recebido = getIntent();
-        editar = new clsEstabelecimentos(recebido.getIntExtra("ID_ESTABELECIMENTO", 0));
-        if(editar.idEstabelecimento>0) {
-            editar=editar.carregaDetalhesEstabelecimento();
-            cbxLargura.setChecked(editar.larguraSuficiente);
-            cbxRampa.setChecked(editar.possuiRampa);
-            cbxAltura.setChecked(editar.alturaCerta);
-            cbxEstacionamento.setChecked(editar.possuiEstacionamento);
-            cbxBanheiro.setChecked(editar.possuiBanheiro);
-            txtFone.setText(editar.telefoneEstabelecimento);
-            String buscaEstado= codigosEstados[0];
-            for(int x=0;x<codigosEstados.length;x++) {
-                if (buscaEstado.equals(editar.estadoEstabelecimento))
-                {
-                    spEstado.setSelection(x);
-                    break;
-                }
-            }
-            txtCidade.setText(editar.cidadeEstabelecimento);
-            txtBairro.setText(editar.bairroEstabelecimento);
-            txtEndereco.setText(editar.enderecoEstabelecimento);
-            txtTitulo.setText(editar.nomeEstabelecimento);
-            rb.setProgress((int) editar.mediaEstrelasAtendimento);
-            clsCategorias buscaId;
-            for(int x=0;x<categoriasCarregadas.size();x++) {
-                buscaId=categoriasCarregadas.get(x);
-                if(buscaId.getIdCategoria()==editar.idCategoria) {
-                    spCategorias.setSelection(x);
-                    break;
-                }
-            }
+        editar = new clsEstabelecimentos();
+        //se houver retorno
+        if(recebido.getIntExtra("ID_ESTABELECIMENTO", 0)>0) {
+                    //busca da intent recebida os dados para edicao
+                    editar.idEstabelecimento= recebido.getIntExtra("ID_ESTABELECIMENTO",0);
+                    editar.idCategoria=       recebido.getIntExtra("ID_CATEGORIA",0);
+                    editar.nomeEstabelecimento=          recebido.getStringExtra("NOME");
+                    editar.enderecoEstabelecimento  =         recebido.getStringExtra("ENDERECO");
+                    editar.bairroEstabelecimento =        recebido.getStringExtra("BAIRRO");
+                    editar.cidadeEstabelecimento =       recebido.getStringExtra("CIDADE");
+                    editar.estadoEstabelecimento  =      recebido.getStringExtra("ESTADO");
+                    editar.mediaEstrelasAtendimento =     recebido.getFloatExtra("ESTRELAS", 0);
+                    editar.possuiBanheiro =    recebido.getBooleanExtra("BANHEIRO", false);
+                    editar.possuiEstacionamento=   recebido.getBooleanExtra("ESTACIONAMENTO", false);
+                    editar.alturaCerta =  recebido.getBooleanExtra("ALTURA", false);
+                    editar.possuiRampa =recebido.getBooleanExtra("RAMPA", false);
+                    editar.larguraSuficiente=recebido.getBooleanExtra("LARGURA", false);
+                    editar.telefoneEstabelecimento=recebido.getStringExtra("TELEFONE");
+                    editar.latlonEstabelecimento = new LatLng(recebido.getDoubleExtra("LATITUDE",0), recebido.getDoubleExtra("LONGITUDE",0));
+
+                    //exibe na tela os dados recebidos
+                    cbxLargura.setChecked(editar.larguraSuficiente);
+                    cbxRampa.setChecked(editar.possuiRampa);
+                    cbxAltura.setChecked(editar.alturaCerta);
+                    cbxEstacionamento.setChecked(editar.possuiEstacionamento);
+                    cbxBanheiro.setChecked(editar.possuiBanheiro);
+                    txtFone.setText(editar.telefoneEstabelecimento);
+                    String buscaEstado= codigosEstados[0];
+                    for(int x=0;x<codigosEstados.length;x++) {
+                        if (buscaEstado.equals(editar.estadoEstabelecimento))
+                        {
+                            spEstado.setSelection(x);
+                            break;
+                        }
+                    }
+                    txtCidade.setText(editar.cidadeEstabelecimento);
+                    txtBairro.setText(editar.bairroEstabelecimento);
+                    txtEndereco.setText(editar.enderecoEstabelecimento);
+                    txtTitulo.setText(editar.nomeEstabelecimento);
+                    rb.setProgress((int) editar.mediaEstrelasAtendimento);
+                    clsCategorias buscaId;
+                    for(int x=0;x<categoriasCarregadas.size();x++) {
+                        buscaId=categoriasCarregadas.get(x);
+                        if(buscaId.getIdCategoria()==editar.idCategoria) {
+                            spCategorias.setSelection(x);
+                            break;
+                        }
+                    }
+
+
         }
         else
         {

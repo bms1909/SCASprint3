@@ -1,5 +1,7 @@
 package ulbra.bms.sca.controllers;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -12,10 +14,17 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Criador por Bruno em 17/03/2015.
- */
+import ulbra.bms.sca.interfaces.downloadFeitoListener;
+
 public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
+
+    private final Context contexto;
+    private downloadFeitoListener ouvinte;
+    private boolean deuErroInternet = false;
+
+    public clsJSONget(Context ctx) {
+        this.contexto = ctx;
+    }
 
     public static boolean temInternet() {
         Runtime runtime = Runtime.getRuntime();
@@ -30,6 +39,24 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
         }
 
         return false;
+    }
+
+    public void addListener(downloadFeitoListener listener) {
+        ouvinte = listener;
+    }
+
+    @Override
+    protected void onPostExecute(JSONArray result) {
+        //utilizado pois o webservice pode retornar null em uma consulta sem resultados
+        if (deuErroInternet) {
+            AlertDialog.Builder dlgErro = new AlertDialog.Builder(contexto);
+            dlgErro.setTitle("Erro de Conexão");
+            dlgErro.setMessage("Erro de conexão com o servidor, confira sua internet e pressione o botão de sincronizar dados na tela principal");
+            dlgErro.setPositiveButton("OK", null);
+            dlgErro.setCancelable(true);
+            dlgErro.show();
+        }
+        ouvinte.downloadConcluido(result);
     }
 
     @Override
@@ -56,7 +83,12 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
             //conversao de inputstream para string
             IOUtils.copy(conn.getInputStream(), intermediario);
             String conteudo = intermediario.toString();
-            if (!conteudo.startsWith("[")) {
+            //se retorno for vazio
+            if ((conteudo.equals("[]"))) {
+                return null;
+            }
+            //se nao comeca com [, eh um JSON object, e para garantir o reuso, eh transformado em jsonArray
+            else if (!conteudo.startsWith("[")) {
                 builder = new StringBuilder();
                 builder.append("[");
                 if (conteudo.startsWith("t") || conteudo.startsWith("f")) {
@@ -69,13 +101,19 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
                 builder.append("]");
                 conteudo = builder.toString();
             }
-                retorno = new JSONArray(conteudo); //converte os dados recebidos de uma string para um objeto manipulável
+            retorno = new JSONArray(conteudo); //converte os dados recebidos de uma string para um objeto manipulável
 
-
-        } catch (IOException |JSONException o) {
+        } catch (IOException o) {
             //previne crash se a mensagem for vazia
-            if (o.getMessage()!=null)
+            if (o.getMessage() != null) {
                 Log.d("get ", o.getMessage());
+            }
+            deuErroInternet = true;
+        } catch (JSONException o) {
+            //previne crash se a mensagem for vazia
+            if (o.getMessage() != null) {
+                Log.d("json ", o.getMessage());
+            }
         }
         return retorno;
     }

@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.controllers.clsJSONget;
 import ulbra.bms.sca.controllers.clsJSONpost;
 import ulbra.bms.sca.interfaces.alertasCarregadosListener;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
@@ -63,7 +63,7 @@ public class clsAlertas{
 
     public void carregaAlertas(int raio, LatLng local,Context contexto) {
 
-        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
+        clsJSONget executor = new clsJSONget(contexto);
 
         executor.addListener(new downloadFeitoListener() {
             @Override

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ulbra.bms.sca.R;
+import ulbra.bms.sca.interfaces.booleanRetornadoListener;
 import ulbra.bms.sca.interfaces.usuarioCarregadoListener;
 import ulbra.bms.sca.models.clsCategorias;
 import ulbra.bms.sca.models.clsUsuarios;
@@ -274,12 +275,16 @@ public class LoginActivity extends ActionBarActivity{
                     nomeOuEmail.setError("Campo obrigatório!");
                     nomeOuEmail.requestFocus();
                 } else {
-                    if(clsUsuarios.recuperaUsuario(nomeOuEmail.getText().toString())) {
-                        Toast.makeText(LoginActivity.this, "Sua senha será enviada para o email cadastrado em breve", Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        Toast.makeText(LoginActivity.this, "Não foi possível reconhecer seu email ou usuário, confira os dados informados", Toast.LENGTH_LONG).show();
-                    }
+                    clsUsuarios.recuperaUsuario(new booleanRetornadoListener() {
+                        @Override
+                        public void booleanRetornado(boolean retorno) {
+                            if (retorno) {
+                                Toast.makeText(LoginActivity.this, "Sua senha será enviada para o email cadastrado em breve", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Não foi possível reconhecer seu email ou usuário, confira os dados informados", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }, nomeOuEmail.getText().toString(), LoginActivity.this);
                 }
             }
         });

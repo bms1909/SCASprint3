@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -51,6 +52,21 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
     private boolean ordenarPorClassificacao;
     private int idCategoriaPesquisa;
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            if (idCategoriaPesquisa > 0)
+                somenteCategoria(0);
+            else
+                //voltar normal
+                onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +103,9 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                         public void estabelecimentosCarregados(ArrayList<clsEstabelecimentos> estabelecimentos) {
                             if (estabelecimentos != null) {
                                 estabelecimentosCarregados = estabelecimentos;
-                                if (txtPesquisa.getText().length() > 0) {
+                                //if (txtPesquisa.getText().length() > 0) {
                                     buscaTexto(txtPesquisa.getText());
-                                }
-                                populaLista();
+                                //}
                             } else
                                 Toast.makeText(PesquisaLocaisActivity.this, "Problema de conexão com o servidor, pesquisa de estabelecimentos indisponível", Toast.LENGTH_LONG).show();
                         }
@@ -123,8 +138,9 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                buscaTexto(s);
-                populaLista();
+                if (!(estabelecimentosCarregados == null || categoriasCarregadas == null)) {
+                    buscaTexto(s);
+                }
             }
 
             @Override
@@ -203,8 +219,9 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
             txtPesquisa.setHint(R.string.pesquisalocais_dica);
             ab.setTitle(R.string.title_activity_pesquisa_locais);
             categoriasCarregadas = clsCategorias.carregaCategorias(this);
+
         }
-        populaLista();
+        txtPesquisa.setText("");
     }
 
     private void gpsDesligado() {
@@ -253,7 +270,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
     }
     private void buscaTexto(CharSequence parametro) {
         elementosLista.clear();
-        if(!parametro.equals("")) {
+        if ((!parametro.toString().equals("")) || idCategoriaPesquisa > 0) {
             parametro = parametro.toString().toLowerCase();
             if (idCategoriaPesquisa==0)
                 buscaCategoria(parametro);
@@ -275,21 +292,23 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                         Location.distanceBetween(localAtual.latitude, localAtual.longitude, busca.latlonEstabelecimento.latitude, busca.latlonEstabelecimento.longitude, distancia);
                         m.put("linha5", "" + DF.format(distancia[0] / 1000));
                         elementosLista.add(m);
-                    }
                 }
             }
-            if(((parametro.toString().startsWith("rua"))||(parametro.toString().startsWith("av"))||(parametro.length()>4))&& idCategoriaPesquisa ==0)
-            {
-                clsPesquisaEndereco pesquisaEndereco = new clsPesquisaEndereco(this, raioBusca, localAtual, parametro.toString(), new enderecoEncontradoListener() {
-                    @Override
-                    public void enderecosEncontrados(List<Map<String, String>> Enderecos) {
-                        elementosLista.addAll(Enderecos);
-                        populaLista();
-                    }
-                });
-                pesquisaEndereco.execute();
+        } else {
+            buscaCategoria("");
+        }
 
-            }
+        if (((parametro.toString().startsWith("rua")) || (parametro.toString().startsWith("av")) || (parametro.length() > 4)) && idCategoriaPesquisa == 0) {
+            clsPesquisaEndereco pesquisaEndereco = new clsPesquisaEndereco(this, raioBusca, localAtual, parametro.toString(), new enderecoEncontradoListener() {
+                @Override
+                public void enderecosEncontrados(List<Map<String, String>> Enderecos) {
+                    elementosLista.addAll(Enderecos);
+                    populaLista();
+                }
+            });
+            pesquisaEndereco.execute();
+        }
+        populaLista();
         }
 
     private void populaLista() {

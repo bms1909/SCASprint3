@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import ulbra.bms.sca.controllers.clsJSONget;
-import ulbra.bms.sca.controllers.clsJSONgetAssincrono;
+import ulbra.bms.sca.interfaces.booleanRetornadoListener;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 import ulbra.bms.sca.interfaces.usuarioCarregadoListener;
 
@@ -48,20 +48,26 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
         super();
     }
 
-    public static boolean recuperaUsuario(String nomeOuEmail) {
-        clsJSONget executor = new clsJSONget();
-        executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
-        JSONArray retorno;
-        JSONObject recebido;
-        try {
-            retorno = executor.get();
-            recebido = retorno.getJSONObject(0);
+    public static void recuperaUsuario(final booleanRetornadoListener listener, String nomeOuEmail, Context contexto) {
+        clsJSONget executor = new clsJSONget(contexto);
 
-            return recebido.getBoolean("resposta");
-        } catch (JSONException | InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
+        executor.addListener(new downloadFeitoListener() {
+            @Override
+            public void downloadConcluido(JSONArray result) {
+                boolean retorno = false;
+                if (result != null) {
+                    JSONObject recebido;
+                    try {
+                        recebido = result.getJSONObject(0);
+                        retorno = recebido.getBoolean("resposta");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                listener.booleanRetornado(retorno);
+            }
+        });
+        executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
     }
 
     @Override
@@ -97,7 +103,7 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
 
     public void carregaUsuario(String nomeOuEmail, String senha,Context contexto) {
 
-        clsJSONgetAssincrono executor = new clsJSONgetAssincrono(contexto);
+        clsJSONget executor = new clsJSONget(contexto);
 
         executor.addListener(new downloadFeitoListener() {
             @Override
