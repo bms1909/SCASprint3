@@ -126,8 +126,8 @@ public class clsEstabelecimentos implements Parcelable {
         executor.addListener(new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
+                ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
                 if (result != null) {
-                    ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
                     try {
                         JSONObject loop;
                         for (int i = 0; i < result.length(); i++) {
@@ -153,9 +153,8 @@ public class clsEstabelecimentos implements Parcelable {
                     } catch (JSONException e) {
                         Log.d(null, e.getMessage());
                     }
-                    ouvinte.estabelecimentosCarregados(retorno);
-                } else
-                    ouvinte.estabelecimentosCarregados(null);
+                }
+                ouvinte.estabelecimentosCarregados(retorno);
             }
         });
         executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);

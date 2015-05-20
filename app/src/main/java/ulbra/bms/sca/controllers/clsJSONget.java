@@ -61,7 +61,7 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
 
     @Override
     protected JSONArray doInBackground(String... params) {
-        JSONArray retorno = null;
+        JSONArray retorno = new JSONArray();
 
         StringBuilder builder = new StringBuilder();
         for (String s : params) {
@@ -85,7 +85,7 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
             String conteudo = intermediario.toString();
             //se retorno for vazio
             if ((conteudo.equals("[]"))) {
-                return null;
+                return retorno;
             }
             //se nao comeca com [, eh um JSON object, e para garantir o reuso, eh transformado em jsonArray
             else if (!conteudo.startsWith("[")) {
@@ -109,11 +109,13 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
                 Log.d("get ", o.getMessage());
             }
             deuErroInternet = true;
+            return null;
         } catch (JSONException o) {
             //previne crash se a mensagem for vazia
             if (o.getMessage() != null) {
                 Log.d("json ", o.getMessage());
             }
+            return null;
         }
         return retorno;
     }

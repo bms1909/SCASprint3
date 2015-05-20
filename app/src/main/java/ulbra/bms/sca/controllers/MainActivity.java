@@ -93,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 if (!segueUsuario) {
                     mLocalFocoCamera.setLatitude(cameraPosition.target.latitude);
                     mLocalFocoCamera.setLongitude(cameraPosition.target.longitude);
-                    if (mLocalUltimaCargaMarcadores != null && mLocalFocoCamera.distanceTo(mLocalUltimaCargaMarcadores) > 1000) {
+                    if (mLocalUltimaCargaMarcadores != null && mLocalFocoCamera.distanceTo(mLocalUltimaCargaMarcadores) > 400) {
                         carregaMarcadores(mLocalFocoCamera, 1, false);
                     }
                 }
@@ -615,7 +615,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         if (mlocalAtual == null || mlocalAtual.getAccuracy() > 1000) {
             Toast.makeText(MainActivity.this, "Aguardando local preciso...", Toast.LENGTH_SHORT).show();
         }
-        //se nao ha estabelecimentos proximos, avança direto para cadastro
+        //se nao ha estabelecimentos, avanca direto para cadastro
         else if (estabelecimentosCarregados == null || estabelecimentosCarregados.size() == 0)
         {
             startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
@@ -624,8 +624,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             ArrayList<String> tiposAlerta = new ArrayList<>();
 
             final ArrayList<clsEstabelecimentos> estabelecimentoSugeridos= new ArrayList<>();
-            if(estabelecimentosCarregados.size()>15) {
-                List<clsEstabelecimentos> temp = estabelecimentosCarregados.subList(0, 15);
+            if (estabelecimentosCarregados.size() > 5) {
+                List<clsEstabelecimentos> temp = estabelecimentosCarregados.subList(0, 5);
                 estabelecimentoSugeridos.addAll(temp);
             }
             else {
@@ -633,26 +633,35 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
 
             for (clsEstabelecimentos percorre : estabelecimentoSugeridos) {
-
-                tiposAlerta.add(percorre.nomeEstabelecimento);
+                Location temp = new Location("");
+                temp.setLatitude(percorre.latlonEstabelecimento.latitude);
+                temp.setLongitude(percorre.latlonEstabelecimento.longitude);
+                if (temp.distanceTo(mlocalAtual) < 100) {
+                    tiposAlerta.add(percorre.nomeEstabelecimento);
+                }
             }
-            AlertDialog.Builder alertas = new AlertDialog.Builder(this);
-            alertas.setTitle("Avaliar Estabelecimento");
-            alertas.setPositiveButton("Cadastrar Novo", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
-                }
-            });
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
-            //define o diálogo como uma lista, passa o adapter.
-            alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int idSelecionado) {
-                    arg0.cancel();
-                    startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSugeridos.get(idSelecionado).idEstabelecimento));
-                }
-            });
-            alertas.create().show();
+            if (tiposAlerta.size() > 0) {
+                AlertDialog.Builder alertas = new AlertDialog.Builder(this);
+                alertas.setTitle("Avaliar Estabelecimento");
+                alertas.setPositiveButton("Cadastrar Novo", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
+                    }
+                });
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
+                //define o diálogo como uma lista, passa o adapter.
+                alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int idSelecionado) {
+                        arg0.cancel();
+                        startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSugeridos.get(idSelecionado).idEstabelecimento));
+                    }
+                });
+                alertas.create().show();
+            }//se nenhum estabelecimento a menos de 100 metros, inicia direto
+            else {
+                startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));
+            }
         }
     }
 
