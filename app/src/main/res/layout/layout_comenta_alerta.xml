@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Risco do Alerta" />
+            android:text="@string/risco_do_alerta" />
 
         <RadioGroup
             android:id="@+id/rgDetalhesAlerta"
@@ -26,14 +26,14 @@
                 android:id="@+id/rbBaixo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Baixo" />
+                android:text="@string/baixo" />
 
             <RadioButton
                 android:id="@+id/rbMedio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="Médio" />
+                android:text="@string/medio" />
 
             <RadioButton
                 android:id="@+id/rbAlto"
@@ -41,14 +41,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:checked="true"
-                android:text="Alto" />
+                android:text="@string/alto" />
         </RadioGroup>
 
         <EditText
             android:id="@+id/txt_descricao_alerta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descreva o alerta (opcional)"
+            android:hint="@string/comentaalerta_descreva"
             android:inputType="text"
             android:maxLength="50" />
 

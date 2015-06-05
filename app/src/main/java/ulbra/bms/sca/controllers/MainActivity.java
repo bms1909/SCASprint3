@@ -171,15 +171,15 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
             dlgAlert.setTitle(estabelecimentoSelecionado.nomeEstabelecimento);
             dlgAlert.setIcon(R.drawable.ic_estabelecimento);
-            dlgAlert.setMessage(estabelecimentoSelecionado.mediaEstrelasAtendimento + " Estrelas \n" + estabelecimentoSelecionado.enderecoEstabelecimento);
-            dlgAlert.setPositiveButton("Abrir", new DialogInterface.OnClickListener() {
+            dlgAlert.setMessage(estabelecimentoSelecionado.mediaEstrelasAtendimento + getResources().getString(R.string.estrelas) + "\n" + estabelecimentoSelecionado.enderecoEstabelecimento);
+            dlgAlert.setPositiveButton(getResources().getString(R.string.abrir), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //inicia tela de detalhes do estabelecimento, enviado o ID do mesmo via putExtra
                     startActivity(new Intent(MainActivity.this, DetalhesEstabelecimentoActivity.class).putExtra("ID_ESTABELECIMENTO", estabelecimentoSelecionado.idEstabelecimento));
                 }
             });
-            dlgAlert.setNeutralButton("Voltar", null);
+            dlgAlert.setNeutralButton(getResources().getString(R.string.voltar), null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
 
@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //1=largura calçada
             //2=rampa
             if (alertaSelecionado.tipoAlerta == 0) {
-                dlgAlert.setTitle("Buraco");
+                dlgAlert.setTitle(getResources().getString(R.string.buraco));
                 if(alertaSelecionado.riscoAlerta==0)
                     dlgAlert.setIcon(R.drawable.ic_buraco_alto);
                 else if(alertaSelecionado.riscoAlerta==1)
@@ -197,7 +197,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 else
                     dlgAlert.setIcon(R.drawable.ic_buraco_baixo);
             } else if (alertaSelecionado.tipoAlerta == 1) {
-                dlgAlert.setTitle("Calçada Estreita");
+                dlgAlert.setTitle(getResources().getString(R.string.calcada_estreita));
                 if(alertaSelecionado.riscoAlerta==0)
                     dlgAlert.setIcon(R.drawable.ic_largura_alto);
                 else if(alertaSelecionado.riscoAlerta==1)
@@ -205,7 +205,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 else
                     dlgAlert.setIcon(R.drawable.ic_largura_baixo);
             } else {
-                dlgAlert.setTitle("Rampa com Defeito");
+                dlgAlert.setTitle(getResources().getString(R.string.rampa_com_defeito));
                 if(alertaSelecionado.riscoAlerta==0)
                     dlgAlert.setIcon(R.drawable.ic_rampa_alto);
                 else if(alertaSelecionado.riscoAlerta==1)
@@ -213,23 +213,23 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 else
                     dlgAlert.setIcon(R.drawable.ic_rampa_baixo);
             }
-            dlgAlert.setMessage("Comentário:\n" + alertaSelecionado.descricaoAlerta);
+            dlgAlert.setMessage(getResources().getString(R.string.comentario) + "\n" + alertaSelecionado.descricaoAlerta);
 
             if(alertaSelecionado.idUsuario==spIdUsuario.getInt("ID_USUARIO", 0)) {
-                dlgAlert.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
+                dlgAlert.setPositiveButton(getResources().getString(R.string.excluir), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         alertaSelecionado.excluiAlerta(MainActivity.this);
                         carregaMarcadores(mLocalFocoCamera, 1, true);
                     }
                 });
-                dlgAlert.setNegativeButton("Editar", new DialogInterface.OnClickListener() {
+                dlgAlert.setNegativeButton(getResources().getString(R.string.editar), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == DialogInterface.BUTTON_NEGATIVE) {
 
                             AlertDialog.Builder dlgEdita = new AlertDialog.Builder(MainActivity.this);
-                            dlgEdita.setTitle("Edita Alerta");
+                            dlgEdita.setTitle(getResources().getString(R.string.editar) + " " + getResources().getString(R.string.alerta));
                             LayoutInflater inflater = MainActivity.this.getLayoutInflater();
 
                             final View viewDetalhes = inflater.inflate(R.layout.layout_edita_alerta, null);
@@ -252,7 +252,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             txtDescricao.setText(alertaSelecionado.descricaoAlerta);
                             dlgEdita.setView(viewDetalhes);
 
-                            dlgEdita.setPositiveButton(getString(R.string.btn_salvar), new DialogInterface.OnClickListener() {
+                            dlgEdita.setPositiveButton(getString(R.string.salvar), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -272,23 +272,25 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                                     alterar.editaAlerta(valorRisco, spTipo.getSelectedItemPosition(), txtDescricao.getText().toString(), MainActivity.this);
                                 }
                             });
-                            dlgEdita.setNegativeButton("Cancelar", null);
+                            dlgEdita.setNegativeButton(getResources().getString(R.string.cancelar), null);
                             dlgEdita.create().show();
                         }
                     }
                 });
             } else {
-                dlgAlert.setPositiveButton("Denunciar", new DialogInterface.OnClickListener() {
+                dlgAlert.setPositiveButton(getResources().getString(R.string.denunciar), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                         clsAlertas.denunciaAlerta(alertaSelecionado.idAlerta, spIdUsuario.getInt("ID_USUARIO", 0), MainActivity.this);
                         //a classe clsJSONpost garante o envio de dados com o armazenamento em banco até a confirmação de envio
-                        Toast.makeText(MainActivity.this, "Alerta denunciado, Obrigado!", Toast.LENGTH_LONG).show();
+
+
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.main_alerta_denunciado), Toast.LENGTH_LONG).show();
                     }
                 });
             }
-            dlgAlert.setNeutralButton("Voltar", null);
+            dlgAlert.setNeutralButton(getResources().getString(R.string.voltar), null);
             dlgAlert.setCancelable(true);
             dlgAlert.create().show();
         }
@@ -342,7 +344,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                         //risco baixo =2
                         MarkerOptions icone = new MarkerOptions().position(percorre.latlonAlerta);
                         if (percorre.tipoAlerta == 0) {
-                            icone.title("Buraco");
+                            icone.title(getResources().getString(R.string.buraco));
                             if (percorre.riscoAlerta == 0)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_alto));
                             else if (percorre.riscoAlerta == 1)
@@ -350,7 +352,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             else
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_buraco_baixo));
                         } else if (percorre.tipoAlerta == 1) {
-                            icone.title("Calçada Estreita");
+                            icone.title(getResources().getString(R.string.calcada_estreita));
                             if (percorre.riscoAlerta == 0)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_alto));
                             else if (percorre.riscoAlerta == 1)
@@ -358,7 +360,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                             else
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_largura_baixo));
                         } else {
-                            icone.title("Rampa com defeito");
+                            icone.title(getResources().getString(R.string.rampa_com_defeito));
                             if (percorre.riscoAlerta == 0)
                                 icone.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_rampa_alto));
                             else if (percorre.riscoAlerta == 1)
@@ -434,8 +436,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Localização Desativada");
-            builder.setMessage("Este aplicativo utiliza sua localização com Alta Precisão (GPS), deseja habilitar agora?");
+            builder.setTitle(getResources().getString(R.string.localizacao_desativada));
+            builder.setMessage(getResources().getString(R.string.mensagem_gps));
             //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
@@ -443,8 +445,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                     finish();
                 }
             });
-
-            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
+            builder.setPositiveButton(getResources().getString(R.string.sim), dialogClickListener).setNegativeButton(getResources().getString(R.string.nao), dialogClickListener);
             builder.create().show();
         } else {
             //obtem uma instancia singleton do objeto, registrando seu próprio listener
@@ -521,7 +522,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
                 clsCategorias.sincronizaCategoriasServidor(MainActivity.this);
             }
             else
-                Toast.makeText(this,"Sem internet, confira conexão e tente de novo",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.erro_conexao_confira_internet), Toast.LENGTH_SHORT).show();
         }
         else if(id==R.id.btn_main_sobre)
         {
@@ -541,10 +542,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     public void btnAlertar_Click(View a) {
         //confere precisão do local obtido
         if (mlocalAtual == null || mlocalAtual.getAccuracy() > 20) {
-            Toast.makeText(MainActivity.this, "Aguardando local preciso", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.aguardando_local_preciso), Toast.LENGTH_SHORT).show();
         } else {
-
-
             final int[] selecionado = new int[1];
             String[] tiposAlerta = getResources().getStringArray(R.array.valores_array_tipos_alerta);
 
@@ -557,8 +556,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             //adiciona o layout viewdetalhes como fonte para visual da view
             detalhe.setView(viewDetalhes);
             //detalhes eh o segundo dialog do cadastro
-            detalhe.setTitle(getString(R.string.txt_detalhes));
-            detalhe.setPositiveButton(getString(R.string.btn_salvar), new DialogInterface.OnClickListener() {
+            detalhe.setTitle(getString(R.string.detalhes));
+            detalhe.setPositiveButton(getString(R.string.salvar), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     RadioGroup rdGrupo = (RadioGroup) viewDetalhes.findViewById(R.id.rgDetalhesAlerta);
@@ -578,12 +577,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
                     clsAlertas novo = new clsAlertas(spIdUsuario.getInt("ID_USUARIO",0), mlocalAtual.getLatitude(), mlocalAtual.getLongitude(), txtDescricao.getText().toString(), selecionado[0], risco);
                     novo.cadastraAlerta(MainActivity.this);
-                    Toast.makeText(MainActivity.this, "Seu alerta aparecerá em breve, obrigado!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.main_alerta_em_breve), Toast.LENGTH_SHORT).show();
                     carregaMarcadores(mlocalAtual, 1,false);
                     dialog.cancel();
                 }
             });
-            detalhe.setNegativeButton(getString(R.string.btn_cancelar), null);
+            detalhe.setNegativeButton(getString(R.string.cancelar), null);
             //click fora do AlertDialog
      /*       detalhe.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
@@ -594,8 +593,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             });*/
 
             //alertas eh o primeiro dialog do cadastro
-            alertas.setTitle("Informar");
-            alertas.setNegativeButton("Voltar", null);
+            alertas.setTitle(getString(R.string.informar));
+            alertas.setNegativeButton(getResources().getString(R.string.voltar), null);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.layout_tipos_alerta, tiposAlerta);
             //define o diálogo como uma lista, passa o adapter.
             alertas.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
@@ -613,7 +612,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         //estabelecimentos já vem ordenados do webservice
         //aguarda precisão suficiente ou obtenção da localização
         if (mlocalAtual == null || mlocalAtual.getAccuracy() > 1000) {
-            Toast.makeText(MainActivity.this, "Aguardando local preciso...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.aguardando_local_preciso), Toast.LENGTH_SHORT).show();
         }
         //se nao ha estabelecimentos, avanca direto para cadastro
         else if (estabelecimentosCarregados == null || estabelecimentosCarregados.size() == 0)
@@ -642,8 +641,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
             if (tiposAlerta.size() > 0) {
                 AlertDialog.Builder alertas = new AlertDialog.Builder(this);
-                alertas.setTitle("Avaliar Estabelecimento");
-                alertas.setPositiveButton("Cadastrar Novo", new DialogInterface.OnClickListener() {
+                alertas.setTitle(getString(R.string.avaliar_estabelecimento));
+                alertas.setPositiveButton(getString(R.string.cadastrar_novo), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         startActivity(new Intent(MainActivity.this, CadastraEstabelecimentoActivity.class));

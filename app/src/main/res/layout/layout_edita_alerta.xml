@@ -16,7 +16,7 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tipo" />
+            android:text="@string/tipo" />
 
         <Spinner
             android:id="@+id/sp_editaalerta_tipo"
@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Risco" />
+            android:text="@string/risco" />
 
         <RadioGroup
             android:id="@+id/rg_editaalerta_risco"
@@ -38,14 +38,14 @@
                 android:id="@+id/rbBaixo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Baixo" />
+                android:text="@string/baixo" />
 
             <RadioButton
                 android:id="@+id/rbMedio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="Médio" />
+                android:text="@string/medio" />
 
             <RadioButton
                 android:id="@+id/rbAlto"
@@ -53,13 +53,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:checked="true"
-                android:text="Alto" />
+                android:text="@string/alto" />
         </RadioGroup>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Descrição do Alerta" />
+            android:text="@string/descricao_do_alerta" />
 
         <EditText
             android:id="@+id/txt_editaalerta_descricao"

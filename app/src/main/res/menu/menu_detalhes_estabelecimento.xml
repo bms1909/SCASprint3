@@ -5,16 +5,16 @@
     <item
         android:id="@+id/btnEstabelecimentoTelefone"
         android:icon="@drawable/ic_action_call"
-        android:title="Ligar"
+        android:title="@string/ligar"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/btnEstabelecimentoAbrirMaps"
         android:icon="@drawable/ic_action_directions"
-        android:title="Navegar Até Endereço"
+        android:title="@string/navegar_ate_endereco"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/btnEstabelecimentoEditar"
         android:icon="@drawable/ic_action_edit"
-        android:title="Editar"
+        android:title="@string/editar"
         app:showAsAction="ifRoom" />
 </menu>

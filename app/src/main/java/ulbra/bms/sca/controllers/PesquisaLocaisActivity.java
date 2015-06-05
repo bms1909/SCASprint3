@@ -107,7 +107,8 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                                     buscaTexto(txtPesquisa.getText());
                                 //}
                             } else
-                                Toast.makeText(PesquisaLocaisActivity.this, "Problema de conexão com o servidor, pesquisa de estabelecimentos indisponível", Toast.LENGTH_LONG).show();
+
+                                Toast.makeText(PesquisaLocaisActivity.this, getString(R.string.pesquisalocais_problema_endereco), Toast.LENGTH_LONG).show();
                         }
                     });
                     listener.estabelecimentosPorRaio(raioBusca, localAtual, PesquisaLocaisActivity.this);
@@ -212,7 +213,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
             String nomeCategoria = clsCategorias.getNomeCategoria(idCategoria, this);
             ab.setTitle(nomeCategoria);
             categoriasCarregadas.clear();
-            txtPesquisa.setHint("Pesquise por "+ nomeCategoria );
+            txtPesquisa.setHint(getString(R.string.pesquise_por) + " " + nomeCategoria);
             elementosLista.clear();
         }
         else {
@@ -240,8 +241,8 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Localização Desativada");
-            builder.setMessage("Este aplicativo utiliza sua localização com Alta Precisão (GPS), deseja habilitar agora?");
+            builder.setTitle(getString(R.string.localizacao_desativada));
+            builder.setMessage(getString(R.string.mensagem_gps));
             //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
@@ -249,8 +250,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
                     finish();
                 }
             });
-
-            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
+            builder.setPositiveButton(getString(R.string.sim), dialogClickListener).setNegativeButton(getString(R.string.nao), dialogClickListener);
             builder.create().show();
         }
     }
@@ -297,8 +297,7 @@ public class PesquisaLocaisActivity extends ActionBarActivity {
         } else {
             buscaCategoria("");
         }
-
-        if (((parametro.toString().startsWith("rua")) || (parametro.toString().startsWith("av")) || (parametro.length() > 4)) && idCategoriaPesquisa == 0) {
+        if (((parametro.toString().startsWith(getString(R.string.rua))) || (parametro.toString().startsWith(getString(R.string.av))) || (parametro.length() > 4)) && idCategoriaPesquisa == 0) {
             clsPesquisaEndereco pesquisaEndereco = new clsPesquisaEndereco(this, raioBusca, localAtual, parametro.toString(), new enderecoEncontradoListener() {
                 @Override
                 public void enderecosEncontrados(List<Map<String, String>> Enderecos) {

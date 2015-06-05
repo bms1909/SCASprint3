@@ -28,7 +28,7 @@
                 android:layout_alignParentTop="true"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="@string/cadastra_nome_local"
+                android:hint="@string/nome_do_local"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textImeMultiLine"
                 android:maxLength="30"
@@ -72,7 +72,7 @@
                 android:ems="10"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="@string/cadastra_dica_bairro"
+                android:hint="@string/bairro"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
                 android:maxLength="40"
@@ -90,7 +90,7 @@
                 android:autoText="false"
                 android:focusable="true"
                 android:gravity="top|start|end"
-                android:hint="@string/cadastra_dica_cidade"
+                android:hint="@string/cidade"
                 android:imeOptions="flagNavigateNext"
                 android:inputType="textCapWords|textPostalAddress"
                 android:maxLength="40"
@@ -138,7 +138,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/rb_novoestabelecimento_classificacao"
-                android:text="@string/cadastra_banheiro_adaptado"
+                android:text="@string/banheiro_adaptado"
                 android:visibility="visible" />
 
             <CheckBox
@@ -148,7 +148,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_possui_banheiro"
-                android:text="@string/cadastra_vagas_exclusivas" />
+                android:text="@string/vagas_exclusivas" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_altura_certa"
@@ -157,7 +157,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_possui_estacionamento"
-                android:text="@string/cadastra_objetos_ao_alcance" />
+                android:text="@string/objetos_ao_alcance" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_possui_rampa"
@@ -166,7 +166,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_altura_certa"
-                android:text="@string/cadastra_possui_rampas" />
+                android:text="@string/possui_rampas" />
 
             <CheckBox
                 android:id="@+id/cbx_novoestabelecimento_largura_suficiente"
@@ -176,7 +176,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/cbx_novoestabelecimento_possui_rampa"
                 android:layout_marginBottom="30dp"
-                android:text="@string/cadastra_largura_suficiente" />
+                android:text="@string/largura_suficiente" />
 
             <TextView
                 android:id="@+id/tv_novoestabelecimento_estado"
@@ -185,7 +185,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/txt_novoestabelecimento_cidade"
-                android:text="@string/cadastra_dica_estado" />
+                android:text="@string/estado" />
 
 
 
@@ -196,7 +196,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/txt_novoestabelecimento_nome"
-                android:text="@string/cadastra_dica_categorias" />
+                android:text="@string/categoria" />
 
         </RelativeLayout>
     </ScrollView>
@@ -226,7 +226,7 @@
             android:layout_weight="1"
             android:background="#ffffffff"
             android:onClick="salvaAvaliacao_Click"
-            android:text="@string/btn_salvar" />
+            android:text="@string/salvar" />
 
     </LinearLayout>
 </RelativeLayout>

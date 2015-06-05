@@ -155,9 +155,9 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
 
                     if ((jaAvaliado) && (btnBar.getHeight() == 0)) {
                         AlertDialog.Builder dlgAlert = new AlertDialog.Builder(DetalhesEstabelecimentoActivity.this);
-                        dlgAlert.setTitle("Confirmação");
-                        dlgAlert.setMessage("Você já avaliou este Estabelecimento, deseja alterar?");
-                        dlgAlert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        dlgAlert.setTitle(getResources().getString(R.string.confirmacao));
+                        dlgAlert.setMessage(getResources().getString(R.string.detalhes_ja_avaliou_confirma));
+                        dlgAlert.setPositiveButton(getResources().getString(R.string.sim), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //inicia tela de detalhes do estabelecimento, enviado o ID do mesmo via putExtra
@@ -166,7 +166,7 @@ public class DetalhesEstabelecimentoActivity extends ActionBarActivity {
                                 }
                             }
                         });
-                        dlgAlert.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        dlgAlert.setNegativeButton(getResources().getString(R.string.nao), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == DialogInterface.BUTTON_NEGATIVE) {

@@ -120,7 +120,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/rb_estabelecimento_classificacao"
                     android:clickable="false"
-                    android:text="Banheiro Adaptado"
+                    android:text="@string/banheiro_adaptado"
                     android:visibility="visible" />
 
                 <CheckBox
@@ -131,7 +131,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/cbx_estabelecimento_possui_banheiro"
                     android:clickable="false"
-                    android:text="Vagas Exclusivas" />
+                    android:text="@string/vagas_exclusivas" />
 
                 <CheckBox
                     android:id="@+id/cbx_estabelecimento_altura_certa"
@@ -141,7 +141,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/cbx_estabelecimento_possui_estacionamento"
                     android:clickable="false"
-                    android:text="Objetos ao alcance" />
+                    android:text="@string/objetos_ao_alcance" />
 
                 <CheckBox
                     android:id="@+id/cbx_estabelecimento_possui_rampa"
@@ -151,7 +151,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/cbx_estabelecimento_altura_certa"
                     android:clickable="false"
-                    android:text="Possui Rampas" />
+                    android:text="@string/possui_rampas" />
 
                 <CheckBox
                     android:id="@+id/cbx_estabelecimento_largura_suficiente"
@@ -161,7 +161,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/cbx_estabelecimento_possui_rampa"
                     android:clickable="false"
-                    android:text="Largura Suficiente" />
+                    android:text="@string/largura_suficiente" />
 
                 <TextView
                     android:id="@+id/textView14"
@@ -209,7 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="salvaAvaliacao_Click"
-                android:text="Avaliar" />
+                android:text="@string/avaliar" />
 
         </LinearLayout>
 

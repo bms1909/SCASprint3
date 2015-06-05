@@ -198,8 +198,8 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
                 }
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Localização Desativada");
-            builder.setMessage("Este aplicativo utiliza sua localização com Alta Precisão (GPS), deseja habilitar agora?");
+            builder.setTitle(getResources().getString(R.string.localizacao_desativada));
+            builder.setMessage(getResources().getString(R.string.mensagem_gps));
             //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
             builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
@@ -208,7 +208,7 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
                 }
             });
 
-            builder.setPositiveButton("Sim", dialogClickListener).setNegativeButton("Não", dialogClickListener);
+            builder.setPositiveButton(getResources().getString(R.string.sim), dialogClickListener).setNegativeButton(getResources().getString(R.string.nao), dialogClickListener);
             builder.create().show();
         }
     }
@@ -221,22 +221,22 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
         txtCidade.setError(null);
 
         if (txtTitulo.getText().toString().isEmpty()) {
-            txtTitulo.setError("Campo Obrigatório!");
+            txtTitulo.setError(getResources().getString(R.string.campo_obrigatorio));
             txtTitulo.requestFocus();
         } else if (txtEndereco.getText().toString().isEmpty()) {
-            txtEndereco.setError("Campo Obrigatório!");
+            txtEndereco.setError(getResources().getString(R.string.campo_obrigatorio));
             txtEndereco.requestFocus();
         } else if (txtCidade.getText().toString().isEmpty()) {
-            txtCidade.setError("Campo Obrigatório!");
+            txtCidade.setError(getResources().getString(R.string.campo_obrigatorio));
             txtCidade.requestFocus();
         } else if (txtBairro.getText().toString().isEmpty()) {
-            txtBairro.setError("Campo Obrigatório!");
+            txtBairro.setError(getResources().getString(R.string.campo_obrigatorio));
             txtBairro.requestFocus();
         } else if (txtCidade.getText().toString().matches("[0-9]*")) {
-            txtCidade.setError("Campo não permite números!");
+            txtCidade.setError(getResources().getString(R.string.campo_nao_permite_numeros));
             txtCidade.requestFocus();
         } else if (txtBairro.getText().toString().matches("[0-9]*")) {
-            txtBairro.setError("Campo não permite números!");
+            txtBairro.setError(getResources().getString(R.string.campo_nao_permite_numeros));
             txtBairro.requestFocus();
         }
         else {
@@ -250,7 +250,7 @@ public class CadastraEstabelecimentoActivity extends ActionBarActivity {
             }
             //se a categoria não for encontrada, força o fechamento da activity e avisa o usuário
             if (idCategoria == 0) {
-                Toast.makeText(this, "Erro ao recuperar Categorias, por favor, refaça a operação", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getResources().getString(R.string.mensagem_erro_recuperar_categorias), Toast.LENGTH_LONG).show();
                 finish();
             }
             SharedPreferences idUsuario = getSharedPreferences("USUARIO", MODE_PRIVATE);

@@ -6,25 +6,25 @@
         android:id="@+id/btn_main_sincroniza"
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="100"
-        android:title="Sincronizar"
+        android:title="@string/sincronizar"
         app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/btn_main_busca"
         android:icon="@drawable/ic_action_search"
         android:orderInCategory="100"
-        android:title="Pesquisa"
+        android:title="@string/pesquisa"
         app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/btn_main_sobre"
         android:orderInCategory="100"
-        android:title="Sobre"
+        android:title="@string/sobre"
         app:showAsAction="never"
         />
     <item
         android:id="@+id/btn_main_logoff"
         android:orderInCategory="100"
-        android:title="Sair"
+        android:title="@string/sair"
         app:showAsAction="never" />
 </menu>

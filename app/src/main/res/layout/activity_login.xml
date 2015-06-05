@@ -16,7 +16,8 @@
 
 
     <AutoCompleteTextView android:id="@+id/txt_login_email" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:hint="Email ou Usuário"
+        android:layout_height="wrap_content"
+        android:hint="@string/e_mail_ou_usuario"
         android:imeOptions="flagNavigateNext"
         android:inputType="textEmailAddress"
         android:maxLength="50"
@@ -34,7 +35,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:enabled="false"
-            android:hint="Usuário"
+            android:hint="@string/usuario"
             android:imeOptions="flagNavigateNext"
             android:inputType="textEmailAddress"
             android:maxLength="50"
@@ -44,7 +45,7 @@
     <EditText android:id="@+id/txt_login_senha" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:hint="Senha"
+        android:hint="@string/senha"
         android:imeActionLabel="Acessar"
         android:imeOptions="actionUnspecified"
         android:inputType="textPassword"
@@ -59,14 +60,14 @@
         android:layout_width="228dp"
         android:layout_height="wrap_content"
         android:onClick="cbxNovoUsuario_Click"
-        android:text="Novo Usuário?"
+        android:text="@string/novo_usuario_"
         />
 
     <Button android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:onClick="btnLogin_Click"
-        android:text="Login"
+        android:text="@string/login"
         android:textStyle="bold" />
 
     <TextView
@@ -75,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:onClick="txtRecuperaSenha_Click"
-        android:text="Esqueci a Senha"
+        android:text="@string/esqueci_a_senha"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#ff5e5fff" />
 

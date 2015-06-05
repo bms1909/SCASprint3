@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import ulbra.bms.sca.R;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
 public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
@@ -50,9 +51,10 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
         //utilizado pois o webservice pode retornar null em uma consulta sem resultados
         if (deuErroInternet) {
             AlertDialog.Builder dlgErro = new AlertDialog.Builder(contexto);
-            dlgErro.setTitle("Erro de Conexão");
-            dlgErro.setMessage("Erro de conexão com o servidor, confira sua internet e pressione o botão de sincronizar dados na tela principal");
-            dlgErro.setPositiveButton("OK", null);
+
+            dlgErro.setTitle(contexto.getString(R.string.erro_de_conexao));
+            dlgErro.setMessage(contexto.getString(R.string.clsget_erro_sincronizar));
+            dlgErro.setPositiveButton(contexto.getString(R.string.ok), null);
             dlgErro.setCancelable(true);
             dlgErro.show();
         }

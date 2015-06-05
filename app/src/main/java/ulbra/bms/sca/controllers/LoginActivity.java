@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -45,7 +46,9 @@ public class LoginActivity extends ActionBarActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        //necessario pois o titulo da activity virava o titulo do app
+        ActionBar ab = getSupportActionBar();
+        ab.setTitle(getResources().getString(R.string.title_activity_login));
         //sincroniza categorias com o servidor antes do login, tarefa assincrona, nao interfere nas demais
         clsCategorias.sincronizaCategoriasServidor(LoginActivity.this);
 
@@ -61,8 +64,8 @@ public class LoginActivity extends ActionBarActivity{
             public void usuarioCarregado(clsUsuarios Usuario) {
                 if (Usuario == null) {
                     AlertDialog.Builder internet = new AlertDialog.Builder(LoginActivity.this);
-                    internet.setTitle("Erro");
-                    internet.setMessage("Não foi possível realizar o login por um problema com sua conexão ou com o servidor, por favor, tente mais tarde");
+                    internet.setTitle(getResources().getString(R.string.erro));
+                    internet.setMessage(getResources().getString(R.string.login_erro_conexao_servidor));
                     internet.show();
                 }
                 else
@@ -77,14 +80,14 @@ public class LoginActivity extends ActionBarActivity{
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     } else if (Usuario.senhaUsuario.equals("INCORRETA")) {
                         //senha incorreta
-                        mPasswordView.setError("Senha Incorreta");
+                        mPasswordView.setError(getResources().getString(R.string.senha_incorreta));
                         mPasswordView.requestFocus();
                     } else if (Usuario.nomeUsuario.equals("INVALIDO")) {
-                        mEmailView.setError("Usuário ou senha incorretos");
+                        mEmailView.setError(getResources().getString(R.string.senha_incorreta));
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                        builder.setTitle("Erro desconhecido");
-                        builder.setMessage("Não foi possível processar o seu login, por favor, confira a estabilidade de sua conexão com a internet e tente novamente, se o erro persistir, contate o desenvolvedor");
+                        builder.setTitle(getResources().getString(R.string.erro_desconhecido));
+                        builder.setMessage(getResources().getString(R.string.login_erro_conexao_servidor_mais_serio));
                         //se o malandro pressionar fora do AlertDialog, fecha o aplicativo
                         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                             @Override
@@ -92,8 +95,7 @@ public class LoginActivity extends ActionBarActivity{
                                 finish();
                             }
                         });
-
-                        builder.setPositiveButton("Repetir", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(getResources().getString(R.string.repetir), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (which == DialogInterface.BUTTON_POSITIVE) {
@@ -102,7 +104,7 @@ public class LoginActivity extends ActionBarActivity{
                                     finish();
                                 }
                             }
-                        }).setNegativeButton("Fechar", null);
+                        }).setNegativeButton(getResources().getString(R.string.fechar), null);
                         builder.create().show();
                     }
                 }
@@ -143,23 +145,23 @@ public class LoginActivity extends ActionBarActivity{
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !(password.length() > 4)) {
-            mPasswordView.setError("Senha inválida, deve ser maior que 4 dígitos");
+            mPasswordView.setError(getResources().getString(R.string.login_senha_invalida));
             focusView = mPasswordView;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(emailouUsuario)) {
-            mEmailView.setError("Campo obrigatório!");
+            mEmailView.setError(getResources().getString(R.string.campo_obrigatorio));
             focusView = mEmailView;
             cancel = true;
         }
         if ((cadastrando) && (TextUtils.isEmpty(usuario))) {
-            mUsuarioView.setError("Campo obrigatório!");
+            mUsuarioView.setError(getResources().getString(R.string.campo_obrigatorio));
             focusView = mUsuarioView;
             cancel = true;
         }
         if ((cadastrando) && (!emailouUsuario.contains("@") || !emailouUsuario.contains("."))) {
-            mEmailView.setError("Insira um email válido!");
+            mEmailView.setError(getResources().getString(R.string.login_email_invalido));
             focusView = mEmailView;
             cancel = true;
         }
@@ -184,22 +186,22 @@ public class LoginActivity extends ActionBarActivity{
                         mUsuario.carregaUsuario(emailouUsuario, password, this);
                         break;
                     case "JA_CADASTRADO":
-                        mEmailView.setError("Usuário ou email já cadastrados!");
-                        mUsuarioView.setError("Usuário ou email já cadastrados!");
+                        mEmailView.setError(getResources().getString(R.string.login_email_ja_cadastrado));
+                        mUsuarioView.setError(getResources().getString(R.string.login_email_ja_cadastrado));
                         mEmailView.requestFocus();
                         showProgress(false);
                         break;
                     case "ERRO_DOWNLOAD": {
                         AlertDialog.Builder novo = new AlertDialog.Builder(this);
-                        novo.setMessage("Erro de conexão com a internet, confira sua internet e tente novamente");
-                        novo.setPositiveButton("OK", null);
+                        novo.setMessage(getResources().getString(R.string.erro_conexao_confira_internet));
+                        novo.setPositiveButton(getResources().getString(R.string.ok), null);
                         novo.show();
                         showProgress(false);
                         break;
                     }
                     default: {
                         AlertDialog.Builder novo = new AlertDialog.Builder(this);
-                        novo.setMessage("Erro desconhecido, confira a estabilidade de sua internet e tente novamente, se persistir, contate o desenvolvedor e informe o código:\n" + retornoCadastro);
+                        novo.setMessage(getResources().getString(R.string.login_erro_conexao_servidor_mais_serio) + getResources().getString(R.string.login_informe_codigo) + "\n" + retornoCadastro);
                         novo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -245,7 +247,7 @@ public class LoginActivity extends ActionBarActivity{
         CheckBox cbxCadastra = (CheckBox) view;
         if(cbxCadastra.isChecked()) {
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            mEmailView.setHint("Email");
+            mEmailView.setHint(getResources().getString(R.string.e_mail));
             mUsuarioView.setEnabled(true);
             mEmailView.setNextFocusForwardId(R.id.txt_login_usuario);
         }
@@ -255,33 +257,33 @@ public class LoginActivity extends ActionBarActivity{
             mUsuarioView.setEnabled(false);
             mUsuarioView.setText("");
             lp.height = 0;
-            mEmailView.setHint("Email ou Usuário");
+            mEmailView.setHint(getResources().getString(R.string.e_mail_ou_usuario));
         }
         habilitar.setLayoutParams(lp);
     }
 
     public void txtRecuperaSenha_Click(View view) {
         AlertDialog.Builder dlgRecupera = new AlertDialog.Builder(this);
-        dlgRecupera.setTitle("Recuperar Conta");
+        dlgRecupera.setTitle(getResources().getString(R.string.recuperar_conta));
         LayoutInflater inflater = this.getLayoutInflater();
         final View recuperaSenha = inflater.inflate(R.layout.layout_recupera_senha, null);
         //adiciona o layout recuperasenha como fonte para visual da view
         dlgRecupera.setView(recuperaSenha);
-        dlgRecupera.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+        dlgRecupera.setPositiveButton(getResources().getString(R.string.enviar), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 EditText nomeOuEmail = (EditText) recuperaSenha.findViewById(R.id.txt_recuperasenha);
                 if (nomeOuEmail.getText().toString().equals("")) {
-                    nomeOuEmail.setError("Campo obrigatório!");
+                    nomeOuEmail.setError(getResources().getString(R.string.campo_obrigatorio));
                     nomeOuEmail.requestFocus();
                 } else {
                     clsUsuarios.recuperaUsuario(new booleanRetornadoListener() {
                         @Override
                         public void booleanRetornado(boolean retorno) {
                             if (retorno) {
-                                Toast.makeText(LoginActivity.this, "Sua senha será enviada para o email cadastrado em breve", Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginActivity.this, getResources().getString(R.string.login_senha_enviada), Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(LoginActivity.this, "Não foi possível reconhecer seu email ou usuário, confira os dados informados", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, getResources().getString(R.string.login_senha_nao_enviada), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }, nomeOuEmail.getText().toString(), LoginActivity.this);
