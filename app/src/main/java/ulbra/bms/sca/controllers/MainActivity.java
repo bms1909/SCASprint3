@@ -458,7 +458,7 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
             }
             else if(mlocalAtual!=null)
             {
-                carregaMarcadores(mlocalAtual,1,false);
+                carregaMarcadores(mlocalAtual, 1, true);
             }
         }
     }

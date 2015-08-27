@@ -54,7 +54,7 @@ public class clsCategorias implements Parcelable {
                 }
             }
         });
-        executor.execute("http://scaws.azurewebsites.net/api/clsCategorias");
+        executor.execute("http://hefestows.azurewebsites.net/api/clsCategorias");
     }
 
 

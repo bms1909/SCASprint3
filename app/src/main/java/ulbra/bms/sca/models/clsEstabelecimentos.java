@@ -112,7 +112,7 @@ public class clsEstabelecimentos implements Parcelable {
                 listener.booleanRetornado(retorno);
             }
         });
-        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
+        executor.execute("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
     }
 
     public void addListener(estabelecimentosCarregadosListener listener)
@@ -157,7 +157,7 @@ public class clsEstabelecimentos implements Parcelable {
                 ouvinte.estabelecimentosCarregados(retorno);
             }
         });
-        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
+        executor.execute("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
     }
 
     public void carregaDetalhesEstabelecimento(final detalhesEstabelecimentoCarregadoListener listener, Context contexto) {
@@ -195,22 +195,22 @@ public class clsEstabelecimentos implements Parcelable {
                 listener.estabelecimentoCarregado(retorno);
             }
         });
-        executor.execute("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento);
+        executor.execute("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento);
     }
 
     public void avaliaEstabelecimento(int notaAvaliacao, int idUsuario, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idUsuario=" + idUsuario + "&nota=" + notaAvaliacao);
+        executor.executaPost("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idUsuario=" + idUsuario + "&nota=" + notaAvaliacao);
     }
 
     public void cadastraEstabelecimento(int idUsuario, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro="+Uri.encode(this.bairroEstabelecimento)+  "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado="+this.estadoEstabelecimento+"&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
+        executor.executaPost("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro=" + Uri.encode(this.bairroEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado=" + this.estadoEstabelecimento + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
     }
 
     public void editaEstabelecimento(int idUsuario, Context context) {
         clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://scaws.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento="+this.idEstabelecimento+"&idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro="+Uri.encode(this.bairroEstabelecimento)+  "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado="+this.estadoEstabelecimento+"&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
+        executor.executaPost("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro=" + Uri.encode(this.bairroEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado=" + this.estadoEstabelecimento + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
     }
 
     @Override

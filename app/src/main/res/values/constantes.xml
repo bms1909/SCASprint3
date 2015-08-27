@@ -3,4 +3,5 @@
     <integer name="distancia_entre_cargas">300</integer>
     <integer name="zoom_camera">17</integer>
     <integer name="raio_longo_carga_marcadores">1</integer>
+    <string name="dominio_servidor">http://hefestows.azurewebsites.net</string>
 </resources>

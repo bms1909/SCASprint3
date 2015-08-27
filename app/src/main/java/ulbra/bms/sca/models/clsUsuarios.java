@@ -67,7 +67,7 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
                 listener.booleanRetornado(retorno);
             }
         });
-        executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
+        executor.execute("http://hefestows.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
     }
 
     @Override
@@ -123,13 +123,13 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
                 }
             }
         });
-        executor.execute("http://scaws.azurewebsites.net/api/clsUsuarios?nomeouEmail=" + Uri.encode(nomeOuEmail) + "&senha=" + Uri.encode(senha));
+        executor.execute("http://hefestows.azurewebsites.net/api/clsUsuarios?nomeouEmail=" + Uri.encode(nomeOuEmail) + "&senha=" + Uri.encode(senha));
     }
 
     public String cadastraUsuario() {
         //this nao foi usado pos asynctask so permite uma execucao por instancia
         clsUsuarios executa = new clsUsuarios();
-        executa.comando="http://scaws.azurewebsites.net/api/clsUsuarios?nome=" + Uri.encode(this.nomeUsuario) + "&email=" + Uri.encode(this.emailUsuario) + "&senha=" + Uri.encode(this.senhaUsuario);
+        executa.comando = "http://hefestows.azurewebsites.net/api/clsUsuarios?nome=" + Uri.encode(this.nomeUsuario) + "&email=" + Uri.encode(this.emailUsuario) + "&senha=" + Uri.encode(this.senhaUsuario);
         executa.execute();
         try {
             return executa.get();

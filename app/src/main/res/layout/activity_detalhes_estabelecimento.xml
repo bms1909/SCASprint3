@@ -2,25 +2,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <ProgressBar
+        android:id="@+id/pb_estabelecimento"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/pb_estabelecimento"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone" />
-
-        <ScrollView
+    <ScrollView
             android:id="@+id/sv_estabelecimento"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+        android:layout_height="fill_parent">
             <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,7 +24,6 @@
                 android:paddingRight="20dp"
                 android:paddingTop="20dp"
                 tools:context="ulbra.bms.sca.controllers.DetalhesEstabelecimentoActivity">
-
 
                 <TextView
                     android:id="@+id/tv_estabelecimento_nome"
@@ -39,7 +34,6 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:gravity="top|start|end"
                     android:text="Restaurante Exemplo Beira-Rio dois"
                     android:textSize="@dimen/abc_text_size_display_1_material"
                     android:visibility="visible" />
@@ -173,15 +167,6 @@
                     android:text=" - "
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyleLarge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/tv_estabelecimento_nome"
-                    android:layout_alignEnd="@+id/tv_estabelecimento_endereco"
-                    android:layout_alignRight="@+id/tv_estabelecimento_endereco" />
-
             </RelativeLayout>
         </ScrollView>
 
@@ -190,6 +175,9 @@
             style="?android:buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_weight="1"
             android:background="#ffffffff"
             android:orientation="horizontal"
             android:visibility="visible">
@@ -205,13 +193,12 @@
             <Button
                 android:id="@+id/btn_estabelecimento_avaliar"
                 style="?android:buttonBarButtonStyle"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
                 android:onClick="salvaAvaliacao_Click"
                 android:text="@string/avaliar" />
 
         </LinearLayout>
 
-    </LinearLayout>
 </RelativeLayout>
