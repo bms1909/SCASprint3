@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ulbra.bms.sca.controllers.clsJSONget;
+import ulbra.bms.sca.controllers.ConexaoWS;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
 /**
@@ -19,6 +19,17 @@ import ulbra.bms.sca.interfaces.downloadFeitoListener;
  */
 //gambiarra confessa, sem isso travava ao solicitar as activities Main e DetalhesEstabelecimento
 public class clsCategorias implements Parcelable {
+    public static final Creator<clsCategorias> CREATOR = new Creator<clsCategorias>() {
+        @Override
+        public clsCategorias createFromParcel(Parcel in) {
+            return new clsCategorias(in);
+        }
+
+        @Override
+        public clsCategorias[] newArray(int size) {
+            return new clsCategorias[size];
+        }
+    };
     private int idCategoria;
     private String nomeCategoria;
 
@@ -27,10 +38,14 @@ public class clsCategorias implements Parcelable {
         this.nomeCategoria = nome;
     }
 
+    protected clsCategorias(Parcel in) {
+        idCategoria = in.readInt();
+        nomeCategoria = in.readString();
+    }
+
     public static void sincronizaCategoriasServidor(Context contexto) {
         final clsBdLocal BD = new clsBdLocal(contexto);
-        clsJSONget executor = new clsJSONget(contexto);
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener listener = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 if (result != null) {
@@ -53,8 +68,8 @@ public class clsCategorias implements Parcelable {
                     BD.desconectaBanco();
                 }
             }
-        });
-        executor.execute("http://hefestows.azurewebsites.net/api/clsCategorias");
+        };
+        ConexaoWS.executaGet(listener, contexto, "http://hefestows.azurewebsites.net/api/clsCategorias");
     }
 
 
@@ -91,6 +106,7 @@ public class clsCategorias implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeInt(idCategoria);
+        dest.writeString(nomeCategoria);
     }
 }

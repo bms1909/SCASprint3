@@ -50,6 +50,8 @@ public class LoginActivity extends ActionBarActivity{
         ActionBar ab = getSupportActionBar();
         ab.setTitle(getResources().getString(R.string.title_activity_login));
         //sincroniza categorias com o servidor antes do login, tarefa assincrona, nao interfere nas demais
+
+
         clsCategorias.sincronizaCategoriasServidor(LoginActivity.this);
 
         // Set up the login form.

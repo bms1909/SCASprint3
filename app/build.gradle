@@ -8,11 +8,12 @@ android {
         applicationId "ulbra.bms.sca"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.3"
         /*1.0 primeiro apk na play
         1.0.1 mudanca de nome para hefesto e icones renovados
         1.0.2 detalhesEstabelecimento com problemas
+        1.0.3 novo dominio do webservice
          */
     }
     buildTypes {
@@ -26,8 +27,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/commons-io-2.4.jar')
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.google.android.gms:play-services:7.5.0'
     compile files('libs/gradle-wrapper.jar')
     compile 'com.github.shell-software:fab:1.0.5'
+    compile 'com.mcxiaoke.volley:library:1.0.18'
 }

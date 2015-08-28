@@ -14,8 +14,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ulbra.bms.sca.controllers.clsJSONget;
-import ulbra.bms.sca.controllers.clsJSONpost;
+import ulbra.bms.sca.controllers.ConexaoWS;
 import ulbra.bms.sca.interfaces.booleanRetornadoListener;
 import ulbra.bms.sca.interfaces.detalhesEstabelecimentoCarregadoListener;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
@@ -94,9 +93,7 @@ public class clsEstabelecimentos implements Parcelable {
     //endregion
 
     public static void estabelecimentoFoiAvaliado(final booleanRetornadoListener listener, int idUsuario, int idEstabelecimento, Context contexto) {
-        clsJSONget executor = new clsJSONget(contexto);
-
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener escutador = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 boolean retorno = false;
@@ -111,8 +108,8 @@ public class clsEstabelecimentos implements Parcelable {
                 }
                 listener.booleanRetornado(retorno);
             }
-        });
-        executor.execute("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
+        };
+        ConexaoWS.executaGet(escutador, contexto, "http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idUsuario=" + idUsuario + "&idEstabelecimento=" + idEstabelecimento);
     }
 
     public void addListener(estabelecimentosCarregadosListener listener)
@@ -121,9 +118,7 @@ public class clsEstabelecimentos implements Parcelable {
     }
 
     public void estabelecimentosPorRaio(float raio, LatLng local,Context contexto) {
-        clsJSONget executor = new clsJSONget(contexto);
-
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener listener = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 ArrayList<clsEstabelecimentos> retorno = new ArrayList<>();
@@ -156,14 +151,12 @@ public class clsEstabelecimentos implements Parcelable {
                 }
                 ouvinte.estabelecimentosCarregados(retorno);
             }
-        });
-        executor.execute("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
+        };
+        ConexaoWS.executaGet(listener, contexto, "http://hefestows.azurewebsites.net/api/clsEstabelecimentos?raioLongoKM=" + raio + "&latitude=" + local.latitude + "&longitude=" + local.longitude);
     }
 
     public void carregaDetalhesEstabelecimento(final detalhesEstabelecimentoCarregadoListener listener, Context contexto) {
-        clsJSONget executor = new clsJSONget(contexto);
-
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener escutador = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 clsEstabelecimentos retorno = new clsEstabelecimentos();
@@ -194,23 +187,20 @@ public class clsEstabelecimentos implements Parcelable {
             }
                 listener.estabelecimentoCarregado(retorno);
             }
-        });
-        executor.execute("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento);
+        };
+        ConexaoWS.executaGet(escutador, contexto, "http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento);
     }
 
-    public void avaliaEstabelecimento(int notaAvaliacao, int idUsuario, Context context) {
-        clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idUsuario=" + idUsuario + "&nota=" + notaAvaliacao);
+    public void avaliaEstabelecimento(int notaAvaliacao, int idUsuario, Context contexto) {
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idUsuario=" + idUsuario + "&nota=" + notaAvaliacao);
     }
 
-    public void cadastraEstabelecimento(int idUsuario, Context context) {
-        clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro=" + Uri.encode(this.bairroEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado=" + this.estadoEstabelecimento + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
+    public void cadastraEstabelecimento(int idUsuario, Context contexto) {
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro=" + Uri.encode(this.bairroEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado=" + this.estadoEstabelecimento + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
     }
 
-    public void editaEstabelecimento(int idUsuario, Context context) {
-        clsJSONpost executor = new clsJSONpost(context);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro=" + Uri.encode(this.bairroEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado=" + this.estadoEstabelecimento + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
+    public void editaEstabelecimento(int idUsuario, Context contexto) {
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsEstabelecimentos?idEstabelecimento=" + this.idEstabelecimento + "&idCategoria=" + this.idCategoria + "&nomeEstabelecimento=" + Uri.encode(this.nomeEstabelecimento) + "&enderecoEstabelecimento=" + Uri.encode(this.enderecoEstabelecimento) + "&bairro=" + Uri.encode(this.bairroEstabelecimento) + "&cidadeEstabelecimento=" + Uri.encode(this.cidadeEstabelecimento) + "&estado=" + this.estadoEstabelecimento + "&possuiBanheiro=" + this.possuiBanheiro + "&possuiEstacionamento=" + this.possuiEstacionamento + "&alturaCerta=" + this.alturaCerta + "&possuiRampa=" + this.possuiRampa + "&larguraSuficiente=" + this.larguraSuficiente + "&telefoneEstabelecimento=" + Uri.encode(this.telefoneEstabelecimento) + "&latitudeEstabelecimento=" + this.latlonEstabelecimento.latitude + "&longitudeEstabelecimento=" + this.latlonEstabelecimento.longitude + "&idUsuario=" + idUsuario + "&nota=" + (int) this.mediaEstrelasAtendimento);
     }
 
     @Override

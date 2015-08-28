@@ -12,8 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import ulbra.bms.sca.controllers.clsJSONget;
-import ulbra.bms.sca.controllers.clsJSONpost;
+import ulbra.bms.sca.controllers.ConexaoWS;
 import ulbra.bms.sca.interfaces.alertasCarregadosListener;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 
@@ -52,8 +51,7 @@ public class clsAlertas{
     }
 
     public static void denunciaAlerta(int idAlerta, int idUsuario, Context contexto) {
-        clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsAlertas?idAlerta=" + idAlerta + "&idUsuario=" + idUsuario);
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsAlertas?idAlerta=" + idAlerta + "&idUsuario=" + idUsuario);
     }
 
     public void addListener(alertasCarregadosListener listener)
@@ -63,9 +61,7 @@ public class clsAlertas{
 
     public void carregaAlertas(int raio, LatLng local,Context contexto) {
 
-        clsJSONget executor = new clsJSONget(contexto);
-
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener listener = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 if (result != null) {
@@ -84,24 +80,20 @@ public class clsAlertas{
                     ouvinte.alertasCarregados(null);
 
             }
-        });
-
-        executor.execute("http://hefestows.azurewebsites.net/api/clsAlertas?raioLongoemKM=" + raio + "&lat=" + local.latitude + "&lon=" + local.longitude);
+        };
+        ConexaoWS.executaGet(listener, contexto, "http://hefestows.azurewebsites.net/api/clsAlertas?raioLongoemKM=" + raio + "&lat=" + local.latitude + "&lon=" + local.longitude);
     }
 
     public void cadastraAlerta(Context contexto) {
-        clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsAlertas?idUsuario=" + this.idUsuario + "&lat=" + this.latlonAlerta.latitude + "&lon=" + this.latlonAlerta.longitude + "&tipo=" + this.tipoAlerta + "&descricao=" + Uri.encode(this.descricaoAlerta) + "&risco=" + this.riscoAlerta);
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsAlertas?idUsuario=" + this.idUsuario + "&lat=" + this.latlonAlerta.latitude + "&lon=" + this.latlonAlerta.longitude + "&tipo=" + this.tipoAlerta + "&descricao=" + Uri.encode(this.descricaoAlerta) + "&risco=" + this.riscoAlerta);
     }
 
     public void editaAlerta(int riscoAlerta, int tipoAlerta, String descricaoAlerta,Context contexto) {
-        clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsAlertas?idAlerta=" + this.idAlerta + "&tipo=" + tipoAlerta + "&descricao=" + Uri.encode(descricaoAlerta) + "&risco=" + riscoAlerta);
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsAlertas?idAlerta=" + this.idAlerta + "&tipo=" + tipoAlerta + "&descricao=" + Uri.encode(descricaoAlerta) + "&risco=" + riscoAlerta);
     }
 
     public void excluiAlerta(Context contexto) {
-        clsJSONpost executor = new clsJSONpost(contexto);
-        executor.executaPost("http://hefestows.azurewebsites.net/api/clsAlertas?idAlerta=" + this.idAlerta);
+        ConexaoWS.executaPost(contexto, "http://hefestows.azurewebsites.net/api/clsAlertas?idAlerta=" + this.idAlerta);
     }
 
 }

@@ -320,12 +320,14 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         //objeto shared preferences, armazena o id do usuário logado e ultimo local conhecido
         spIdUsuario = getSharedPreferences("USUARIO", MODE_PRIVATE);
 
         //executa operações de POST pendentes
-        if (clsJSONget.temInternet())
-            clsJSONpost.executaPendentes(this);
+        if (ConexaoWS.temInternet())
+            ConexaoWS.executaPendentes(this);
 
         //listener disparado quando a carga de dados do webservice é concluída
         alertasListener.addListener(new alertasCarregadosListener() {
@@ -468,8 +470,8 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         if (mLocationListener != null && mGerenciadorApiClient != null)
             mGerenciadorApiClient.suspendeLocalizacao(mLocationListener);
         super.onStop();
-        if (clsJSONget.temInternet())
-            clsJSONpost.executaPendentes(this);
+        if (ConexaoWS.temInternet())
+            ConexaoWS.executaPendentes(this);
     }
 
     @Override
@@ -512,12 +514,12 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         else if(id==R.id.btn_main_sincroniza)
         {
             //limpa e recarrega o mapa e sincroniza operações pendentes
-            if(clsJSONget.temInternet()) {
+            if (ConexaoWS.temInternet()) {
                 if (mlocalAtual!=null) {
                     carregaMarcadores(mLocalFocoCamera, 2, true);
                 }
                 //faz uma nova tentativa de sincronizacao de possiveis operacoes pendentes
-                clsJSONpost.executaPendentes(this);
+                ConexaoWS.executaPendentes(this);
                 //sincroniza categorias com o servidor, tarefa assincrona, nao interfere nas demais
                 clsCategorias.sincronizaCategoriasServidor(MainActivity.this);
             }

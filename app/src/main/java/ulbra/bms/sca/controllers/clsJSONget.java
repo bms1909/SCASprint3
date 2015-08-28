@@ -1,23 +1,6 @@
 package ulbra.bms.sca.controllers;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import ulbra.bms.sca.R;
-import ulbra.bms.sca.interfaces.downloadFeitoListener;
-
-public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
+/*public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
 
     private final Context contexto;
     private downloadFeitoListener ouvinte;
@@ -76,8 +59,8 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
             URL link = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) link.openConnection();
 
-            conn.setReadTimeout(30000 /* milliseconds */);
-            conn.setConnectTimeout(30000 /* milliseconds */);
+            conn.setReadTimeout(30000 );
+            conn.setConnectTimeout(30000 );
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
 
@@ -121,4 +104,4 @@ public class clsJSONget extends AsyncTask<String, Void, JSONArray> {
         }
         return retorno;
     }
-}
+}*/

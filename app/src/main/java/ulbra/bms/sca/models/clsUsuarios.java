@@ -15,7 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-import ulbra.bms.sca.controllers.clsJSONget;
+import ulbra.bms.sca.controllers.ConexaoWS;
 import ulbra.bms.sca.interfaces.booleanRetornadoListener;
 import ulbra.bms.sca.interfaces.downloadFeitoListener;
 import ulbra.bms.sca.interfaces.usuarioCarregadoListener;
@@ -49,9 +49,8 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
     }
 
     public static void recuperaUsuario(final booleanRetornadoListener listener, String nomeOuEmail, Context contexto) {
-        clsJSONget executor = new clsJSONget(contexto);
-
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener escutador;
+        escutador = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 boolean retorno = false;
@@ -66,8 +65,8 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
                 }
                 listener.booleanRetornado(retorno);
             }
-        });
-        executor.execute("http://hefestows.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
+        };
+        ConexaoWS.executaGet(escutador, contexto, "http://hefestows.azurewebsites.net/api/clsUsuarios?nomeOuEmail=" + Uri.encode(nomeOuEmail));
     }
 
     @Override
@@ -103,9 +102,8 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
 
     public void carregaUsuario(String nomeOuEmail, String senha,Context contexto) {
 
-        clsJSONget executor = new clsJSONget(contexto);
-
-        executor.addListener(new downloadFeitoListener() {
+        downloadFeitoListener listener;
+        listener = new downloadFeitoListener() {
             @Override
             public void downloadConcluido(JSONArray result) {
                 if (result != null) {
@@ -122,8 +120,8 @@ public class clsUsuarios extends AsyncTask<Void,Void,String> {
                     ouvinte.usuarioCarregado(null);
                 }
             }
-        });
-        executor.execute("http://hefestows.azurewebsites.net/api/clsUsuarios?nomeouEmail=" + Uri.encode(nomeOuEmail) + "&senha=" + Uri.encode(senha));
+        };
+        ConexaoWS.executaGet(listener, contexto, "http://hefestows.azurewebsites.net/api/clsUsuarios?nomeouEmail=" + Uri.encode(nomeOuEmail) + "&senha=" + Uri.encode(senha));
     }
 
     public String cadastraUsuario() {

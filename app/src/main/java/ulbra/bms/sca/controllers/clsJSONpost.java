@@ -1,21 +1,9 @@
 package ulbra.bms.sca.controllers;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-
-import org.apache.commons.io.IOUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import ulbra.bms.sca.models.clsBdLocal;
-
 /**
  * Criador por Bruno em 17/03/2015.
  */
-public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
+/*public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
     private Context contexto;
 
     public clsJSONpost(Context ctx) {
@@ -52,8 +40,8 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
                 URL link = new URL(url);
                 HttpURLConnection conn = (HttpURLConnection) link.openConnection();
 
-                conn.setReadTimeout(30000 /* milliseconds */);
-                conn.setConnectTimeout(30000 /* milliseconds */);
+                conn.setReadTimeout(30000);
+                conn.setConnectTimeout(30000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
 
@@ -88,5 +76,5 @@ public class clsJSONpost extends AsyncTask<String, Void, Boolean> {
         //   if(result)
         // Toast.makeText(contexto,"Informações Enviadas!",Toast.LENGTH_SHORT).show();
     }
-}
+}*/
 
